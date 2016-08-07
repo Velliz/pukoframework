@@ -32,7 +32,7 @@ class Framework extends Lifecycle
 
     public function Start()
     {
-        $controller = new $this->request->className();
-
+        $controller = $this->request->className;
+        new $controller();
     }
 }
