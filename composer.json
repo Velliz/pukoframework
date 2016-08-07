@@ -1,0 +1,19 @@
+{
+    "name": "puko/framework",
+    "description": "Puko is MVC PHP Framework for quick and fast PHP Application Development",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "velliz",
+            "email": "diditvelliz@outlook.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "pukoframework\\": "src/"
+        }
+    }
+}
