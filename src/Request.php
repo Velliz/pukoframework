@@ -5,11 +5,37 @@ class Request
 {
     var $requestType;
     var $requestUrl;
-    var $className;
+    var $className = "main";
+    var $fnName = "main";
+    var $variable;
+    var $constant;
 
     public function __construct()
     {
-        $this->className = $_GET['req'];
+        $this->requestType = $_SERVER['REQUEST_METHOD'];
+        if (isset($_GET['req'])) $this->requestUrl = $_GET['req'];
+        $tail = substr($this->requestUrl, -1);
+        if($tail != "/") $this->requestUrl .= "/";
+        $this->requestUrl = explode("/", $this->requestUrl);
+        foreach ($this->requestUrl as $point => $value) {
+            if ($value == "") break;
+            switch ($point) {
+                case 0:
+                    $this->className = $value;
+                    break;
+                case 1:
+                    if (intval($value)) $this->constant = $value;
+                    else $this->fnName = $value;
+                    break;
+                case 2:
+                    if (isset($this->constant) || is_int($this->constant)) $this->fnName = $value;
+                    else array_push($this->variable, $val);
+                    break;
+                default:
+                    array_push($this->variable, $val);
+                    break;
+            }
+        }
     }
 
     public function GETRequest()

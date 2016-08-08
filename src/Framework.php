@@ -32,7 +32,13 @@ class Framework extends Lifecycle
 
     public function Start()
     {
-        $controller = $this->request->className;
-        new $controller();
+        $controller = '\\controller\\'.$this->request->className;
+        $object = new $controller(); //todo: var $constant into constructor
+        if (method_exists($object, $this->request->fnName)) {
+            if (is_callable(array($object, $this->request->fnName))) {
+                if (empty($this->request->variable)) call_user_func(array($object, $this->request->fnName));
+                else call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
+            } else throw new \Exception("Function must set Public.");
+        } else throw new \Exception("Function not found.");
     }
 }
