@@ -18,10 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "pukoframework\\": "src/",
-            "controller\\": "controller/",
-            "model\\": "model/",
-            "config\\": "config/"
+            "pukoframework\\": "src/"
         }
     }
 }
