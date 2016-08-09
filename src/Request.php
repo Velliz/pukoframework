@@ -7,15 +7,15 @@ class Request
     var $requestUrl;
     var $className = "main";
     var $fnName = "main";
-    var $variable;
+    var $variable = array();
     var $constant;
     var $lang = "id";
 
     public function __construct()
     {
         $this->requestType = $_SERVER['REQUEST_METHOD'];
-        if (isset($_GET['lang'])) $this->lang = $_GET['lang'];
-        if (isset($_GET['req'])) $this->requestUrl = $_GET['request'];
+        if (isset($_GET['lang']) && $_GET['lang'] != "") $this->lang = $_GET['lang'];
+        if (isset($_GET['request'])) $this->requestUrl = $_GET['request'];
         $tail = substr($this->requestUrl, -1);
         if($tail != "/") $this->requestUrl .= "/";
         $this->requestUrl = explode("/", $this->requestUrl);
@@ -31,10 +31,10 @@ class Request
                     break;
                 case 2:
                     if (isset($this->constant) || is_int($this->constant)) $this->fnName = $value;
-                    else array_push($this->variable, $val);
+                    else array_push($this->variable, $value);
                     break;
                 default:
-                    array_push($this->variable, $val);
+                    array_push($this->variable, $value);
                     break;
             }
         }
