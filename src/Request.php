@@ -13,7 +13,7 @@ class Request
     public function __construct()
     {
         $this->requestType = $_SERVER['REQUEST_METHOD'];
-        if (isset($_GET['req'])) $this->requestUrl = $_GET['req'];
+        if (isset($_GET['req'])) $this->requestUrl = $_GET['request'];
         $tail = substr($this->requestUrl, -1);
         if($tail != "/") $this->requestUrl .= "/";
         $this->requestUrl = explode("/", $this->requestUrl);
