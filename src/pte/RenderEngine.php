@@ -51,6 +51,18 @@ namespace pukoframework\pte {
             return array($key => $val);
         }
 
+        public function Date($key, $val)
+        {
+            $now = date("d-m-Y H:i:s");
+            $target = (new \DateTime($val))->format("d-m-Y H:i:s");
+            if (strcasecmp($key, "before") == 0) {
+                if ($now > $target) throw new \Exception("URL available before " . $val);
+            }
+            if (strcasecmp($key, "after") == 0) {
+                if ($now < $target) throw new \Exception("URL available after " . $val);
+            }
+        }
+
         public function PTEParser($filePath, $arrayData)
         {
             if (!file_exists($filePath)) throw new \Exception("html template file not found.");

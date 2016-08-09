@@ -17,6 +17,9 @@ class Framework extends Lifecycle
         $this->request = new Request();
         $this->response = new Response();
         $this->render = new RenderEngine();
+
+        $this->Request($this->request);
+        $this->response($this->response);
     }
 
     public function Request(Request $request)
@@ -27,7 +30,7 @@ class Framework extends Lifecycle
 
     public function Response(Response $response)
     {
-
+        @set_exception_handler(array($response, 'ExceptionHandler'));
     }
 
     public function RouteMapping($mapping = array())
