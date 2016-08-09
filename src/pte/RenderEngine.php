@@ -13,9 +13,8 @@ class RenderEngine
 
     var $htmlMaster;
 
-    public function PDCParser(&$phpDocs = array())
+    public function PDCParser($phpDocs, &$arrData)
     {
-        $result = array();
         preg_match_all("(#[ a-zA-Z0-9-:./]+)", $phpDocs, $result, PREG_PATTERN_ORDER);
         if (sizeof($result[0]) > 0) {
             foreach ($result[0] as $key => $value) {
@@ -36,14 +35,13 @@ class RenderEngine
                     }
                 }
                 $command = $this->$pteFn($pteKeyword, $pteValue);
-                if (is_array($phpDocs) && is_array($command)) {
-                    foreach ($result as $k => $v) {
-                        $phpDocs[$k] = $v;
+                if (is_array($arrData) && is_array($command)) {
+                    foreach ($command as $k => $v) {
+                        $arrData[$k] = $v;
                     }
                 }
             }
         }
-        return $result;
     }
 
     public function Value($key, $val)
@@ -57,7 +55,8 @@ class RenderEngine
         if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
         $filePath = file_get_contents($filePath);
         $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
-        //if (sizeof($arrayData) <= 0) return null;
+        $this->htmlMaster = str_replace('{URL}', ROOT, $this->htmlMaster);
+        if (sizeof($arrayData) <= 0) return $this->htmlMaster;
         foreach ($arrayData as $key => $value) {
             $tagReplace = '{!' . $key . '}';
             $openTag = '<!--{!' . $key . '}-->';

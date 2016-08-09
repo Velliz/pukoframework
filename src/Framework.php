@@ -43,7 +43,6 @@ class Framework extends Lifecycle
         else $object = new $controller($this->request->constant);
         $pdc = new \ReflectionClass($object);
         $classpdc = $pdc->getDocComment();
-        $classpdc = $this->render->PDCParser($classpdc);
         if (method_exists($object, $this->request->fnName)) {
             $fnpdc = $pdc->getMethod($this->request->fnName)->getDocComment();
             if (is_callable(array($object, $this->request->fnName))) {
@@ -51,11 +50,18 @@ class Framework extends Lifecycle
                 else $this->fnreturn = call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
             } else throw new \Exception("Function must set Public.");
         } else throw new \Exception("Function not found.");
-        $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->className . "/master.html");
-        $template = $this->render->PTEParser(
-            ROOT . "/assets/html/" . $this->request->className . "/" . $this->request->fnName . ".html",
-            $this->fnreturn
-        );
-        echo $template;
+        $view = new \ReflectionClass(pte\View::class);
+        $service = new \ReflectionClass(pte\Service::class);
+        if ($pdc->isSubclassOf($view)) {
+            $this->render->PDCParser($classpdc, $this->fnreturn);
+            $this->render->PDCParser($fnpdc, $this->fnreturn);
+            $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->className . "/master.html");
+            $template = $this->render->PTEParser(
+                ROOT . "/assets/html/" . $this->request->className . "/" . $this->request->fnName . ".html",
+                $this->fnreturn
+            );
+            echo $template;
+        }
+        if ($pdc->isSubclassOf($service)) {}
     }
 }
