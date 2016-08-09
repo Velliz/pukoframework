@@ -4,11 +4,11 @@ namespace pukoframework;
 abstract class Lifecycle
 {
 
-    var $start;
+    public static $start;
 
     public function __construct()
     {
-        $this->start = microtime(true);
+        self::$start = microtime(true);
         $this->OnInitialize();
     }
 

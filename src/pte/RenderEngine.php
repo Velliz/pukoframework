@@ -1,6 +1,8 @@
 <?php
 namespace pukoframework\pte {
 
+    use pukoframework\Lifecycle;
+
     class RenderEngine
     {
 
@@ -103,6 +105,20 @@ namespace pukoframework\pte {
         public function PTEMaster($filePath)
         {
             $this->htmlMaster = file_get_contents($filePath);
+        }
+
+        public function PTEJson($arrayData)
+        {
+            header("Cache-Control: no-cache");
+            header("Pragma: no-cache");
+            header("Author: Puko framework 1.0");
+            header("Content-Type: application/json");
+            $data = array(
+                'time' => microtime(true) - Lifecycle::$start,
+                'status' => 'success'
+            );
+            $data['data'] = $arrayData;
+            return $data;
         }
 
         public function GetVarType($var)

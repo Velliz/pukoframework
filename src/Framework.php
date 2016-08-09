@@ -52,6 +52,9 @@ class Framework extends Lifecycle
         } else throw new \Exception("Function not found.");
         $view = new \ReflectionClass(pte\View::class);
         $service = new \ReflectionClass(pte\Service::class);
+
+        $this->funcReturn['token'] = (isset($_COOKIE['token'])) ? $_COOKIE['token'] : null;
+
         if ($pdc->isSubclassOf($view)) {
             $this->render->PDCParser($classpdc, $this->funcReturn);
             $this->render->PDCParser($fnpdc, $this->funcReturn);
@@ -62,6 +65,8 @@ class Framework extends Lifecycle
             );
             echo $template;
         }
-        if ($pdc->isSubclassOf($service)) {}
+        if ($pdc->isSubclassOf($service)) {
+            echo json_encode($this->render->PTEJson($this->funcReturn));
+        }
     }
 }
