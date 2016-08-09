@@ -52,15 +52,13 @@ class Framework extends Lifecycle
         } else throw new \Exception("Function not found.");
         $view = new \ReflectionClass(pte\View::class);
         $service = new \ReflectionClass(pte\Service::class);
-
         $this->funcReturn['token'] = (isset($_COOKIE['token'])) ? $_COOKIE['token'] : null;
-
         if ($pdc->isSubclassOf($view)) {
             $this->render->PDCParser($classpdc, $this->funcReturn);
             $this->render->PDCParser($fnpdc, $this->funcReturn);
-            $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->className . "/master.html");
+            $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
             $template = $this->render->PTEParser(
-                ROOT . "/assets/html/" . $this->request->className . "/" . $this->request->fnName . ".html",
+                ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html",
                 $this->funcReturn
             );
             echo $template;

@@ -9,10 +9,12 @@ class Request
     var $fnName = "main";
     var $variable;
     var $constant;
+    var $lang = "id";
 
     public function __construct()
     {
         $this->requestType = $_SERVER['REQUEST_METHOD'];
+        if (isset($_GET['lang'])) $this->lang = $_GET['lang'];
         if (isset($_GET['req'])) $this->requestUrl = $_GET['request'];
         $tail = substr($this->requestUrl, -1);
         if($tail != "/") $this->requestUrl .= "/";
