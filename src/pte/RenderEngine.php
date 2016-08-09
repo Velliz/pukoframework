@@ -111,7 +111,9 @@ namespace pukoframework\pte {
                         break;
                 }
             }
-            return preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
+            $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
+            $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
+            return $this->htmlMaster;
         }
 
         public function PTEMaster($filePath)

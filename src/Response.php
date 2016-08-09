@@ -5,8 +5,8 @@ class Response
 {
     var $responseType;
 
-    public function ExceptionHandler(\Exception $error)
+    public function ExceptionHandler($error)
     {
-        echo $error->getMessage();
+        return $error->getMessage();
     }
 }

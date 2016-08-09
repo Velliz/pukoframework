@@ -40,34 +40,39 @@ class Framework extends Lifecycle
 
     public function Start()
     {
-        $controller = '\\controller\\'.$this->request->className;
+        $controller = '\\controller\\' . $this->request->className;
         $controller = strtolower($controller);
-        if(!isset($this->request->constant)) $object = new $controller();
+        if (!isset($this->request->constant)) $object = new $controller();
         else $object = new $controller($this->request->constant);
         $pdc = new \ReflectionClass($object);
         $classpdc = $pdc->getDocComment();
-        if (method_exists($object, $this->request->fnName)) {
-            $fnpdc = $pdc->getMethod($this->request->fnName)->getDocComment();
-            if (is_callable(array($object, $this->request->fnName))) {
-                if (empty($this->request->variable)) $this->funcReturn = call_user_func(array($object, $this->request->fnName));
-                else $this->funcReturn = call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
-            } else throw new \Exception("Function must set Public.");
-        } else throw new \Exception("Function not found.");
-        $view = new \ReflectionClass(pte\View::class);
-        $service = new \ReflectionClass(pte\Service::class);
-        $this->funcReturn['token'] = (isset($_COOKIE['token'])) ? $_COOKIE['token'] : null;
-        if ($pdc->isSubclassOf($view)) {
-            $this->render->PDCParser($classpdc, $this->funcReturn);
-            $this->render->PDCParser($fnpdc, $this->funcReturn);
-            $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
-            $template = $this->render->PTEParser(
-                ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html",
-                $this->funcReturn
-            );
-            echo $template;
-        }
-        if ($pdc->isSubclassOf($service)) {
-            echo json_encode($this->render->PTEJson($this->funcReturn));
+        try {
+            if (method_exists($object, $this->request->fnName)) {
+                $fnpdc = $pdc->getMethod($this->request->fnName)->getDocComment();
+                if (is_callable(array($object, $this->request->fnName))) {
+                    if (empty($this->request->variable)) $this->funcReturn = call_user_func(array($object, $this->request->fnName));
+                    else $this->funcReturn = call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
+                } else throw new \Exception("Function must set Public.");
+            } else throw new \Exception("Function not found.");
+            $this->funcReturn['token'] = (isset($_COOKIE['token'])) ? $_COOKIE['token'] : null;
+        } catch (\Exception $error) {
+            $this->funcReturn['PukoException'] = $this->response->ExceptionHandler($error);
+        } finally {
+            $view = new \ReflectionClass(pte\View::class);
+            $service = new \ReflectionClass(pte\Service::class);
+            if ($pdc->isSubclassOf($view)) {
+                $this->render->PDCParser($classpdc, $this->funcReturn);
+                $this->render->PDCParser($fnpdc, $this->funcReturn);
+                $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
+                $template = $this->render->PTEParser(
+                    ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html",
+                    $this->funcReturn
+                );
+                echo $template;
+            }
+            if ($pdc->isSubclassOf($service)) {
+                echo json_encode($this->render->PTEJson($this->funcReturn));
+            }
         }
     }
 }
