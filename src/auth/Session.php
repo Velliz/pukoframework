@@ -29,7 +29,6 @@ class Session
 
     public static function GenerateSecureToken()
     {
-        //todo: if(hash_equals($_POST['token'],$_COOKIE['token']))
         if (function_exists('mcrypt_create_iv')) $token = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
         else $token = bin2hex(openssl_random_pseudo_bytes(32));
         setcookie('token', $token, time() + (86400 * 30), '/', $_SERVER['SERVER_NAME']);

@@ -17,7 +17,7 @@ class Request
         if (isset($_GET['lang']) && $_GET['lang'] != "") $this->lang = $_GET['lang'];
         if (isset($_GET['request'])) $this->requestUrl = $_GET['request'];
         $tail = substr($this->requestUrl, -1);
-        if($tail != "/") $this->requestUrl .= "/";
+        if ($tail != "/") $this->requestUrl .= "/";
         $this->requestUrl = explode("/", $this->requestUrl);
         foreach ($this->requestUrl as $point => $value) {
             if ($value == "") break;
@@ -41,23 +41,38 @@ class Request
         if (isset($_GET['request'])) $this->requestUrl = $_GET['request'];
     }
 
-    public function GETRequest()
+    public static function Get($key, $default)
+    {
+        if (!isset($_GET[$key])) return $default;
+        return $_GET[$key];
+    }
+
+    public static function Post($key, $default)
+    {
+        if (!isset($_POST[$key])) return $default;
+        return $_POST[$key];
+    }
+
+    public static function Put()
     {
 
     }
 
-    public function POSTRequest()
+    public static function Del()
     {
 
     }
 
-    public function PUTRequest()
+    public static function IsPost()
     {
-
+        if (!isset($_POST['_submit'])) return false;
+        if (!isset($_POST['token'])) return false;
+        if (!isset($_COOKIE['token'])) return false;
+        if (!hash_equals($_POST['token'], $_COOKIE['token'])) return false;
+        unset($_POST['_submit']);
+        unset($_POST['token']);
+        \pukoframework\auth\Session::GenerateSecureToken();
+        return true;
     }
 
-    public function DELETERequest()
-    {
-
-    }
 }
