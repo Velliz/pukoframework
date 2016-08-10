@@ -38,6 +38,7 @@ class Request
                     break;
             }
         }
+        $this->requestUrl = $_GET['request'];
     }
 
     public function GETRequest()

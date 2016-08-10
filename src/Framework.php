@@ -17,14 +17,19 @@ class Framework extends Lifecycle
         $this->request = new Request();
         $this->response = new Response();
         $this->render = new RenderEngine();
-
-        $this->Request($this->request);
-        $this->response($this->response);
     }
 
     public function Request(Request $request)
     {
-
+        if(sizeof($this->route) == 0) return;
+        foreach ($this->route as $key => $value) {
+            if (strpos($request->requestUrl, $key) !== false) {
+                $value = str_replace($key, $value, $request->requestUrl);
+                $_GET['request'] = $value;
+                break;
+            }
+        }
+        $this->request = new Request();
     }
 
 
@@ -40,6 +45,8 @@ class Framework extends Lifecycle
 
     public function Start()
     {
+        $this->Request($this->request);
+        $this->Response($this->response);
         $controller = '\\controller\\' . $this->request->className;
         $controller = strtolower($controller);
         if (!isset($this->request->constant)) $object = new $controller();
