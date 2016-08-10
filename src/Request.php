@@ -38,7 +38,7 @@ class Request
                     break;
             }
         }
-        $this->requestUrl = $_GET['request'];
+        if (isset($_GET['request'])) $this->requestUrl = $_GET['request'];
     }
 
     public function GETRequest()

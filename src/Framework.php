@@ -21,15 +21,17 @@ class Framework extends Lifecycle
 
     public function Request(Request $request)
     {
-        if(sizeof($this->route) == 0) return;
+        if (!isset($request->requestUrl)) return;
+        if (sizeof($this->route) == 0) return;
+        if (!isset($_GET['request'])) return;
         foreach ($this->route as $key => $value) {
             if (strpos($request->requestUrl, $key) !== false) {
                 $value = str_replace($key, $value, $request->requestUrl);
                 $_GET['request'] = $value;
+                $this->request = new Request();
                 break;
             }
         }
-        $this->request = new Request();
     }
 
 
