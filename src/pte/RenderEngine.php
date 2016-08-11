@@ -14,6 +14,8 @@ namespace pukoframework\pte {
         protected $UNDEFINED = 6;
 
         var $htmlMaster;
+        var $useMasterLayout = true;
+        var $useHtmlLayout = true;
 
         public function PDCParser($phpDocs, &$arrData)
         {
@@ -63,12 +65,26 @@ namespace pukoframework\pte {
             }
         }
 
+        public function Template($key, $val)
+        {
+            switch ($key) {
+                case "master":
+                    if (strcasecmp($val, "false") == 0) $this->useMasterLayout = false;
+                    break;
+                case "html":
+                    if (strcasecmp($val, "false") == 0) $this->useHtmlLayout = false;
+                    break;
+            }
+        }
+
         public function PTEParser($filePath, $arrayData)
         {
+            if (!$this->useHtmlLayout) return "";
             if (!file_exists($filePath)) throw new \Exception("html template file not found.");
             if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
             $filePath = file_get_contents($filePath);
-            $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
+            if ($this->useMasterLayout) $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
+            if (!$this->useMasterLayout) $this->htmlMaster = $filePath;
             $this->htmlMaster = str_replace('{URL}', BASE_URL, $this->htmlMaster);
             if (sizeof($arrayData) <= 0) return $this->htmlMaster;
             foreach ($arrayData as $key => $value) {
