@@ -69,10 +69,10 @@ namespace pukoframework\pte {
         {
             switch ($key) {
                 case "master":
-                    if (strcasecmp($val, "false") == 0) $this->useMasterLayout = false;
+                    if (strcasecmp(str_replace(" ", "", $val), "false") == 0) $this->useMasterLayout = false;
                     break;
                 case "html":
-                    if (strcasecmp($val, "false") == 0) $this->useHtmlLayout = false;
+                    if (strcasecmp(str_replace(" ", "", $val), "false") == 0) $this->useHtmlLayout = false;
                     break;
             }
         }
