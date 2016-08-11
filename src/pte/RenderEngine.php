@@ -69,7 +69,7 @@ namespace pukoframework\pte {
             if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
             $filePath = file_get_contents($filePath);
             $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
-            $this->htmlMaster = str_replace('{URL}', ROOT, $this->htmlMaster);
+            $this->htmlMaster = str_replace('{URL}', BASE_URL, $this->htmlMaster);
             if (sizeof($arrayData) <= 0) return $this->htmlMaster;
             foreach ($arrayData as $key => $value) {
                 $tagReplace = '{!' . $key . '}';
