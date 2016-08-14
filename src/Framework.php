@@ -60,8 +60,6 @@ class Framework extends Lifecycle
         $this->classPdc = $this->pdc->getDocComment();
         $this->fnPdc = $this->classPdc;
         try {
-            $this->funcReturn['Exception'] = false;
-            $this->funcReturn['ExceptionMessage'] = "";
             if (method_exists($object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 if (is_callable(array($object, $this->request->fnName))) {
@@ -71,6 +69,8 @@ class Framework extends Lifecycle
             } else die("Function '" . $this->request->fnName . "'' not found in class: " . $this->request->className);
             if (!isset($_COOKIE['token'])) \pukoframework\auth\Session::GenerateSecureToken();
             $this->funcReturn['token'] = $_COOKIE['token'];
+            $this->funcReturn['ExceptionMessage'] = "";
+            $this->funcReturn['Exception'] = true;
         } catch (\Exception $error) {
             $this->funcReturn = $this->response->ExceptionHandler($error);
         } finally {

@@ -7,7 +7,7 @@ class Response
 
     public function ExceptionHandler($error)
     {
-        $emg['Exception'] = true;
+        $emg['Exception'] = false;
         $emg['ExceptionMessage'] = $error->getMessage();
         return $emg;
     }
