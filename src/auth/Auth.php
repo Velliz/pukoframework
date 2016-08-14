@@ -3,7 +3,7 @@ namespace pukoframework\auth;
 
 interface Auth
 {
-    public function Login();
+    public function Login($username, $password);
 
     public function Logout();
 

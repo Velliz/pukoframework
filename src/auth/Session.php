@@ -77,9 +77,9 @@ class Session
     }
 
     #region authentication
-    public function Login()
+    public function Login($username, $password)
     {
-        $secure = $this->authentication->Login();
+        $secure = $this->authentication->Login($username, $password);
         if($secure == false || $secure == null) return false;
         $secure = $this->encrypt($secure);
         setcookie('puko', $secure, time() + (86400), "/", $_SERVER['SERVER_NAME']);
