@@ -70,7 +70,7 @@ class Framework extends Lifecycle
             if (!isset($_COOKIE['token'])) \pukoframework\auth\Session::GenerateSecureToken();
             $this->funcReturn['token'] = $_COOKIE['token'];
         } catch (\Exception $error) {
-            $this->funcReturn['PukoException'] = $this->response->ExceptionHandler($error);
+            $this->funcReturn = $this->response->ExceptionHandler($error);
         } finally {
             $this->Render();
         }
