@@ -60,6 +60,8 @@ class Framework extends Lifecycle
         $this->classPdc = $this->pdc->getDocComment();
         $this->fnPdc = $this->classPdc;
         try {
+            $this->funcReturn['Exception'] = false;
+            $this->funcReturn['ExceptionMessage'] = "";
             if (method_exists($object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 if (is_callable(array($object, $this->request->fnName))) {
