@@ -1,6 +1,6 @@
 {
     "name": "puko/framework",
-    "description": "Puko is MVC PHP Framework for quick and fast PHP Application Development",
+    "description": "PSR 4 modular based MVC Puko Framework",
     "type": "library",
     "license": "MIT",
     "authors": [
