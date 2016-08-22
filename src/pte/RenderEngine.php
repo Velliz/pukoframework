@@ -79,7 +79,7 @@ namespace pukoframework\pte {
 
         public function PTEParser($filePath, $arrayData)
         {
-            if (!$this->useHtmlLayout) return "";
+            if (!$this->useHtmlLayout) return null;
             if (!file_exists($filePath)) throw new \Exception("html template file not found.");
             if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
             $filePath = file_get_contents($filePath);

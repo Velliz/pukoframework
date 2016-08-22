@@ -91,9 +91,13 @@ class Framework extends Lifecycle
                     ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html",
                     $this->funcReturn
                 );
-                echo $template;
+                if ($template != null) echo $template;
+                return;
             }
-            if ($this->pdc->isSubclassOf($service)) echo json_encode($this->render->PTEJson($this->funcReturn));
+            if ($this->pdc->isSubclassOf($service)) {
+                echo json_encode($this->render->PTEJson($this->funcReturn));
+                return;
+            }
         } catch (\Exception $error) {
             echo $this->response->ExceptionHandler($error);
         }
