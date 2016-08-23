@@ -74,6 +74,7 @@ class Session
     public function ClearSession()
     {
         setcookie('puko', '', time() - (86400 * 30), '/', $_SERVER['SERVER_NAME']);
+        $_COOKIE['puko'] = null;
     }
 
     #region authentication
@@ -83,6 +84,7 @@ class Session
         if($secure == false || $secure == null) return false;
         $secure = $this->encrypt($secure);
         setcookie('puko', $secure, time() + (86400), "/", $_SERVER['SERVER_NAME']);
+        $_COOKIE['puko'] = $secure;
         return true;
     }
 
