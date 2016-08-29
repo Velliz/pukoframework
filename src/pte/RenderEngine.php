@@ -139,13 +139,21 @@ namespace pukoframework\pte {
 
         public function PTEJson($arrayData)
         {
+            if ($arrayData['Exception']) {
+                $success = 'success';
+                unset($arrayData['Exception']);
+                unset($arrayData['ExceptionMessage']);
+            } else {
+                $success = 'failed';
+                $arrayData['Exception'] = true;
+            }
             header("Cache-Control: no-cache");
             header("Pragma: no-cache");
             header("Author: Puko framework 1.0");
             header("Content-Type: application/json");
             $data = array(
                 'time' => microtime(true) - Lifecycle::$start,
-                'status' => 'success'
+                'status' => $success
             );
             $data['data'] = $arrayData;
             return $data;

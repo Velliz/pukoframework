@@ -69,6 +69,8 @@ class Framework extends Lifecycle
             } else die("Function '" . $this->request->fnName . "'' not found in class: " . $this->request->className);
             if (!isset($_COOKIE['token'])) \pukoframework\auth\Session::GenerateSecureToken();
             $this->funcReturn['token'] = $_COOKIE['token'];
+            $this->funcReturn['ExceptionMessage'] = "";
+            $this->funcReturn['Exception'] = true;
         } catch (\Exception $error) {
             $this->funcReturn = $this->response->ExceptionHandler($error);
         } finally {
@@ -83,8 +85,6 @@ class Framework extends Lifecycle
         try {
             if ($this->pdc->isSubclassOf($view)) {
                 // TODO: create custom Exception render blocks if exception triggered
-                $this->funcReturn['ExceptionMessage'] = "";
-                $this->funcReturn['Exception'] = true;
                 $this->render->PDCParser($this->classPdc, $this->funcReturn);
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
