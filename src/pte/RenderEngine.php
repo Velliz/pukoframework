@@ -1,6 +1,7 @@
 <?php
 namespace pukoframework\pte {
 
+    use pukoframework\auth\Session;
     use pukoframework\Lifecycle;
 
     class RenderEngine
@@ -65,6 +66,11 @@ namespace pukoframework\pte {
             }
         }
 
+        public function Auth($authObject)
+        {
+            return Session::Get($authObject)->GetLoginData();
+        }
+
         public function Template($key, $val)
         {
             switch ($key) {
@@ -88,48 +94,58 @@ namespace pukoframework\pte {
             $this->htmlMaster = str_replace('{URL}', BASE_URL, $this->htmlMaster);
             if (sizeof($arrayData) <= 0) return $this->htmlMaster;
             foreach ($arrayData as $key => $value) {
-                $tagReplace = '{!' . $key . '}';
-                $openTag = '<!--{!' . $key . '}-->';
-                $closeTag = '<!--{/' . $key . '}-->';
-                switch ($this->GetVarType($value)) {
-                    case $this->NUMERIC:
-                        $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
-                        break;
-                    case $this->STRINGS:
-                        $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
-                        break;
-                    case $this->ARRAYS:
-                        $dynamicTags = null;
-                        $ember = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
-                        foreach ($value as $key2 => $value2) {
-                            $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
-                            foreach ($value2 as $key3 => $value3) {
-                                $parsed = str_replace('{!' . $key3 . '}', $value3, $parsed);
-                            }
-                            $dynamicTags .= $parsed;
-                        }
-                        $this->htmlMaster = str_replace($ember, $dynamicTags, $this->htmlMaster);
-                        break;
-                    case $this->BOOLEANS:
-                        $stanza = $this->BlockedConditions($this->htmlMaster, $key);
-                        if (is_null($stanza)) {
-                            if ($value != true) {
-                                $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
-                                $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
-                            }
-                        } else if ($value == true) $this->htmlMaster = str_replace($stanza, '', $this->htmlMaster);
-                        break;
-                    case $this->NULLS:
-                        break;
-                    case $this->UNDEFINED:
-                        break;
-                    default:
-                        break;
-                }
+                $this->TemplateParser($key, $value);
             }
             $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
             $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
             return $this->htmlMaster;
+        }
+
+        public function TemplateParser($key, $value)
+        {
+            $tagReplace = '{!' . $key . '}';
+            $openTag = '<!--{!' . $key . '}-->';
+            $closeTag = '<!--{/' . $key . '}-->';
+            switch ($this->GetVarType($value)) {
+                case $this->ARRAYS:
+                    foreach ($value as $key2 => $value2) {
+                        foreach ($value2 as $key3 => $value3) {
+                            if (is_array($value3)) $this->TemplateParser($key3, $value3);
+                        }
+                    }
+                    $dynamicTags = "";
+                    $ember = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
+                    foreach ($value as $key2 => $value2) {
+                        $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
+                        foreach ($value2 as $key3 => $value3) {
+                            if (!is_array($value3)) $parsed = str_replace('{!' . $key3 . '}', $value3, $parsed);
+                        }
+                        $dynamicTags .= $parsed;
+                    }
+                    $this->htmlMaster = str_replace($ember, $dynamicTags, $this->htmlMaster);
+                    break;
+                case $this->NUMERIC:
+                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
+                    break;
+                case $this->STRINGS:
+                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
+                    break;
+                case $this->BOOLEANS:
+                    $stanza = $this->BlockedConditions($this->htmlMaster, $key);
+                    if (is_null($stanza)) {
+                        if ($value != true) {
+                            $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
+                            $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                        }
+                    } else if ($value == true) $this->htmlMaster = str_replace($stanza, '', $this->htmlMaster);
+                    break;
+                case $this->NULLS:
+                    break;
+                case $this->UNDEFINED:
+                    break;
+                default:
+                    break;
+            }
         }
 
         public function PTEMaster($filePath)
