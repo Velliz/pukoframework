@@ -91,6 +91,8 @@ namespace pukoframework\pte {
             $filePath = file_get_contents($filePath);
             if ($this->useMasterLayout) $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
             if (!$this->useMasterLayout) $this->htmlMaster = $filePath;
+            $this->AssetsParser('CSS');
+            $this->AssetsParser('JS');
             $this->htmlMaster = str_replace('{URL}', BASE_URL, $this->htmlMaster);
             if (sizeof($arrayData) <= 0) return $this->htmlMaster;
             foreach ($arrayData as $key => $value) {
@@ -140,12 +142,25 @@ namespace pukoframework\pte {
                     } else if ($value == true) $this->htmlMaster = str_replace($stanza, '', $this->htmlMaster);
                     break;
                 case $this->NULLS:
+                    $this->htmlMaster = preg_replace("({!(" . $key . ")*?})", '', $this->htmlMaster);
                     break;
                 case $this->UNDEFINED:
+                    $this->htmlMaster = preg_replace("(<!--(" . $key . ")*?-->)", '', $this->htmlMaster);
                     break;
                 default:
                     break;
             }
+        }
+
+        public function AssetsParser($key)
+        {
+            $openTag = '{!' . $key . '}';
+            $closeTag = '{/' . $key . '}';
+            $ember = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
+            $this->htmlMaster = str_replace($openTag, "", $this->htmlMaster);
+            $this->htmlMaster = str_replace($closeTag, "", $this->htmlMaster);
+            $this->htmlMaster = str_replace($ember, "", $this->htmlMaster);
+            $this->htmlMaster = str_replace("{" . $key . "}", $ember, $this->htmlMaster);
         }
 
         public function PTEMaster($filePath)
