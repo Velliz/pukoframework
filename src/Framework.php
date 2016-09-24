@@ -49,6 +49,7 @@ class Framework extends Lifecycle
 
     public function Start()
     {
+        $finally = false;
         $this->Request($this->request);
         $this->Response($this->response);
         $controller = '\\controller\\' . $this->request->className;
@@ -72,10 +73,11 @@ class Framework extends Lifecycle
             $this->funcReturn['ExceptionMessage'] = "";
             $this->funcReturn['Exception'] = true;
         } catch (\Exception $error) {
+            $finally = true;
             $this->funcReturn = $this->response->ExceptionHandler($error);
-        } finally {
-            $this->Render();
         }
+        //PHP 5.4 does not support finally blocks
+        if($finally) $this->Render();
     }
 
     private function Render()
