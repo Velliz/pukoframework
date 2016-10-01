@@ -53,14 +53,16 @@ class Request
         return $_POST[$key];
     }
 
-    public static function Put()
+    public static function OutputBufferStart()
     {
-
+        return ob_start();
     }
 
-    public static function Del()
+    public static function OutputBufferFinish()
     {
-
+        $data = ob_get_contents();
+        ob_end_clean();
+        return $data;
     }
 
     public static function IsPost()

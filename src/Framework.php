@@ -104,8 +104,7 @@ class Framework extends Lifecycle
                 return;
             }
         } catch (\Exception $error) {
-            echo $this->response->ExceptionHandler($error);
+            echo $this->response->ExceptionHandler($error)['ExceptionMessage'];
         }
     }
-
 }
