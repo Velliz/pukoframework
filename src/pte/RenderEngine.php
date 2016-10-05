@@ -98,6 +98,11 @@ namespace pukoframework\pte {
             foreach ($arrayData as $key => $value) {
                 $this->TemplateParser($key, $value);
             }
+            preg_match_all('(<!--{[\s\S]*?}-->)', $this->htmlMaster, $result); //TODO: remove no data tags.
+            foreach ($result[0] as $key => $value) {
+                $parsed = $this->GetStringBetween($this->htmlMaster, $value, str_replace('{!', '{/', $value));
+                $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+            }
             $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
             $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
             return $this->htmlMaster;
@@ -125,12 +130,14 @@ namespace pukoframework\pte {
                         $dynamicTags .= $parsed;
                     }
                     $this->htmlMaster = str_replace($ember, $dynamicTags, $this->htmlMaster);
+                    $this->htmlMaster = str_replace($openTag, '', $this->htmlMaster);
+                    $this->htmlMaster = str_replace($closeTag, '', $this->htmlMaster);
                     break;
                 case $this->NUMERIC:
-                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
+                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster); //todo: prevent also replacing tag in loop
                     break;
                 case $this->STRINGS:
-                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
+                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster); //todo: prevent also replacing tag in loop
                     break;
                 case $this->BOOLEANS:
                     $stanza = $this->BlockedConditions($this->htmlMaster, $key);
