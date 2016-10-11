@@ -119,7 +119,7 @@ namespace pukoframework\pte {
                 case $this->ARRAYS:
                     foreach ($value as $key2 => $value2) {
                         foreach ($value2 as $key3 => $value3) {
-                            if (is_array($value3)) $this->TemplateParser($key3, $value3);
+                            if (is_array($value3) || is_bool($value3)) $this->TemplateParser($key3, $value3);
                         }
                     }
                     $dynamicTags = "";
@@ -127,7 +127,7 @@ namespace pukoframework\pte {
                     foreach ($value as $key2 => $value2) {
                         $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
                         foreach ($value2 as $key3 => $value3) {
-                            if (!is_array($value3)) $parsed = str_replace('{!' . $key3 . '}', $value3, $parsed);
+                            if (!is_array($value3) && !is_bool($value3)) $parsed = str_replace('{!' . $key3 . '}', $value3, $parsed);
                         }
                         $dynamicTags .= $parsed;
                     }
