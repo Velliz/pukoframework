@@ -17,7 +17,7 @@ Puko Framework is MVC PHP Framework for quick and fast PHP Application Developme
 
 ## Usage
 
-Starter kit for Puko Framework in [here](https://velliz.github.io/puko)
+Starter kit for Puko Framework in [here](https://github.com/Velliz/puko)
 
 Usage and Sample you can see it in [Documentation](https://velliz.github.io/pukodocs)
 
