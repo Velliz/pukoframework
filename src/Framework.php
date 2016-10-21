@@ -1,6 +1,23 @@
 <?php
+/**
+ * pukoframework
+ *
+ * MVC PHP Framework for quick and fast PHP Application Development.
+ *
+ * This content is released under the Apache License Version 2.0, January 2004
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Copyright (c) 2016, Didit Velliz
+ *
+ * @package	puko/framework
+ * @author	Didit Velliz
+ * @link	https://github.com/velliz/pukoframework
+ * @since	Version 0.9.0
+ *
+ */
 namespace pukoframework;
 
+use pukoframework\auth\Session;
 use pukoframework\pte\RenderEngine;
 
 class Framework extends Lifecycle
@@ -34,7 +51,7 @@ class Framework extends Lifecycle
     {
         $this->request = new Request();
         $this->response = new Response();
-        $this->render = new \pukoframework\pte\RenderEngine();
+        $this->render = new RenderEngine();
     }
 
     public function Request(Request $request)
@@ -84,7 +101,7 @@ class Framework extends Lifecycle
                     else $this->funcReturn = call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
                 } else die("Function " . $this->request->fnName . " must set 'public'.");
             } else die("Function '" . $this->request->fnName . "'' not found in class: " . $this->request->className);
-            if (!isset($_COOKIE['token'])) \pukoframework\auth\Session::GenerateSecureToken();
+            if (!isset($_COOKIE['token'])) Session::GenerateSecureToken();
             $this->funcReturn['token'] = $_COOKIE['token'];
             $this->funcReturn['ExceptionMessage'] = "";
             $this->funcReturn['Exception'] = true;
