@@ -14,6 +14,7 @@ class Session
     {
         if(is_object(self::$session)) return;
         $secure = ROOT . "/config/encryption.php";
+        if(!file_exists($secure)) throw new \Exception("Authentication configuration file not found.");
         $secure = include $secure;
         $this->key = $secure['key'];
         $this->method = $secure['method'];

@@ -1,6 +1,8 @@
 <?php
 namespace pukoframework;
 
+use pukoframework\auth\Session;
+
 class Request
 {
     var $requestType;
@@ -73,7 +75,7 @@ class Request
         if (!hash_equals($_POST['token'], $_COOKIE['token'])) return false;
         unset($_POST['_submit']);
         unset($_POST['token']);
-        \pukoframework\auth\Session::GenerateSecureToken();
+        Session::GenerateSecureToken();
         return true;
     }
 

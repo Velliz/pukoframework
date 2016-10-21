@@ -1,15 +1,31 @@
 <?php
 namespace pukoframework;
 
+use pukoframework\pte\RenderEngine;
+
 class Framework extends Lifecycle
 {
 
+    /**
+     * @var Request
+     */
     private $request;
+
+    /**
+     * @var Response
+     */
     private $response;
     private $route;
+
+    /**
+     * @var RenderEngine
+     */
     private $render;
     private $funcReturn;
 
+    /**
+     * @var \ReflectionClass
+     */
     private $pdc;
     private $fnPdc;
     private $classPdc;
