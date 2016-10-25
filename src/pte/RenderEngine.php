@@ -85,7 +85,7 @@ namespace pukoframework\pte {
 
         public function Auth($val)
         {
-            if ($val) {
+            if ($val == 'true') {
                 if (!Session::IsSession()) throw new \Exception("Authentication Required");
             }
         }
