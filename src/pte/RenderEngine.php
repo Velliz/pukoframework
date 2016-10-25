@@ -9,10 +9,10 @@
  *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package	puko/framework
- * @author	Didit Velliz
- * @link	https://github.com/velliz/pukoframework
- * @since	Version 0.9.2
+ * @package    puko/framework
+ * @author    Didit Velliz
+ * @link    https://github.com/velliz/pukoframework
+ * @since    Version 0.9.2
  *
  */
 namespace pukoframework\pte {
@@ -83,9 +83,11 @@ namespace pukoframework\pte {
             }
         }
 
-        public function Auth($authObject)
+        public function Auth($val)
         {
-            return Session::Get($authObject)->GetLoginData();
+            if ($val) {
+                if (!Session::IsSession()) throw new \Exception("Authentication Required");
+            }
         }
 
         public function Template($key, $val)

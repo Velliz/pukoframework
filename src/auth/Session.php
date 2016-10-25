@@ -77,18 +77,18 @@ class Session
         return $this->decrypt($_COOKIE[$val]);
     }
 
-    public function RemoveSession($key)
+    public static function RemoveSession($key)
     {
         setcookie($key, '', time() - (86400 * 30), '/', $_SERVER['SERVER_NAME']);
     }
 
-    public function IsSession()
+    public static function IsSession()
     {
         if (isset($_COOKIE['puko'])) return true;
         return false;
     }
 
-    public function ClearSession()
+    public static function ClearSession()
     {
         setcookie('puko', '', time() - (86400 * 30), '/', $_SERVER['SERVER_NAME']);
         $_COOKIE['puko'] = null;
