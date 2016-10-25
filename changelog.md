@@ -60,7 +60,8 @@ class Example extends Service {
 * Set minimum requirement to PHP 5.6 for security.
 
 ### 0.9.4 (7 July 2016)
-* Customize PHP error handler
+* Customize PHP error handler.
+* Optimize PDC loop tag.
 
 ### 1.0.0 (21 October 2016)
-* Initial Release, General bugfix.
+* Initial Release, Add author info and General bugfix.
