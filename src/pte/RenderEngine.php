@@ -33,6 +33,7 @@ namespace pukoframework\pte {
         var $htmlMaster;
         var $useMasterLayout = true;
         var $useHtmlLayout = true;
+        var $clearOutput = true;
 
         public function PDCParser($phpDocs, &$arrData)
         {
@@ -114,15 +115,17 @@ namespace pukoframework\pte {
             foreach ($arrayData as $key => $value) {
                 $this->TemplateParser($key, $value);
             }
-            preg_match_all('(<!--{[\s\S]*?}-->)', $this->htmlMaster, $result); //TODO: remove no data tags.
+            preg_match_all('(<!--{[\s\S]*?}-->)', $this->htmlMaster, $result);
             foreach ($result[0] as $key => $value) {
                 if (strpos($value, '!!') === false) {
                     $parsed = $this->GetStringBetween($this->htmlMaster, $value, str_replace('{!', '{/', $value));
                     $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
                 }
             }
-            $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
-            $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
+            if ($this->clearOutput) {
+                $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
+                $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
+            }
             return $this->htmlMaster;
         }
 
