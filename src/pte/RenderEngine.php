@@ -86,6 +86,7 @@ namespace pukoframework\pte {
         public function Auth($val)
         {
             if ($val == 'true') {
+                header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
                 if (!Session::IsSession()) throw new \Exception("Authentication Required");
             }
         }
