@@ -107,8 +107,8 @@ class Session
 
     public function Logout()
     {
-        $this->ClearSession();
         $secure = $this->authentication->Logout();
+        $this->ClearSession();
         if($secure == false || $secure == null) return false;
         return true;
     }
