@@ -9,10 +9,10 @@
  *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package	puko/framework
- * @author	Didit Velliz
- * @link	https://github.com/velliz/pukoframework
- * @since	Version 0.9.3
+ * @package    puko/framework
+ * @author    Didit Velliz
+ * @link    https://github.com/velliz/pukoframework
+ * @since    Version 0.9.3
  *
  */
 namespace pukoframework\auth;
@@ -28,9 +28,9 @@ class Session
 
     private function __construct(Auth $authentication)
     {
-        if(is_object(self::$session)) return;
+        if (is_object(self::$session)) return;
         $secure = ROOT . "/config/encryption.php";
-        if(!file_exists($secure)) throw new \Exception("Authentication configuration file not found.");
+        if (!file_exists($secure)) throw new \Exception("Authentication configuration file not found.");
         $secure = include $secure;
         $this->key = $secure['key'];
         $this->method = $secure['method'];
@@ -40,7 +40,7 @@ class Session
 
     public static function Get(Auth $authentication)
     {
-        if(is_object(self::$session)) return self::$session;
+        if (is_object(self::$session)) return self::$session;
         return self::$session = new Session($authentication);
     }
 
@@ -67,19 +67,20 @@ class Session
         return openssl_decrypt(base64_decode($string), $this->method, $key, 0, $iv);
     }
 
-    public function PutSession($key, $val)
+    public function PutSession($key, $val, $expired = 0)
     {
-        setcookie($key, $this->encrypt($val), time() + (86400 * 30), "/", $_SERVER['SERVER_NAME']);
+        setcookie($key, $this->encrypt($val), (time() + $expired), "/", $_SERVER['SERVER_NAME']);
     }
 
-    public function GetSession($val){
+    public function GetSession($val)
+    {
         if (!isset($_COOKIE[$val])) return false;
         return $this->decrypt($_COOKIE[$val]);
     }
 
     public static function RemoveSession($key)
     {
-        setcookie($key, '', time() - (86400 * 30), '/', $_SERVER['SERVER_NAME']);
+        setcookie($key, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
     }
 
     public static function IsSession()
@@ -90,17 +91,17 @@ class Session
 
     public static function ClearSession()
     {
-        setcookie('puko', '', time() - (86400 * 30), '/', $_SERVER['SERVER_NAME']);
+        setcookie('puko', '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
         $_COOKIE['puko'] = null;
     }
 
     #region authentication
-    public function Login($username, $password)
+    public function Login($username, $password, $expired = 0)
     {
         $secure = $this->authentication->Login($username, $password);
-        if($secure == false || $secure == null) return false;
+        if ($secure == false || $secure == null) return false;
         $secure = $this->encrypt($secure);
-        setcookie('puko', $secure, time() + (86400), "/", $_SERVER['SERVER_NAME']);
+        setcookie('puko', $secure, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
         $_COOKIE['puko'] = $secure;
         return true;
     }
@@ -109,7 +110,7 @@ class Session
     {
         $secure = $this->authentication->Logout();
         $this->ClearSession();
-        if($secure == false || $secure == null) return false;
+        if ($secure == false || $secure == null) return false;
         return true;
     }
 
