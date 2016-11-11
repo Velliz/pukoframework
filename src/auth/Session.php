@@ -69,12 +69,12 @@ class Session
 
     public function PutSession($key, $val)
     {
-        setcookie($key, $this->encrypt($val), time() + (86400 * 30), "/", $_SERVER['SERVER_NAME']);
+        setcookie($key, $this->Encrypt($val), time() + (86400 * 30), "/", $_SERVER['SERVER_NAME']);
     }
 
     public function GetSession($val){
         if (!isset($_COOKIE[$val])) return false;
-        return $this->decrypt($_COOKIE[$val]);
+        return $this->Decrypt($_COOKIE[$val]);
     }
 
     public static function RemoveSession($key)
@@ -99,7 +99,7 @@ class Session
     {
         $secure = $this->authentication->Login($username, $password);
         if($secure == false || $secure == null) return false;
-        $secure = $this->encrypt($secure);
+        $secure = $this->Encrypt($secure);
         setcookie('puko', $secure, time() + (86400), "/", $_SERVER['SERVER_NAME']);
         $_COOKIE['puko'] = $secure;
         return true;
@@ -116,7 +116,7 @@ class Session
     public function GetLoginData()
     {
         if (!isset($_COOKIE['puko'])) return false;
-        return $this->authentication->GetLoginData($this->decrypt($_COOKIE['puko']));
+        return $this->authentication->GetLoginData($this->Decrypt($_COOKIE['puko']));
     }
     #end region authentication
 }
