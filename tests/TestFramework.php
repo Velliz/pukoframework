@@ -2,18 +2,24 @@
 
 namespace tests;
 
-use phpunit\framework\TestCase;
-use pukoframework\Request;
+use PHPUnit_Framework_TestCase;
+use pukoframework\pte\RenderEngine;
 
-class TestFramework extends TestCase
+class TestFramework extends PHPUnit_Framework_TestCase
 {
 
-    public function testRequest()
+    public function setUp()
     {
-        include '../vendor/autoload.php';
-        $framework = new Request();
-        $this->assertEquals("main", "main");
-        $this->assertEquals("main", "main");
+    }
+
+    public function tearDown()
+    {
+    }
+
+    public function testRender()
+    {
+        $pte = new RenderEngine();
+        $this->assertTrue($pte->clearOutput);
     }
 
 }

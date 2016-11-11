@@ -91,6 +91,15 @@ namespace pukoframework\pte {
             }
         }
 
+        public function ClearOutput($val)
+        {
+            if ($val == 'true') {
+                $this->clearOutput = true;
+            } else if ($val == 'false') {
+                $this->clearOutput = false;
+            }
+        }
+
         public function Template($key, $val)
         {
             switch ($key) {

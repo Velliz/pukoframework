@@ -65,3 +65,7 @@ class Example extends Service {
 
 ### 1.0.0 (21 October 2016)
 * Initial Release, Add author info and General bugfix.
+
+### 1.0.1 (30 October 2016)
+* Auth feature for PDC.
+* ClearOutput feature for PDC.
