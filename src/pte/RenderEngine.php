@@ -30,10 +30,21 @@ namespace pukoframework\pte {
         protected $NUMERIC = 5;
         protected $UNDEFINED = 6;
 
+        var $sourceFile;
+
         var $htmlMaster;
         var $useMasterLayout = true;
         var $useHtmlLayout = true;
         var $clearOutput = true;
+
+        /**
+         * RenderEngine constructor.
+         * @param string $sourceFile
+         */
+        public function __construct($sourceFile = 'file')
+        {
+            $this->sourceFile = $sourceFile;
+        }
 
         public function PDCParser($phpDocs, &$arrData)
         {
@@ -112,12 +123,14 @@ namespace pukoframework\pte {
             }
         }
 
-        public function PTEParser($filePath, $arrayData)
+        public function PTEParser($filePath, $arrayData, $source = 'file')
         {
             if (!$this->useHtmlLayout) return null;
-            if (!file_exists($filePath)) throw new \Exception("html template file not found.");
-            if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
-            $filePath = file_get_contents($filePath);
+            if ($this->sourceFile == 'file') {
+                if (!file_exists($filePath)) throw new \Exception("html template file not found.");
+                if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
+                $filePath = file_get_contents($filePath);
+            }
             if ($this->useMasterLayout) $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
             if (!$this->useMasterLayout) $this->htmlMaster = $filePath;
             $this->AssetsParser('CSS');
