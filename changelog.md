@@ -69,3 +69,5 @@ class Example extends Service {
 ### 1.0.1 (30 October 2016)
 * Auth feature for PDC.
 * ClearOutput feature for PDC.
+* Session Expire Time.
+* General Bugfix (Pukoframework Error on PHP 7.0.11).
