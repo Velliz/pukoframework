@@ -9,10 +9,10 @@
  *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package	puko/framework
- * @author	Didit Velliz
- * @link	https://github.com/velliz/pukoframework
- * @since	Version 0.9.0
+ * @package    puko/framework
+ * @author    Didit Velliz
+ * @link    https://github.com/velliz/pukoframework
+ * @since    Version 0.9.0
  *
  */
 namespace pukoframework;
@@ -69,7 +69,6 @@ class Framework extends Lifecycle
         }
     }
 
-
     public function Response(Response $response)
     {
         @set_exception_handler(array($response, 'ExceptionHandler'));
@@ -86,7 +85,7 @@ class Framework extends Lifecycle
         $this->Response($this->response);
         $controller = '\\controller\\' . $this->request->className;
         $controller = strtolower($controller);
-        if (!class_exists($controller)) die("404 not found.");
+        if (!class_exists($controller)) $this->Render('404');
         if (!isset($this->request->constant)) $object = new $controller();
         else $object = new $controller($this->request->constant);
         $this->pdc = new \ReflectionClass($object);
@@ -111,8 +110,20 @@ class Framework extends Lifecycle
         }
     }
 
-    private function Render()
+    private function Render($renderCode = '200')
     {
+        if ($renderCode == '404') {
+            $this->render->PDCParser($this->classPdc, $this->funcReturn);
+            $this->render->PDCParser($this->fnPdc, $this->funcReturn);
+            $this->render->PTEMaster(ROOT . "/assets/system_html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
+            $template = $this->render->PTEParser(
+                ROOT . "/assets/system_html/" . $this->request->lang . "/404.html",
+                $this->funcReturn
+            );
+            if ($template != null) echo $template;
+            return;
+        }
+
         $view = new \ReflectionClass(pte\View::class);
         $service = new \ReflectionClass(pte\Service::class);
         try {
