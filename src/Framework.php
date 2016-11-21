@@ -72,13 +72,14 @@ class Framework extends Lifecycle
     public function Response(Response $response)
     {
         @set_exception_handler(array($response, 'ExceptionHandler'));
+        @set_error_handler(array($response, 'ErrorHandler'));
     }
 
     public function RouteMapping($mapping = array())
     {
         $this->route = $mapping;
     }
-
+    
     public function Start()
     {
         $this->Request($this->request);
@@ -112,37 +113,37 @@ class Framework extends Lifecycle
 
     private function Render($renderCode = '200')
     {
-        if ($renderCode == '404') {
-            $this->render->PDCParser($this->classPdc, $this->funcReturn);
-            $this->render->PDCParser($this->fnPdc, $this->funcReturn);
-            $this->render->PTEMaster(ROOT . "/assets/system_html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
-            $template = $this->render->PTEParser(
-                ROOT . "/assets/system_html/" . $this->request->lang . "/404.html",
-                $this->funcReturn
-            );
-            if ($template != null) echo $template;
-            return;
-        }
-
         $view = new \ReflectionClass(pte\View::class);
         $service = new \ReflectionClass(pte\Service::class);
         try {
+            
             if ($this->pdc->isSubclassOf($view)) {
-                // TODO: create custom Exception render blocks if exception triggered
                 $this->render->PDCParser($this->classPdc, $this->funcReturn);
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
-                $this->render->PTEMaster(ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/master.html");
-                $template = $this->render->PTEParser(
-                    ROOT . "/assets/html/" . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html",
-                    $this->funcReturn
-                );
-                if ($template != null) echo $template;
+                $template = '';
+
+                $html = ROOT . "/assets/html/";
+                $sys_html = ROOT . "/assets/system_html/";
+                
+                if ($renderCode == '200') {
+                    $this->render->PTEMaster($html . $this->request->lang . "/" . $this->request->className . "/master.html");
+                    $template = $this->render->PTEParser($html . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html", $this->funcReturn);
+                }
+                if ($renderCode == '404') {
+                    $this->render->PTEMaster($sys_html . $this->request->lang . "/" . $this->request->className . "/master.html");
+                    $template = $this->render->PTEParser($sys_html . $this->request->lang . "/404.html", $this->funcReturn);
+                }
+
+                echo $template;
                 return;
             }
+            
             if ($this->pdc->isSubclassOf($service)) {
-                echo json_encode($this->render->PTEJson($this->funcReturn));
+                if ($renderCode == '200') echo json_encode($this->render->PTEJson($this->funcReturn));
+                if ($renderCode == '404') echo json_encode($this->render->PTEJson(array('error' => true)));
                 return;
             }
+            
         } catch (\Exception $error) {
             echo $this->response->ExceptionHandler($error)['ExceptionMessage'];
         }

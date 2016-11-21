@@ -71,3 +71,4 @@ class Example extends Service {
 * ClearOutput feature for PDC.
 * Session Expire Time.
 * General Bugfix (Pukoframework Error on PHP 7.0.11).
+* Add DataTable Server Processing wrapper.

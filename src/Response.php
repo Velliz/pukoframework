@@ -17,6 +17,7 @@
  */
 namespace pukoframework;
 
+use Error;
 use Exception;
 
 class Response
@@ -28,6 +29,18 @@ class Response
      * @return mixed
      */
     public function ExceptionHandler($error)
+    {
+        $emg['Exception'] = false;
+        $emg['token'] = $_COOKIE['token'];
+        $emg['ExceptionMessage'] = $error->getMessage();
+        return $emg;
+    }
+
+    /**
+     * @param Error $error
+     * @return mixed
+     */
+    public function ErrorHandler($error)
     {
         $emg['Exception'] = false;
         $emg['token'] = $_COOKIE['token'];

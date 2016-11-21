@@ -9,13 +9,17 @@
  *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package	puko/framework
- * @author	Didit Velliz
- * @link	https://github.com/velliz/pukoframework
- * @since	Version 0.9.1
+ * @package    puko/framework
+ * @author    Didit Velliz
+ * @link    https://github.com/velliz/pukoframework
+ * @since    Version 0.9.1
  *
  */
 namespace pukoframework\pda;
+
+use Exception;
+use PDO;
+use PDOException;
 
 class DBI
 {
@@ -29,7 +33,7 @@ class DBI
         $this->query = $query;
         if (!is_object(self::$dbi)) {
             $file = ROOT . "/config/database.php";
-            if(!file_exists($file)) throw new \Exception("Database configuration file not found.");
+            if (!file_exists($file)) throw new Exception("Database configuration file not found.");
             $connection = include $file;
             $dbtype = $connection['dbType'];
             $host = $connection['host'];
@@ -37,8 +41,12 @@ class DBI
             $dbname = $connection['dbName'];
             $username = $connection['user'];
             $password = $connection['pass'];
-            self::$dbi = new \PDO("$dbtype:host=$host;port=$port;dbname=$dbname", $username, $password);
-            self::$dbi->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            try {
+                self::$dbi = new PDO("$dbtype:host=$host;port=$port;dbname=$dbname", $username, $password);
+                self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $ex) {
+                echo 'Connection failed: ' . $ex->getMessage();
+            }
         }
     }
 
@@ -104,21 +112,25 @@ class DBI
 
         $statement = self::$dbi->prepare($insert_text);
 
-        foreach ($keys as $no => $key) {
-            if (strpos($key, 'file') !== false) {
-                $blob = file_get_contents($values[$no], 'rb');
-                $statement->bindParam(':' . $key, $blob, \PDO::PARAM_LOB);
-            } else {
-                $statement->bindParam(':' . $key, $values[$no]);
+        try {
+            foreach ($keys as $no => $key) {
+                if (strpos($key, 'file') !== false) {
+                    $blob = file_get_contents($values[$no], 'rb');
+                    $statement->bindParam(':' . $key, $blob, \PDO::PARAM_LOB);
+                } else {
+                    $statement->bindParam(':' . $key, $values[$no]);
+                }
             }
-        }
 
-        if ($statement->execute()) {
-            return self::$dbi->lastInsertId();
-        } else {
+            if ($statement->execute()) {
+                return self::$dbi->lastInsertId();
+            } else {
+                return false;
+            }
+        } catch (PDOException $ex) {
+            echo 'Database error: ' . $ex->getMessage();
             return false;
         }
-
     }
 
     public function Delete($arrWhere)
@@ -129,8 +141,13 @@ class DBI
         }
         $del_text = substr($del_text, 0, -4);
 
-        $statement = self::$dbi->prepare($del_text);
-        return $statement->execute($arrWhere);
+        try {
+            $statement = self::$dbi->prepare($del_text);
+            return $statement->execute($arrWhere);
+        } catch (PDOException $ex) {
+            echo 'Database error: ' . $ex->getMessage();
+            return false;
+        }
     }
 
     public function Update($id, $array)
@@ -153,9 +170,13 @@ class DBI
         $key_where = substr($key_where, 0, -4);
 
         $update_text = $update_text . " " . $key_string . $key_where;
-
-        $statement = self::$dbi->prepare($update_text);
-        return $statement->execute($array);
+        try {
+            $statement = self::$dbi->prepare($update_text);
+            return $statement->execute($array);
+        } catch (PDOException $ex) {
+            echo 'Database error: ' . $ex->getMessage();
+            return false;
+        }
     }
 
     public function GetData()
@@ -167,9 +188,14 @@ class DBI
             $this->query = preg_replace_callback(
                 $this->queryPattern, array($this, 'queryParseReplace'), $this->query);
         }
-        $statement = self::$dbi->prepare($this->query);
-        $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $statement = self::$dbi->prepare($this->query);
+            $statement->execute();
+            return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (PDOException $ex) {
+            echo 'Database error: ' . $ex->getMessage();
+            return false;
+        }
     }
 
     public function FirstRow()
@@ -181,9 +207,14 @@ class DBI
             $this->query = preg_replace_callback(
                 $this->queryPattern, array($this, 'queryParseReplace'), $this->query);
         }
-        $statement = self::$dbi->prepare($this->query);
-        $statement->execute();
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $statement = self::$dbi->prepare($this->query);
+            $statement->execute();
+            return $statement->fetch(\PDO::FETCH_ASSOC);
+        } catch (PDOException $ex) {
+            echo 'Database error: ' . $ex->getMessage();
+            return false;
+        }
     }
 
     public static function NOW()
