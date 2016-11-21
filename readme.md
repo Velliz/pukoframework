@@ -3,6 +3,7 @@
 Puko Framework is MVC PHP Framework for quick and fast PHP Application Development.
 
 [![Latest Stable Version](https://poser.pugx.org/puko/framework/v/stable)](https://packagist.org/packages/puko/framework)
+[![Builds](https://travis-ci.org/Velliz/pukoframework.svg?branch=master)
 [![Total Downloads](https://poser.pugx.org/puko/framework/downloads)](https://packagist.org/packages/puko/framework)
 
 **this is [Core] module only for Puko Framework**
