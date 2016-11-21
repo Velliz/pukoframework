@@ -21,3 +21,4 @@ notifications:
   email: "diditvelliz@gmail.com"
 
 after_success:
+ - bin/coveralls -v --exclude-no-stmt
