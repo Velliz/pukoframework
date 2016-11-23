@@ -113,37 +113,29 @@ class Framework extends Lifecycle
 
     private function Render($renderCode = '200')
     {
+        $html = ROOT . "/assets/html/";
+        $sys_html = ROOT . "/assets/system/";
+        if ($renderCode == '404') {
+            $this->render->PTEMaster($sys_html . $this->request->lang . "/master.html");
+            $template = $this->render->PTEParser($sys_html . $this->request->lang . "/404.html", $this->funcReturn);
+            echo $template;
+            return;
+        }
         $view = new \ReflectionClass(pte\View::class);
         $service = new \ReflectionClass(pte\Service::class);
         try {
-            
             if ($this->pdc->isSubclassOf($view)) {
                 $this->render->PDCParser($this->classPdc, $this->funcReturn);
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
-                $template = '';
-
-                $html = ROOT . "/assets/html/";
-                $sys_html = ROOT . "/assets/system_html/";
-                
-                if ($renderCode == '200') {
-                    $this->render->PTEMaster($html . $this->request->lang . "/" . $this->request->className . "/master.html");
-                    $template = $this->render->PTEParser($html . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html", $this->funcReturn);
-                }
-                if ($renderCode == '404') {
-                    $this->render->PTEMaster($sys_html . $this->request->lang . "/" . $this->request->className . "/master.html");
-                    $template = $this->render->PTEParser($sys_html . $this->request->lang . "/404.html", $this->funcReturn);
-                }
-
+                $this->render->PTEMaster($html . $this->request->lang . "/" . $this->request->className . "/master.html");
+                $template = $this->render->PTEParser($html . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html", $this->funcReturn);
                 echo $template;
                 return;
             }
-            
             if ($this->pdc->isSubclassOf($service)) {
-                if ($renderCode == '200') echo json_encode($this->render->PTEJson($this->funcReturn));
-                if ($renderCode == '404') echo json_encode($this->render->PTEJson(array('error' => true)));
+                echo json_encode($this->render->PTEJson($this->funcReturn));
                 return;
             }
-            
         } catch (\Exception $error) {
             echo $this->response->ExceptionHandler($error)['ExceptionMessage'];
         }
