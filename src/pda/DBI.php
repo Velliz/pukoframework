@@ -152,27 +152,43 @@ class DBI
 
     public function Update($id, $array)
     {
-        $array = array_merge($id, $array);
-
-        $update_text = "UPDATE `$this->query` SET ";
+        $update_text = "UPDATE $this->query SET";
 
         $key_string = "";
         $key_where = " WHERE ";
 
         foreach ($array as $key => $val) {
-            $key_string = $key_string . "`" . $key . "` = :" . $key . ", ";
+            $key_string .= $key . " = :" . $key . ", ";
         }
         $key_string = substr($key_string, 0, -2);
 
         foreach ($id as $key => $val) {
-            $key_where = $key_where . "`" . $key . "` = :" . $key . " AND ";
+            $key_where .= $key . " = :" . $key . " AND ";
         }
         $key_where = substr($key_where, 0, -4);
 
-        $update_text = $update_text . " " . $key_string . $key_where;
+        $update_text .= " " . $key_string . $key_where;
+
         try {
             $statement = self::$dbi->prepare($update_text);
-            return $statement->execute($array);
+            foreach ($array as $key => $val) {
+                if (strpos($key, 'file') !== false) {
+                    $blob = file_get_contents($val, 'rb');
+                    $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
+                } else {
+                    $statement->bindValue(':' . $key, $val);
+                }
+            }
+            foreach ($id as $key => $val) {
+                if (strpos($key, 'file') !== false) {
+                    $blob = file_get_contents($val, 'rb');
+                    $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
+                } else {
+                    $statement->bindValue(':' . $key, $val);
+                }
+            }
+            return $statement->execute();
+
         } catch (PDOException $ex) {
             echo 'Database error: ' . $ex->getMessage();
             return false;
