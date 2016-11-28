@@ -23,6 +23,12 @@ interface Crud
 
 }
 
+/**
+ * Class Model
+ * @package pukoframework\pda
+ * 
+ * TODO: This class is not ready to use yet.
+ */
 class Model implements Crud, ModelCallbacks
 {
 
