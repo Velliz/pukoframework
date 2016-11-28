@@ -3,7 +3,6 @@
 namespace tests;
 
 use PHPUnit_Framework_TestCase;
-use pukoframework\pda\Model;
 use pukoframework\pte\RenderEngine;
 use pukoframework\Request;
 
@@ -36,11 +35,6 @@ class TestFramework extends PHPUnit_Framework_TestCase
 
         $user = Request::IsPost();
         $this->assertFalse($user);
-    }
-
-    public function testModel()
-    {
-        $pda = new Model();
     }
 
 }
