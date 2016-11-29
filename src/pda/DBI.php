@@ -177,14 +177,14 @@ class DBI
             foreach ($array as $key => $val) {
                 if (strpos($key, 'file') !== false) {
                     if (!$hasBinary) $blob = file_get_contents($val, 'rb');
-                    else $blob = $key;
+                    else $blob = $val;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $val);
             }
             foreach ($id as $key => $val) {
                 if (strpos($key, 'file') !== false) {
                     if (!$hasBinary) $blob = file_get_contents($val, 'rb');
-                    else $blob = $key;
+                    else $blob = $val;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $val);
             }
