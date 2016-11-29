@@ -89,10 +89,11 @@ class DBI
 
     /**
      * @param $array
+     * @param bool $hasBinary
      * @return bool|string
      * @throws Exception
      */
-    public function Save($array)
+    public function Save($array, $hasBinary = false)
     {
         $keys = $values = array();
         $insert_text = "INSERT INTO `$this->query`";
@@ -118,7 +119,8 @@ class DBI
             $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
                 if (strpos($key, 'file') !== false) {
-                    $blob = file_get_contents($values[$no], 'rb');
+                    if (!$hasBinary) $blob = file_get_contents($values[$no], 'rb');
+                    else $blob = $key;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $values[$no]);
             }
@@ -152,10 +154,11 @@ class DBI
     /**
      * @param $id
      * @param $array
+     * @param bool $hasBinary
      * @return bool
      * @throws Exception
      */
-    public function Update($id, $array)
+    public function Update($id, $array, $hasBinary = false)
     {
         $update_text = "UPDATE $this->query SET";
         $key_string = "";
@@ -173,13 +176,15 @@ class DBI
             $statement = self::$dbi->prepare($update_text);
             foreach ($array as $key => $val) {
                 if (strpos($key, 'file') !== false) {
-                    $blob = file_get_contents($val, 'rb');
+                    if (!$hasBinary) $blob = file_get_contents($val, 'rb');
+                    else $blob = $key;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $val);
             }
             foreach ($id as $key => $val) {
                 if (strpos($key, 'file') !== false) {
-                    $blob = file_get_contents($val, 'rb');
+                    if (!$hasBinary) $blob = file_get_contents($val, 'rb');
+                    else $blob = $key;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $val);
             }
