@@ -96,7 +96,7 @@ class Session
     }
 
     #region authentication
-    public function Login($username, $password, $expired = null)
+    public function Login($username, $password, $expired = Auth::EXPIRED_1_HOUR)
     {
         $secure = $this->authentication->Login($username, $password);
         if ($secure == false || $secure == null) return false;
