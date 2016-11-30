@@ -70,7 +70,7 @@ class Framework extends Lifecycle
     {
         $this->route = $mapping;
     }
-    
+
     public function Start()
     {
         $this->Request($this->request);
@@ -84,13 +84,13 @@ class Framework extends Lifecycle
             $this->classPdc = $this->pdc->getDocComment();
             $this->render->PDCParser($this->classPdc, $this->funcReturn);
             $this->fnPdc = $this->classPdc;
-            
+
             if (method_exists($object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 if (is_callable(array($object, $this->request->fnName))) {
-                    if (empty($this->request->variable)) array_push($this->funcReturn, call_user_func(array($object, $this->request->fnName)));
-                    else array_push($this->funcReturn, call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
+                    if (empty($this->request->variable)) $this->funcReturn = array_merge($this->funcReturn, call_user_func(array($object, $this->request->fnName)));
+                    else $this->funcReturn = array_merge($this->funcReturn, call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
                 } else die("Puko Error (FW001) Function " . $this->request->fnName . " must set 'public'.");
             } else die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
             if (!isset($_COOKIE['token'])) Session::GenerateSecureToken();
