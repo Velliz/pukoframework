@@ -36,6 +36,7 @@ namespace pukoframework\pte {
         var $useMasterLayout = true;
         var $useHtmlLayout = true;
         var $clearOutput = true;
+        var $displayException = true;
 
         /**
          * RenderEngine constructor.
@@ -67,7 +68,11 @@ namespace pukoframework\pte {
                                 break;
                         }
                     }
-                    $command = $this->$pteFn($pteKeyword, $pteValue);
+                    try {
+                        $command = $this->$pteFn($pteKeyword, $pteValue);
+                    } catch (\Error $error) {
+                        die("Puko Error (PTE001) PTE Command <b>#$pteFn $pteKeyword $pteValue</b> unregistered.");
+                    }
                     if (is_array($arrData) && is_array($command)) {
                         foreach ($command as $k => $v) {
                             $arrData[$k] = $v;
@@ -102,6 +107,15 @@ namespace pukoframework\pte {
             }
         }
 
+        public function DisplayException($val)
+        {
+            if ($val == 'true') {
+                $this->displayException = true;
+            } else if ($val == 'false') {
+                $this->displayException = false;
+            }
+        }
+        
         public function ClearOutput($val)
         {
             if ($val == 'true') {
@@ -126,7 +140,7 @@ namespace pukoframework\pte {
         public function PTEParser($filePath, $arrayData, $source = 'file')
         {
             if (!$this->useHtmlLayout) return null;
-            if ($this->sourceFile == 'file') {
+            if ($this->sourceFile == $source) {
                 if (!file_exists($filePath)) throw new \Exception("html template file not found.");
                 if (!file_get_contents($filePath)) throw new \Exception("html template file is not readable.");
                 $filePath = file_get_contents($filePath);
@@ -180,10 +194,12 @@ namespace pukoframework\pte {
                     $this->htmlMaster = str_replace($ember, $dynamicTags, $this->htmlMaster);
                     break;
                 case $this->NUMERIC:
-                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster); //todo: prevent also replacing tag in loop
+                    //todo: prevent also replacing tag in loop
+                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
                     break;
                 case $this->STRINGS:
-                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster); //todo: prevent also replacing tag in loop
+                    //todo: prevent also replacing tag in loop
+                    $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
                     break;
                 case $this->BOOLEANS:
                     $stanza = $this->BlockedConditions($this->htmlMaster, $key);

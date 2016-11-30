@@ -32,6 +32,6 @@ abstract class Lifecycle
 
     public abstract function Request(Request $request);
 
-    public abstract function Response(Response $response);
+    public abstract function Response();
 
 }

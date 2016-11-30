@@ -27,11 +27,6 @@ class Framework extends Lifecycle
      * @var Request
      */
     private $request;
-
-    /**
-     * @var Response
-     */
-    private $response;
     private $route;
 
     /**
@@ -50,7 +45,6 @@ class Framework extends Lifecycle
     public function OnInitialize()
     {
         $this->request = new Request();
-        $this->response = new Response();
         $this->render = new RenderEngine();
     }
 
@@ -69,10 +63,10 @@ class Framework extends Lifecycle
         }
     }
 
-    public function Response(Response $response)
+    public function Response()
     {
-        @set_exception_handler(array($response, 'ExceptionHandler'));
-        @set_error_handler(array($response, 'ErrorHandler'));
+        @set_exception_handler(array($this, 'ExceptionHandler'));
+        @set_error_handler(array($this, 'ErrorHandler'));
     }
 
     public function RouteMapping($mapping = array())
@@ -83,29 +77,29 @@ class Framework extends Lifecycle
     public function Start()
     {
         $this->Request($this->request);
-        $this->Response($this->response);
         $controller = '\\controller\\' . $this->request->className;
         $controller = strtolower($controller);
         if (!class_exists($controller)) $this->Render('404');
-        if (!isset($this->request->constant)) $object = new $controller();
-        else $object = new $controller($this->request->constant);
-        $this->pdc = new \ReflectionClass($object);
-        $this->classPdc = $this->pdc->getDocComment();
-        $this->fnPdc = $this->classPdc;
         try {
+            if (!isset($this->request->constant)) $object = new $controller();
+            else $object = new $controller($this->request->constant);
+            $this->pdc = new \ReflectionClass($object);
+            $this->classPdc = $this->pdc->getDocComment();
+            $this->fnPdc = $this->classPdc;
+            
             if (method_exists($object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 if (is_callable(array($object, $this->request->fnName))) {
                     if (empty($this->request->variable)) $this->funcReturn = call_user_func(array($object, $this->request->fnName));
                     else $this->funcReturn = call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
-                } else die("Function " . $this->request->fnName . " must set 'public'.");
-            } else die("Function '" . $this->request->fnName . "'' not found in class: " . $this->request->className);
+                } else die("Puko Error (FW001) Function " . $this->request->fnName . " must set 'public'.");
+            } else die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
             if (!isset($_COOKIE['token'])) Session::GenerateSecureToken();
             $this->funcReturn['token'] = $_COOKIE['token'];
             $this->funcReturn['ExceptionMessage'] = "";
             $this->funcReturn['Exception'] = true;
         } catch (\Exception $error) {
-            $this->funcReturn = $this->response->ExceptionHandler($error);
+            $this->funcReturn = $this->ExceptionHandler($error);
         } finally {
             $this->Render();
         }
@@ -119,7 +113,7 @@ class Framework extends Lifecycle
             $this->render->PTEMaster($sys_html . $this->request->lang . "/master.html");
             $template = $this->render->PTEParser($sys_html . $this->request->lang . "/404.html", $this->funcReturn);
             echo $template;
-            return;
+            die();
         }
         $view = new \ReflectionClass(pte\View::class);
         $service = new \ReflectionClass(pte\Service::class);
@@ -130,14 +124,56 @@ class Framework extends Lifecycle
                 $this->render->PTEMaster($html . $this->request->lang . "/" . $this->request->className . "/master.html");
                 $template = $this->render->PTEParser($html . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html", $this->funcReturn);
                 echo $template;
-                return;
+                die();
             }
             if ($this->pdc->isSubclassOf($service)) {
                 echo json_encode($this->render->PTEJson($this->funcReturn));
-                return;
+                die();
             }
         } catch (\Exception $error) {
-            echo $this->response->ExceptionHandler($error)['ExceptionMessage'];
+            die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
         }
+    }
+
+    /**
+     * @param \Exception $error
+     * @return mixed
+     */
+    public function ExceptionHandler($error)
+    {
+        $emg['Message'] = $error->getMessage();
+        $emg['File'] = $error->getFile();
+        $emg['LineNumber'] = $error->getLine();
+
+        $sys_html = ROOT . "/assets/system/";
+        $render = new RenderEngine();
+        $render->useMasterLayout = false;
+        $template = $render->PTEParser($sys_html . "/exception.html", $emg);
+
+        if ($this->render->displayException) echo $template;
+        die();
+    }
+
+    /**
+     * @param $error
+     * @param $message
+     * @param $file
+     * @param $line
+     *
+     * @return mixed
+     */
+    public function ErrorHandler($error, $message, $file, $line)
+    {
+        $emg['Error'] = $error;
+        $emg['Message'] = $message;
+        $emg['File'] = $file;
+        $emg['LineNumber'] = $line;
+
+        $sys_html = ROOT . "/assets/system/";
+        $render = new RenderEngine();
+        $render->useMasterLayout = false;
+        $template = $render->PTEParser($sys_html . "/error.html", $emg);
+
+        if ($this->render->displayException) echo $template;
     }
 }
