@@ -33,7 +33,7 @@ class Framework extends Lifecycle
      * @var RenderEngine
      */
     private $render;
-    private $funcReturn;
+    private $funcReturn = array();
 
     /**
      * @var \ReflectionClass
