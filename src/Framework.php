@@ -85,10 +85,12 @@ class Framework extends Lifecycle
             else $object = new $controller($this->request->constant);
             $this->pdc = new \ReflectionClass($object);
             $this->classPdc = $this->pdc->getDocComment();
+            $this->render->PDCParser($this->classPdc, $this->funcReturn);
             $this->fnPdc = $this->classPdc;
             
             if (method_exists($object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
+                $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 if (is_callable(array($object, $this->request->fnName))) {
                     if (empty($this->request->variable)) $this->funcReturn = call_user_func(array($object, $this->request->fnName));
                     else $this->funcReturn = call_user_func_array(array($object, $this->request->fnName), $this->request->variable);
@@ -119,8 +121,6 @@ class Framework extends Lifecycle
         $service = new \ReflectionClass(pte\Service::class);
         try {
             if ($this->pdc->isSubclassOf($view)) {
-                $this->render->PDCParser($this->classPdc, $this->funcReturn);
-                $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 $this->render->PTEMaster($html . $this->request->lang . "/" . $this->request->className . "/master.html");
                 $template = $this->render->PTEParser($html . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html", $this->funcReturn);
                 echo $template;
