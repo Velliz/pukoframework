@@ -44,6 +44,9 @@ class Framework extends Lifecycle
 
     public function OnInitialize()
     {
+        set_exception_handler(array($this, 'ExceptionHandler'));
+        set_error_handler(array($this, 'ErrorHandler'));
+        
         $this->request = new Request();
         $this->render = new RenderEngine();
     }
@@ -61,12 +64,6 @@ class Framework extends Lifecycle
                 break;
             }
         }
-    }
-
-    public function Response()
-    {
-        @set_exception_handler(array($this, 'ExceptionHandler'));
-        @set_error_handler(array($this, 'ErrorHandler'));
     }
 
     public function RouteMapping($mapping = array())
