@@ -72,3 +72,7 @@ class Example extends Service {
 * Session Expire Time.
 * General Bugfix (Pukoframework Error on PHP 7.0.11).
 * Add DataTable Server Processing wrapper.
+
+### 1.0.2 (3 December 2016)
+* System error render.
+* General bugfix.
