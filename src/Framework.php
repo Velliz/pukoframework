@@ -58,10 +58,23 @@ class Framework extends Lifecycle
         if (!isset($_GET['request'])) return;
         foreach ($this->route as $key => $value) {
             if (strpos($request->requestUrl, $key) !== false) {
-                $value = str_replace($key, $value, $request->requestUrl);
-                $_GET['request'] = $value;
-                $this->request = new Request();
-                break;
+                if (substr_count($value, "/") > 1) {
+                    $segment = explode("/", $value);
+                    $classSegment = "";
+                    foreach ($segment as $pos => $rows) {
+                        array_push($this->request->variable, $rows);
+                        if ($pos == 0) $classSegment .= $rows;
+                        if (($pos > 0) && ($pos + 1) < sizeof($segment)) $classSegment .= '\\' . $rows;
+                        else $this->request->fnName = $rows;
+                    }
+                    $this->request->className = $classSegment;
+                    return;
+                } else {
+                    $value = str_replace($key, $value, $request->requestUrl);
+                    $_GET['request'] = $value;
+                    $this->request = new Request();
+                    return;
+                }
             }
         }
     }
