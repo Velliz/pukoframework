@@ -69,7 +69,7 @@ class DBI
         if (is_object(self::$dbi)) return;
         $this->connectionPath = ROOT . "/config/database.php";
         if (!file_exists($this->connectionPath))
-            throw new Exception("Database configuration file not found or ROOT is not set.");
+            die("Puko Error (PDA001) Database configuration file not found or ROOT is not set.");
 
         $this->DBISet(include "$this->connectionPath");
         $pdoConnection = "$this->db_type:host=$this->host;port=$this->port;dbname=$this->db_name";

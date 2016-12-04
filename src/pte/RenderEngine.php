@@ -139,6 +139,10 @@ namespace pukoframework\pte {
 
         public function PTEParser($filePath, $arrayData, $source = 'file')
         {
+            header("Cache-Control: no-cache");
+            header("Pragma: no-cache");
+            header("Author: Puko framework 1.0");
+
             if (!$this->useHtmlLayout) return null;
             if ($this->sourceFile == $source) {
                 if (!file_exists($filePath)) throw new \Exception("html template file not found.");
