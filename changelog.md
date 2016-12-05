@@ -73,6 +73,8 @@ class Example extends Service {
 * General Bugfix (Pukoframework Error on PHP 7.0.11).
 * Add DataTable Server Processing wrapper.
 
-### 1.0.2 (3 December 2016)
-* System error render.
-* General bugfix.
+### 1.0.2 (12 December 2016)
+* Controller & view file group in directory.
+* System Exception & Error now can rendered to system html.
+* DisplayException feature for PDC.
+* General bugfix and Puko fatal Error codes.
