@@ -26,6 +26,7 @@ class Session
     private $identifier;
     private $authentication;
 
+    private static $cookies;
     public static $session;
 
     private function __construct(Auth $authentication)
@@ -37,6 +38,7 @@ class Session
         $this->key = $secure['key'];
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
+        self::$cookies = $secure['cookies'];
         $this->authentication = $authentication;
     }
 
@@ -82,19 +84,19 @@ class Session
 
     public static function RemoveSession($key)
     {
-        setcookie($key, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
+        setcookie($key, '', (time() - Auth::EXPIRED_1_MONTH), '/', $_SERVER['SERVER_NAME']);
     }
 
     public static function IsSession()
     {
-        if (isset($_COOKIE['puko'])) return true;
+        if (isset($_COOKIE[self::$cookies])) return true;
         return false;
     }
 
     public static function ClearSession()
     {
-        setcookie('puko', '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
-        $_COOKIE['puko'] = null;
+        setcookie(self::$cookies, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
+        $_COOKIE[self::$cookies] = null;
     }
 
     #region authentication
@@ -103,8 +105,8 @@ class Session
         $secure = $this->authentication->Login($username, $password);
         if ($secure == false || $secure == null) return false;
         $secure = $this->Encrypt($secure);
-        setcookie('puko', $secure, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
-        $_COOKIE['puko'] = $secure;
+        setcookie(self::$cookies, $secure, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
+        $_COOKIE[self::$cookies] = $secure;
         return true;
     }
 
@@ -118,8 +120,8 @@ class Session
 
     public function GetLoginData()
     {
-        if (!isset($_COOKIE['puko'])) return false;
-        return $this->authentication->GetLoginData($this->Decrypt($_COOKIE['puko']));
+        if (!isset($_COOKIE[self::$cookies])) return false;
+        return $this->authentication->GetLoginData($this->Decrypt($_COOKIE[self::$cookies]));
     }
     #end region authentication
 }
