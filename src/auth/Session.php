@@ -89,7 +89,10 @@ class Session
 
     public static function IsSession()
     {
-        if (isset($_COOKIE[self::$cookies])) return true;
+        $secure = ROOT . "/config/encryption.php";
+        if (!file_exists($secure)) die("Puko Error (AUTH001) Authentication configuration file not found.");
+        $secure = include $secure;
+        if (isset($_COOKIE[$secure['cookies']])) return true;
         return false;
     }
 
