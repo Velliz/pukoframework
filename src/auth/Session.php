@@ -17,8 +17,11 @@
  */
 namespace pukoframework\auth;
 
-use Exception;
-
+/**
+ * Class Session
+ * @package pukoframework\auth
+ *
+ */
 class Session
 {
     private $method;
