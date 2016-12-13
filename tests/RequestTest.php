@@ -25,6 +25,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testRequest()
     {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_GET['request'] = 'puko/tests/1';
         $_GET['lang'] = 'id';
         $req = new Request();
@@ -41,7 +42,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
         $_POST['framework'] = 'puko';
         $fw = Request::Post('framework', 0);
-        $this->assertEquals('framework', $fw);
+        $this->assertEquals('puko', $fw);
     }
 
     public function testGet()
