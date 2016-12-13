@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
+        backupGlobals="true"
         colors="true"
+        stopOnFailure="false"
         bootstrap="vendor/autoload.php">
     <testsuites>
-        <testsuite name="pukoframework">
-            <directory>tests</directory>
+        <testsuite name="Puko Framework Start Test">
+            <directory suffix=".php">tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
