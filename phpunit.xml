@@ -6,7 +6,7 @@
         bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="Puko Framework Start Test">
-            <directory suffix=".php">tests</directory>
+            <directory suffix=".php">./tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
