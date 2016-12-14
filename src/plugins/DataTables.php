@@ -1,22 +1,11 @@
 <?php
+
 namespace pukoframework\plugins;
 
 use pukoframework\pda\DBI;
 
 /**
- * Class TableServerProcessing
- * @package DV\DataTables
- *
- * This is a Model Wrapper Class for server processing. Compatible with DataTables 1.10.2 and newer.
- * Example of usage:
- *
- * <pre>
- *    $dTables = new ServerProcessing();
- *    $dTables->SetColumns(array("Created", "Type", "Name", "Description", "Note"));
- *    $dTables->SetQuery("SELECT * FROM Records WHERE (DFlag = 0)");
- *    echo $dTables->GetDataTables(function($data) {}); //use callback to manipulate result data.
- *    exit();
- * </pre>
+ * Class TableServerProcessing.
  *
  * @copyright DV 2016
  * @author Didit Velliz diditvelliz@gmail.com
@@ -25,16 +14,16 @@ class DataTables extends DBI
 {
     /**
      * @var string
-     * base sql query string
+     *             base sql query string
      */
-    var $sQuery;
-    var $totalColumn;
+    public $sQuery;
+    public $totalColumn;
 
     /**
      * @var array
-     * total columns for selector, order and sorting.
+     *            total columns for selector, order and sorting.
      */
-    var $dtColumns = array();
+    public $dtColumns = array();
 
     public function SetColumnSpec($columns)
     {
@@ -53,19 +42,19 @@ class DataTables extends DBI
 
     public function SetQuery($query)
     {
-        $this->sQuery = "SELECT * FROM (" . $query . ") DTable ";
+        $this->sQuery = 'SELECT * FROM ('.$query.') DTable ';
     }
 
     public function GetDataTables(callable $callback = null)
     {
         if (!empty($_GET)) {
-            $draw = $_GET["draw"];
+            $draw = $_GET['draw'];
 
             $orderByColumnIndex = $_GET['order'][0]['column'];
             $orderBy = $_GET['columns'][$orderByColumnIndex]['data'];
             $orderType = $_GET['order'][0]['dir'];
 
-            $start = $_GET["start"];
+            $start = $_GET['start'];
             $length = $_GET['length'];
 
             $where = array();
@@ -75,27 +64,29 @@ class DataTables extends DBI
             if (!empty($_GET['search']['value'])) {
                 for ($i = 0; $i < count($_GET['columns']); $i++) {
                     $column = $this->dtColumns[$_GET['columns'][$i]['data']];
-                    $where[] = "$column like '%" . $_GET['search']['value'] . "%'";
+                    $where[] = "$column like '%".$_GET['search']['value']."%'";
                 }
-                $where = "WHERE " . implode(" OR ", $where);
-                $sql = sprintf("%s %s", $this->sQuery, $where);
+                $where = 'WHERE '.implode(' OR ', $where);
+                $sql = sprintf('%s %s', $this->sQuery, $where);
                 $recordsFiltered = count($this->Prepare($sql)->GetData());
-                $sql = sprintf("%s %s ORDER BY %s %s limit %d,%d ", $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
                 $data = $this->Prepare($sql)->GetData();
             } else {
-                $sql = sprintf("%s ORDER BY %s %s limit %d,%d ", $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                $sql = sprintf('%s ORDER BY %s %s limit %d,%d ', $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
                 $data = $this->Prepare($sql)->GetData();
                 $recordsFiltered = $recordsTotal;
             }
 
             $response = array(
-                "draw" => intval($draw),
-                "recordsTotal" => $recordsTotal,
-                "recordsFiltered" => $recordsFiltered,
-                "data" => array()
+                'draw' => intval($draw),
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => array(),
             );
 
-            if ($callback != null) $data = $callback($data);
+            if ($callback !== null) {
+                $data = $callback($data);
+            }
 
             $counter = 0;
             foreach ($data as $aRow) {
@@ -106,19 +97,19 @@ class DataTables extends DBI
                 }
                 $tData = count($this->dtColumns);
                 for ($j = $tData; $j < $this->totalColumn; $j++) {
-                    $row[] = "-";
+                    $row[] = '-';
                 }
                 $response['data'][] = $row;
             }
-
         } else {
             $response = array(
-                "draw" => 1,
-                "recordsTotal" => 0,
-                "recordsFiltered" => 0,
-                "error" => "NO POST Query from DataTable"
+                'draw' => 1,
+                'recordsTotal' => 0,
+                'recordsFiltered' => 0,
+                'error' => 'NO POST Query from DataTable',
             );
         }
+
         return json_encode($response);
     }
 }

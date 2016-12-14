@@ -1,18 +1,16 @@
 <?php
+
 namespace pukoframework\pda;
 
 interface ModelCallbacks
 {
-
     public function SetQuery($customQuery);
 
     public function SetTable($tableName);
-
 }
 
 interface Crud
 {
-
     public function Create($data, ModelCallbacks $options);
 
     public function Read(ModelCallbacks $options);
@@ -20,25 +18,20 @@ interface Crud
     public function Update($id, $data, ModelCallbacks $options);
 
     public function Delete($id, ModelCallbacks $options);
-
 }
 
 /**
- * Class Model
- * @package pukoframework\pda
- * 
- * TODO: This class is not ready to use yet.
+ * Class Model.
  */
 class Model implements Crud, ModelCallbacks
 {
-
-    var $table;
-    var $query;
+    public $table;
+    public $query;
 
     /**
      * @var DBI
      */
-    var $db;
+    public $db;
 
     public function __construct($table)
     {
@@ -64,7 +57,6 @@ class Model implements Crud, ModelCallbacks
     {
         return DBI::Prepare($this->table)->Delete($data);
     }
-
 
     public function SetQuery($customQuery)
     {
