@@ -323,7 +323,7 @@ namespace pukoframework\pte {
         {
             $string = ' '.$string;
             $ini = strpos($string, $start);
-            if ($ini === 0) {
+            if ($ini === false) {
                 return '';
             }
             $ini += strlen($start);
