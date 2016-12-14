@@ -1,6 +1,6 @@
 <?php
 /**
- * pukoframework
+ * pukoframework.
  *
  * MVC PHP Framework for quick and fast PHP Application Development.
  *
@@ -9,17 +9,16 @@
  *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package	puko/framework
  * @author	Didit Velliz
+ *
  * @link	https://github.com/velliz/pukoframework
  * @since	Version 0.9.2
- *
  */
+
 namespace pukoframework;
 
 abstract class Lifecycle
 {
-
     public static $start;
 
     public function __construct()
@@ -28,8 +27,7 @@ abstract class Lifecycle
         $this->OnInitialize();
     }
 
-    public abstract function OnInitialize();
+    abstract public function OnInitialize();
 
-    public abstract function Request(Request $request);
-
+    abstract public function Request(Request $request);
 }

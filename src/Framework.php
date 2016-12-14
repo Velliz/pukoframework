@@ -1,6 +1,6 @@
 <?php
 /**
- * pukoframework
+ * pukoframework.
  *
  * MVC PHP Framework for quick and fast PHP Application Development.
  *
@@ -9,12 +9,12 @@
  *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package    puko/framework
  * @author    Didit Velliz
+ *
  * @link    https://github.com/velliz/pukoframework
  * @since    Version 0.9.0
- *
  */
+
 namespace pukoframework;
 
 use pukoframework\auth\Session;
@@ -22,7 +22,6 @@ use pukoframework\pte\RenderEngine;
 
 class Framework extends Lifecycle
 {
-
     /**
      * @var Request
      */
@@ -46,33 +45,46 @@ class Framework extends Lifecycle
     {
         set_exception_handler(array($this, 'ExceptionHandler'));
         set_error_handler(array($this, 'ErrorHandler'));
-        
+
         $this->request = new Request();
         $this->render = new RenderEngine();
     }
 
     public function Request(Request $request)
     {
-        if (!isset($request->requestUrl)) return;
-        if (sizeof($this->route) == 0) return;
-        if (!isset($_GET['request'])) return;
+        if (!isset($request->requestUrl)) {
+            return;
+        }
+        if (count($this->route) === 0) {
+            return;
+        }
+        if (!isset($_GET['request'])) {
+            return;
+        }
         foreach ($this->route as $key => $value) {
             if (strpos($request->requestUrl, $key) !== false) {
-                if (substr_count($value, "/") > 1) {
-                    $segment = explode("/", $value);
-                    $classSegment = "";
+                if (substr_count($value, '/') > 1) {
+                    $segment = explode('/', $value);
+                    $classSegment = '';
                     foreach ($segment as $pos => $rows) {
                         array_push($this->request->variable, $rows);
-                        if ($pos == 0) $classSegment .= $rows;
-                        if (($pos > 0) && ($pos + 1) < sizeof($segment)) $classSegment .= '\\' . $rows;
-                        else $this->request->fnName = $rows;
+                        if ($pos === 0) {
+                            $classSegment .= $rows;
+                        }
+                        if (($pos > 0) && ($pos + 1) < count($segment)) {
+                            $classSegment .= '\\'.$rows;
+                        } else {
+                            $this->request->fnName = $rows;
+                        }
                     }
                     $this->request->className = $classSegment;
+
                     return;
                 } else {
                     $value = str_replace($key, $value, $request->requestUrl);
                     $_GET['request'] = $value;
                     $this->request = new Request();
+
                     return;
                 }
             }
@@ -87,12 +99,17 @@ class Framework extends Lifecycle
     public function Start()
     {
         $this->Request($this->request);
-        $controller = '\\controller\\' . $this->request->className;
+        $controller = '\\controller\\'.$this->request->className;
         $controller = strtolower($controller);
-        if (!class_exists($controller)) $this->Render('404');
+        if (!class_exists($controller)) {
+            $this->Render('404');
+        }
         try {
-            if (!isset($this->request->constant)) $object = new $controller();
-            else $object = new $controller($this->request->constant);
+            if (!isset($this->request->constant)) {
+                $object = new $controller();
+            } else {
+                $object = new $controller($this->request->constant);
+            }
             $this->pdc = new \ReflectionClass($object);
             $this->classPdc = $this->pdc->getDocComment();
             $this->render->PDCParser($this->classPdc, $this->funcReturn);
@@ -102,13 +119,22 @@ class Framework extends Lifecycle
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 if (is_callable(array($object, $this->request->fnName))) {
-                    if (empty($this->request->variable)) $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($object, $this->request->fnName)));
-                    else $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
-                } else die("Puko Error (FW001) Function " . $this->request->fnName . " must set 'public'.");
-            } else die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
-            if (!isset($_COOKIE['token'])) Session::GenerateSecureToken();
+                    if (empty($this->request->variable)) {
+                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($object, $this->request->fnName)));
+                    } else {
+                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
+                    }
+                } else {
+                    die('Puko Error (FW001) Function '.$this->request->fnName." must set 'public'.");
+                }
+            } else {
+                die("Puko Error (FW002) Function '".$this->request->fnName."' not found in class: ".$this->request->className);
+            }
+            if (!isset($_COOKIE['token'])) {
+                Session::GenerateSecureToken();
+            }
             $this->funcReturn['token'] = $_COOKIE['token'];
-            $this->funcReturn['ExceptionMessage'] = "";
+            $this->funcReturn['ExceptionMessage'] = '';
             $this->funcReturn['Exception'] = true;
         } catch (\Exception $error) {
             $this->funcReturn = $this->ExceptionHandler($error);
@@ -119,11 +145,11 @@ class Framework extends Lifecycle
 
     private function Render($renderCode = '200')
     {
-        $html = ROOT . "/assets/html/";
-        $sys_html = ROOT . "/assets/system/";
-        if ($renderCode == '404') {
-            $this->render->PTEMaster($sys_html . $this->request->lang . "/master.html");
-            $template = $this->render->PTEParser($sys_html . $this->request->lang . "/404.html", $this->funcReturn);
+        $html = ROOT.'/assets/html/';
+        $sys_html = ROOT.'/assets/system/';
+        if ($renderCode === '404') {
+            $this->render->PTEMaster($sys_html.$this->request->lang.'/master.html');
+            $template = $this->render->PTEParser($sys_html.$this->request->lang.'/404.html', $this->funcReturn);
             echo $template;
             die();
         }
@@ -131,8 +157,8 @@ class Framework extends Lifecycle
         $service = new \ReflectionClass(pte\Service::class);
         try {
             if ($this->pdc->isSubclassOf($view)) {
-                $this->render->PTEMaster($html . $this->request->lang . "/" . $this->request->className . "/master.html");
-                $template = $this->render->PTEParser($html . $this->request->lang . "/" . $this->request->className . "/" . $this->request->fnName . ".html", $this->funcReturn);
+                $this->render->PTEMaster($html.$this->request->lang.'/'.$this->request->className.'/master.html');
+                $template = $this->render->PTEParser($html.$this->request->lang.'/'.$this->request->className.'/'.$this->request->fnName.'.html', $this->funcReturn);
                 echo $template;
                 die();
             }
@@ -147,6 +173,7 @@ class Framework extends Lifecycle
 
     /**
      * @param \Exception $error
+     *
      * @return mixed
      */
     public function ExceptionHandler($error)
@@ -155,12 +182,14 @@ class Framework extends Lifecycle
         $emg['File'] = $error->getFile();
         $emg['LineNumber'] = $error->getLine();
 
-        $sys_html = ROOT . "/assets/system/";
+        $sys_html = ROOT.'/assets/system/';
         $render = new RenderEngine();
         $render->useMasterLayout = false;
-        $template = $render->PTEParser($sys_html . "/exception.html", $emg);
+        $template = $render->PTEParser($sys_html.'/exception.html', $emg);
 
-        if ($this->render->displayException) echo $template;
+        if ($this->render->displayException) {
+            echo $template;
+        }
         die();
     }
 
@@ -177,11 +206,13 @@ class Framework extends Lifecycle
         $emg['File'] = $file;
         $emg['LineNumber'] = $line;
 
-        $sys_html = ROOT . "/assets/system/";
+        $sys_html = ROOT.'/assets/system/';
         $render = new RenderEngine();
         $render->useMasterLayout = false;
-        $template = $render->PTEParser($sys_html . "/error.html", $emg);
+        $template = $render->PTEParser($sys_html.'/error.html', $emg);
 
-        if ($this->render->displayException) echo $template;
+        if ($this->render->displayException) {
+            echo $template;
+        }
     }
 }
