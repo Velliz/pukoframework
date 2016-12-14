@@ -61,4 +61,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($isPost);
     }
 
+    public function testOutputBuffers()
+    {
+        Request::OutputBufferStart();
+        $thumb = imagecreatetruecolor(300, 300);
+        imagejpeg($thumb);
+        $save = Request::OutputBufferFinish();
+        imagedestroy($thumb);
+        $this->assertNotNull($save);
+    }
+
 }

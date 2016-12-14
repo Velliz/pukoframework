@@ -169,8 +169,6 @@ class Framework extends Lifecycle
      * @param $message
      * @param $file
      * @param $line
-     *
-     * @return mixed
      */
     public function ErrorHandler($error, $message, $file, $line)
     {
