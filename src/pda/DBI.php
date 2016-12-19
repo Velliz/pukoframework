@@ -203,10 +203,11 @@ class DBI
         $parameters = func_get_args();
         $argCount = count($parameters);
         $this->queryParams = $parameters;
-        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryParseReplace'), $this->query);
+        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
         try {
             $statement = self::$dbi->prepare($this->query);
-            $statement->execute();
+            if ($argCount > 0) $statement->execute($parameters);
+            else $statement->execute();
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());
@@ -222,10 +223,11 @@ class DBI
         $parameters = func_get_args();
         $argCount = count($parameters);
         $this->queryParams = $parameters;
-        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryParseReplace'), $this->query);
+        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
         try {
             $statement = self::$dbi->prepare($this->query);
-            $statement->execute();
+            if ($argCount > 0) $statement->execute($parameters);
+            else $statement->execute();
             $result = $statement->fetch(PDO::FETCH_ASSOC);
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
@@ -237,6 +239,8 @@ class DBI
     /**
      * @param $key
      * @return string
+     *
+     * @deprecated SQL Injections vulnerability
      */
     private function queryParseReplace($key)
     {
@@ -267,6 +271,14 @@ class DBI
             }
         }
         return '';
+    }
+
+    /**
+     * @return string
+     */
+    private function queryPrepareSelect()
+    {
+        return '?';
     }
 
     /**
