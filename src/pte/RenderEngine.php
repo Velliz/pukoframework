@@ -113,7 +113,7 @@ namespace pukoframework\pte {
                 header('Cache-Control: no-store, no-cache, must-revalidate');
                 header('Cache-Control: post-check=0, pre-check=0', false);
                 header('Pragma: no-cache');
-                header( "Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
+                header('Last-Modified: '.gmdate('D, j M Y H:i:s').' GMT');
                 if (!Session::IsSession()) {
                     throw new \Exception('Authentication Required');
                 }
