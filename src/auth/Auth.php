@@ -30,4 +30,6 @@ interface Auth
     public function Logout();
 
     public function GetLoginData($id);
+
+    //public function IsNotAuthenticated();
 }

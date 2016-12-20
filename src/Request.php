@@ -31,6 +31,9 @@ class Request
 
     public function __construct()
     {
+        if (!isset($_COOKIE['token'])) {
+            Session::GenerateSecureToken();
+        }
         $this->requestType = $_SERVER['REQUEST_METHOD'];
         if (isset($_GET['lang']) && $_GET['lang'] !== '') {
             $this->lang = $_GET['lang'];
@@ -120,8 +123,7 @@ class Request
         if (!hash_equals($_POST['token'], $_COOKIE['token'])) {
             return false;
         }
-        unset($_POST['_submit']);
-        unset($_POST['token']);
+
         Session::GenerateSecureToken();
 
         return true;

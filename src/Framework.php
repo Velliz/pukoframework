@@ -14,11 +14,13 @@
  * @link    https://github.com/velliz/pukoframework
  * @since    Version 0.9.0
  */
-
 namespace pukoframework;
 
-use pukoframework\auth\Session;
+use Exception;
+use pukoframework\peh\PukoException;
+use pukoframework\peh\ValueException;
 use pukoframework\pte\RenderEngine;
+use ReflectionClass;
 
 class Framework extends Lifecycle
 {
@@ -27,6 +29,11 @@ class Framework extends Lifecycle
      */
     private $request;
     private $route;
+
+    /**
+     * @var PukoException
+     */
+    private $exception;
 
     /**
      * @var RenderEngine
@@ -43,8 +50,10 @@ class Framework extends Lifecycle
 
     public function OnInitialize()
     {
-        set_exception_handler(array($this, 'ExceptionHandler'));
-        set_error_handler(array($this, 'ErrorHandler'));
+        $this->exception = new PukoException();
+
+        set_exception_handler(array($this->exception, 'ExceptionHandler'));
+        set_error_handler(array($this->exception, 'ErrorHandler'));
 
         $this->request = new Request();
         $this->render = new RenderEngine();
@@ -78,13 +87,11 @@ class Framework extends Lifecycle
                         }
                     }
                     $this->request->className = $classSegment;
-
                     return;
                 } else {
                     $value = str_replace($key, $value, $request->requestUrl);
                     $_GET['request'] = $value;
                     $this->request = new Request();
-
                     return;
                 }
             }
@@ -104,43 +111,41 @@ class Framework extends Lifecycle
         if (!class_exists($controller)) {
             $this->Render('404');
         }
-        try {
-            if (!isset($this->request->constant)) {
-                $object = new $controller();
-            } else {
-                $object = new $controller($this->request->constant);
-            }
-            $this->pdc = new \ReflectionClass($object);
-            $this->classPdc = $this->pdc->getDocComment();
-            $this->render->PDCParser($this->classPdc, $this->funcReturn);
-            $this->fnPdc = $this->classPdc;
 
+        if (!isset($this->request->constant)) {
+            $object = new $controller();
+        } else {
+            $object = new $controller($this->request->constant);
+        }
+        $this->pdc = new ReflectionClass($object);
+        $this->classPdc = $this->pdc->getDocComment();
+        $this->render->PDCParser($this->classPdc, $this->funcReturn);
+        $this->fnPdc = $this->classPdc;
+
+        try {
+            $this->funcReturn['Exception'] = true;
             if (method_exists($object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 if (is_callable(array($object, $this->request->fnName))) {
                     if (empty($this->request->variable)) {
-                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($object, $this->request->fnName)));
+                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func(array($object, $this->request->fnName)));
                     } else {
-                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
+                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
                     }
                 } else {
-                    die('Puko Error (FW001) Function '.$this->request->fnName." must set 'public'.");
+                    die('Puko Error (FW001) Function ' . $this->request->fnName . " must set 'public'.");
                 }
             } else {
-                die("Puko Error (FW002) Function '".$this->request->fnName."' not found in class: ".$this->request->className);
+                die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
             }
-            if (!isset($_COOKIE['token'])) {
-                Session::GenerateSecureToken();
-            }
-            $this->funcReturn['token'] = $_COOKIE['token'];
-            $this->funcReturn['ExceptionMessage'] = '';
-            $this->funcReturn['Exception'] = true;
-        } catch (\Exception $error) {
-            $this->funcReturn = $this->ExceptionHandler($error);
-        } finally {
-            $this->Render();
+        } catch (ValueException $ve) {
+            $this->funcReturn = array_merge($this->funcReturn, $ve->getValidations());
         }
+
+        $this->funcReturn['token'] = $_COOKIE['token'];
+
+        echo $this->Render();
     }
 
     private function Render($renderCode = '200')
@@ -150,69 +155,22 @@ class Framework extends Lifecycle
         if ($renderCode === '404') {
             $this->render->PTEMaster($sys_html.$this->request->lang.'/master.html');
             $template = $this->render->PTEParser($sys_html.$this->request->lang.'/404.html', $this->funcReturn);
-            echo $template;
-            die();
+            return $template;
         }
-        $view = new \ReflectionClass(pte\View::class);
-        $service = new \ReflectionClass(pte\Service::class);
+        $view = new ReflectionClass(pte\View::class);
+        $service = new ReflectionClass(pte\Service::class);
         try {
             if ($this->pdc->isSubclassOf($view)) {
                 $this->render->PTEMaster($html.$this->request->lang.'/'.$this->request->className.'/master.html');
                 $template = $this->render->PTEParser($html.$this->request->lang.'/'.$this->request->className.'/'.$this->request->fnName.'.html', $this->funcReturn);
-                echo $template;
-                die();
+                return $template;
             }
             if ($this->pdc->isSubclassOf($service)) {
-                echo json_encode($this->render->PTEJson($this->funcReturn));
-                die();
+                return json_encode($this->render->PTEJson($this->funcReturn));
             }
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
         }
-    }
-
-    /**
-     * @param \Exception $error
-     *
-     * @return mixed
-     */
-    public function ExceptionHandler($error)
-    {
-        $emg['Message'] = $error->getMessage();
-        $emg['File'] = $error->getFile();
-        $emg['LineNumber'] = $error->getLine();
-
-        $sys_html = ROOT.'/assets/system/';
-        $render = new RenderEngine();
-        $render->useMasterLayout = false;
-        $template = $render->PTEParser($sys_html.'/exception.html', $emg);
-
-        if ($this->render->displayException) {
-            echo $template;
-        }
-        die();
-    }
-
-    /**
-     * @param $error
-     * @param $message
-     * @param $file
-     * @param $line
-     */
-    public function ErrorHandler($error, $message, $file, $line)
-    {
-        $emg['Error'] = $error;
-        $emg['Message'] = $message;
-        $emg['File'] = $file;
-        $emg['LineNumber'] = $line;
-
-        $sys_html = ROOT.'/assets/system/';
-        $render = new RenderEngine();
-        $render->useMasterLayout = false;
-        $template = $render->PTEParser($sys_html.'/error.html', $emg);
-
-        if ($this->render->displayException) {
-            echo $template;
-        }
+        return '';
     }
 }
