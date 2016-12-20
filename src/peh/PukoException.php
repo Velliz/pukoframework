@@ -14,6 +14,7 @@
  * @link	https://github.com/velliz/pukoframework
  * @since	Version 1.0.2
  */
+
 namespace pukoframework\peh;
 
 use Exception;
@@ -26,15 +27,15 @@ class PukoException extends Exception
      */
     private $render;
 
-    var $IsFatalError;
-    var $systemHtml = ROOT.'/assets/system/';
+    public $IsFatalError;
+    public $systemHtml = ROOT.'/assets/system/';
 
     /**
      * PukoException constructor.
      *
      * @param string $message
      */
-    public function __construct($message = "")
+    public function __construct($message = '')
     {
         parent::__construct($message, 10122, null);
         $this->render = new RenderEngine();
