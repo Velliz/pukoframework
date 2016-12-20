@@ -14,6 +14,7 @@
  * @link	https://github.com/velliz/pukoframework
  * @since	Version 1.0.2
  */
+
 namespace pukoframework\peh;
 
 use Exception;
@@ -21,7 +22,6 @@ use pukoframework\auth\Session;
 
 class ValueException extends Exception
 {
-
     private $validation = array();
 
     public function __construct($message = '', $validate = array())
@@ -38,6 +38,7 @@ class ValueException extends Exception
     public function getValidations()
     {
         $error = $this->validation;
+
         return $error;
     }
 
@@ -46,13 +47,12 @@ class ValueException extends Exception
         Session::GenerateSecureToken();
 
         if (count($this->validation) > 0) {
-
             $this->validation = array_merge($this->validation, $arrayData);
 
             $this->validation['Exception'] = false;
             $this->validation['ExceptionMessage'] = $message;
 
-            throw new ValueException($message, $this->validation);
+            throw new self($message, $this->validation);
         }
     }
 }

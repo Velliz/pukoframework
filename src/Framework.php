@@ -14,6 +14,7 @@
  * @link    https://github.com/velliz/pukoframework
  * @since    Version 0.9.0
  */
+
 namespace pukoframework;
 
 use Exception;
@@ -87,11 +88,13 @@ class Framework extends Lifecycle
                         }
                     }
                     $this->request->className = $classSegment;
+
                     return;
                 } else {
                     $value = str_replace($key, $value, $request->requestUrl);
                     $_GET['request'] = $value;
                     $this->request = new Request();
+
                     return;
                 }
             }
@@ -129,15 +132,15 @@ class Framework extends Lifecycle
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 if (is_callable(array($object, $this->request->fnName))) {
                     if (empty($this->request->variable)) {
-                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func(array($object, $this->request->fnName)));
+                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($object, $this->request->fnName)));
                     } else {
-                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
+                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
                     }
                 } else {
-                    die('Puko Error (FW001) Function ' . $this->request->fnName . " must set 'public'.");
+                    die('Puko Error (FW001) Function '.$this->request->fnName." must set 'public'.");
                 }
             } else {
-                die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
+                die("Puko Error (FW002) Function '".$this->request->fnName."' not found in class: ".$this->request->className);
             }
         } catch (ValueException $ve) {
             $this->funcReturn = array_merge($this->funcReturn, $ve->getValidations());
@@ -155,6 +158,7 @@ class Framework extends Lifecycle
         if ($renderCode === '404') {
             $this->render->PTEMaster($sys_html.$this->request->lang.'/master.html');
             $template = $this->render->PTEParser($sys_html.$this->request->lang.'/404.html', $this->funcReturn);
+
             return $template;
         }
         $view = new ReflectionClass(pte\View::class);
@@ -163,6 +167,7 @@ class Framework extends Lifecycle
             if ($this->pdc->isSubclassOf($view)) {
                 $this->render->PTEMaster($html.$this->request->lang.'/'.$this->request->className.'/master.html');
                 $template = $this->render->PTEParser($html.$this->request->lang.'/'.$this->request->className.'/'.$this->request->fnName.'.html', $this->funcReturn);
+
                 return $template;
             }
             if ($this->pdc->isSubclassOf($service)) {
@@ -171,6 +176,7 @@ class Framework extends Lifecycle
         } catch (Exception $error) {
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
         }
+
         return '';
     }
 }
