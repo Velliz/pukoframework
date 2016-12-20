@@ -11,6 +11,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $_COOKIE['token'] = 'pukoframework';
     }
 
     public function tearDown()
