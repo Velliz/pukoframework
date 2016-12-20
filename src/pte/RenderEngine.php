@@ -109,11 +109,13 @@ namespace pukoframework\pte {
         public function Auth($val)
         {
             if ($val === 'true') {
+
                 header('Expires: Mon, 1 Jul 1998 01:00:00 GMT');
                 header('Cache-Control: no-store, no-cache, must-revalidate');
                 header('Cache-Control: post-check=0, pre-check=0', false);
                 header('Pragma: no-cache');
                 header('Last-Modified: '.gmdate('D, j M Y H:i:s').' GMT');
+
                 if (!Session::IsSession()) {
                     throw new \Exception('Authentication Required');
                 }
@@ -156,9 +158,9 @@ namespace pukoframework\pte {
 
         public function PTEParser($filePath, $arrayData, $source = 'file')
         {
-            header('Cache-Control: no-cache');
-            header('Pragma: no-cache');
-            header('Author: Puko framework 1.0');
+
+            header('Author: Puko Framework');
+            header('Content-Type: text/html');
 
             if (!$this->useHtmlLayout) {
                 return;
@@ -281,6 +283,10 @@ namespace pukoframework\pte {
 
         public function PTEJson($arrayData)
         {
+
+            header('Author: Puko Framework');
+            header('Content-Type: application/json');
+
             if ($arrayData['Exception']) {
                 $success = 'success';
                 unset($arrayData['Exception']);
@@ -289,10 +295,6 @@ namespace pukoframework\pte {
                 $success = 'failed';
                 $arrayData['Exception'] = true;
             }
-            header('Cache-Control: no-cache');
-            header('Pragma: no-cache');
-            header('Author: Puko framework 1.0');
-            header('Content-Type: application/json');
             $data = array(
                 'time' => microtime(true) - Lifecycle::$start,
                 'status' => $success,
