@@ -40,6 +40,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
     public function testLeave()
     {
         $this->assertEquals($this->isLeaveAllowed(), true);
+        $this->assertEquals($this->newClosure(), 1);
+
     }
 
     function isLeaveAllowed($selectedDate = '2017-01-16', $limit = 7)
@@ -50,6 +52,17 @@ class RouterTest extends PHPUnit_Framework_TestCase
 
         if ($selectedDateObject < $limitDateObject) return false;
         else return true;
+    }
+
+    function newClosure()
+    {
+        $deleteDirectory = 1;
+        $app = function($path) use (&$deleteDirectory) {
+            return $path;
+        };
+
+        $data = $app(true);
+        return $data;
     }
 
 }
