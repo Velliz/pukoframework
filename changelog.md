@@ -78,3 +78,5 @@ class Example extends Service {
 * System Exception & Error now can rendered to system html.
 * DisplayException feature for PDC.
 * General bugfix and Puko fatal Error codes.
+* ValueException Handler
+* Error & Global Exception Handler
