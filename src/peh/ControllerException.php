@@ -21,4 +21,5 @@ use Exception;
 
 class ControllerException extends Exception
 {
+
 }
