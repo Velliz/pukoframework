@@ -77,6 +77,7 @@ class Session
     public function PutSession($key, $val, $expired = 0)
     {
         setcookie($key, $this->Encrypt($val), (time() + $expired), "/", $_SERVER['SERVER_NAME']);
+        $_COOKIE[$key] = $this->Encrypt($val);
     }
 
     public function GetSession($val)
@@ -88,6 +89,7 @@ class Session
     public static function RemoveSession($key)
     {
         setcookie($key, '', (time() - Auth::EXPIRED_1_MONTH), '/', $_SERVER['SERVER_NAME']);
+        $_COOKIE[$key] = '';
     }
 
     public static function IsSession()
