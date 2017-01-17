@@ -47,6 +47,10 @@ namespace pukoframework\pte {
             $this->sourceFile = $sourceFile;
         }
 
+        /**
+         * @param $phpDocs
+         * @param $arrData
+         */
         public function PDCParser($phpDocs, &$arrData)
         {
             preg_match_all('(#[ a-zA-Z0-9-:./]+)', $phpDocs, $result, PREG_PATTERN_ORDER);
@@ -106,6 +110,10 @@ namespace pukoframework\pte {
             }
         }
 
+        /**
+         * @param $val
+         * @throws \Exception
+         */
         public function Auth($val)
         {
             if ($val === 'true') {
