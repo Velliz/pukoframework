@@ -237,6 +237,25 @@ class DBI
     }
 
     /**
+     * @return mixed|null
+     * @throws Exception
+     */
+    public function Run()
+    {
+        $parameters = func_get_args();
+        $argCount = count($parameters);
+        $this->queryParams = $parameters;
+        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        try {
+            $statement = self::$dbi->prepare($this->query);
+            if ($argCount > 0)  return $statement->execute($parameters);
+            else return $statement->execute();
+        } catch (PDOException $ex) {
+            throw new Exception('Database error: ' . $ex->getMessage());
+        }
+    }
+
+    /**
      * @param $key
      * @return string
      *
