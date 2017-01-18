@@ -96,7 +96,7 @@ class DBI
     public function Save($array, $hasBinary = false)
     {
         $keys = $values = array();
-        $insert_text = "INSERT INTO `$this->query`";
+        $insert_text = "INSERT INTO $this->query";
         foreach ($array as $k => $v) {
             $keys[] = $k;
             $values[] = $v;
@@ -138,7 +138,7 @@ class DBI
      */
     public function Delete($arrWhere)
     {
-        $del_text = "DELETE FROM `$this->query` WHERE ";
+        $del_text = "DELETE FROM $this->query WHERE ";
         foreach ($arrWhere as $col => $value) {
             $del_text .= "`" . $col . "`" . " = '" . $value . "' AND ";
         }
