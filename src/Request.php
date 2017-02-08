@@ -101,7 +101,27 @@ class Request
         return ob_start();
     }
 
+    /**
+     * @return string
+     * @deprecated
+     */
     public static function OutputBufferFinish()
+    {
+        $data = ob_get_contents();
+        ob_end_clean();
+
+        return $data;
+    }
+
+    public static function OutputBufferFlush()
+    {
+        $data = ob_get_contents();
+        ob_end_flush();
+
+        return $data;
+    }
+
+    public static function OutputBufferClean()
     {
         $data = ob_get_contents();
         ob_end_clean();
