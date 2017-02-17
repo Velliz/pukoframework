@@ -228,7 +228,7 @@ class DBI
             $statement = self::$dbi->prepare($this->query);
             if ($argCount > 0) $statement->execute($parameters);
             else $statement->execute();
-            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
         } catch (PDOException $ex) {
