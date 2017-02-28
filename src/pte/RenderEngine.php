@@ -19,6 +19,8 @@ namespace pukoframework\pte {
 
     use pukoframework\auth\Session;
     use pukoframework\Lifecycle;
+    use pukoframework\peh\ThrowService;
+    use pukoframework\peh\ThrowView;
 
     class RenderEngine
     {
@@ -354,6 +356,15 @@ namespace pukoframework\pte {
 
     class Service
     {
+
+        public function __construct()
+        {
+            $exceptionHandler = new ThrowService();
+
+            set_exception_handler(array($exceptionHandler, 'ExceptionHandler'));
+            set_error_handler(array($exceptionHandler, 'ErrorHandler'));
+        }
+
         public function RedirectTo($url, $permanent = false)
         {
             header('Location: '.$url, true, $permanent ? 301 : 302);
@@ -363,6 +374,14 @@ namespace pukoframework\pte {
 
     class View
     {
+        public function __construct()
+        {
+            $exceptionHandler = new ThrowView();
+
+            set_exception_handler(array($exceptionHandler, 'ExceptionHandler'));
+            set_error_handler(array($exceptionHandler, 'ErrorHandler'));
+        }
+
         public function RedirectTo($url, $permanent = false)
         {
             header('Location: '.$url, true, $permanent ? 301 : 302);

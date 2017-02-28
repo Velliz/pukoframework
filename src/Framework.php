@@ -51,11 +51,6 @@ class Framework extends Lifecycle
 
     public function OnInitialize()
     {
-        $this->exception = new PukoException();
-
-        set_exception_handler(array($this->exception, 'ExceptionHandler'));
-        set_error_handler(array($this->exception, 'ErrorHandler'));
-
         $this->request = new Request();
         $this->render = new RenderEngine();
     }
