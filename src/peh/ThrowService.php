@@ -44,8 +44,6 @@ class ThrowService extends Exception
     public function ExceptionHandler($error)
     {
         $emg['Message'] = $error->getMessage();
-        $emg['File'] = $error->getFile();
-        $emg['LineNumber'] = $error->getLine();
 
         header('Author: Puko Framework');
         header('Content-Type: application/json');
@@ -71,8 +69,6 @@ class ThrowService extends Exception
     {
         $emg['Error'] = $error;
         $emg['Message'] = $message;
-        $emg['File'] = $file;
-        $emg['LineNumber'] = $line;
 
         header('Author: Puko Framework');
         header('Content-Type: application/json');
