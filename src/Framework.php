@@ -21,6 +21,8 @@ use Exception;
 use pukoframework\peh\PukoException;
 use pukoframework\peh\ValueException;
 use pukoframework\pte\RenderEngine;
+use pukoframework\pte\Service;
+use pukoframework\pte\View;
 use ReflectionClass;
 
 class Framework extends Lifecycle
@@ -48,6 +50,11 @@ class Framework extends Lifecycle
     private $pdc;
     private $fnPdc;
     private $classPdc;
+
+    /**
+     * @var View|Service
+     */
+    private $object = null;
 
     public function OnInitialize()
     {
@@ -111,25 +118,25 @@ class Framework extends Lifecycle
         }
 
         if (!isset($this->request->constant)) {
-            $object = new $controller();
+            $this->object = new $controller();
         } else {
-            $object = new $controller($this->request->constant);
+            $this->object = new $controller($this->request->constant);
         }
-        $this->pdc = new ReflectionClass($object);
+        $this->pdc = new ReflectionClass($this->object);
         $this->classPdc = $this->pdc->getDocComment();
         $this->render->PDCParser($this->classPdc, $this->funcReturn);
         $this->fnPdc = $this->classPdc;
 
         try {
             $this->funcReturn['Exception'] = true;
-            if (method_exists($object, $this->request->fnName)) {
+            if (method_exists($this->object, $this->request->fnName)) {
                 $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
-                if (is_callable(array($object, $this->request->fnName))) {
+                if (is_callable(array($this->object, $this->request->fnName))) {
                     if (empty($this->request->variable)) {
-                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($object, $this->request->fnName)));
+                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($this->object, $this->request->fnName)));
                     } else {
-                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($object, $this->request->fnName), $this->request->variable));
+                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($this->object, $this->request->fnName), $this->request->variable));
                     }
                 } else {
                     die('Puko Error (FW001) Function '.$this->request->fnName." must set 'public'.");
@@ -141,6 +148,7 @@ class Framework extends Lifecycle
             $this->funcReturn = array_merge($this->funcReturn, $ve->getValidations());
         }
 
+        $this->funcReturn = array_merge($this->funcReturn, $this->object->OnInitialize());
         $this->funcReturn['token'] = $_COOKIE['token'];
 
         echo $this->Render();

@@ -354,7 +354,7 @@ namespace pukoframework\pte {
         }
     }
 
-    class Service
+    abstract class Service
     {
 
         public function __construct()
@@ -370,9 +370,11 @@ namespace pukoframework\pte {
             header('Location: '.$url, true, $permanent ? 301 : 302);
             exit();
         }
+
+        public abstract function OnInitialize();
     }
 
-    class View
+    abstract class View
     {
         public function __construct()
         {
@@ -387,5 +389,7 @@ namespace pukoframework\pte {
             header('Location: '.$url, true, $permanent ? 301 : 302);
             exit();
         }
+
+        public abstract function OnInitialize();
     }
 }
