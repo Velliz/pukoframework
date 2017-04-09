@@ -34,11 +34,6 @@ class Framework extends Lifecycle
     private $route;
 
     /**
-     * @var PukoException
-     */
-    private $exception;
-
-    /**
      * @var RenderEngine
      */
     private $render;
@@ -148,7 +143,10 @@ class Framework extends Lifecycle
             $this->funcReturn = array_merge($this->funcReturn, $ve->getValidations());
         }
 
-        $this->funcReturn = array_merge($this->funcReturn, $this->object->OnInitialize());
+        $setup = $this->object->OnInitialize();
+        if (is_array($setup)) {
+            $this->funcReturn = array_merge($this->funcReturn, $this->object->OnInitialize());
+        }
         $this->funcReturn['token'] = $_COOKIE['token'];
 
         echo $this->Render();
