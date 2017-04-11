@@ -356,7 +356,7 @@ namespace pukoframework\pte {
         }
     }
 
-    abstract class Service
+    class Service
     {
 
         public function __construct()
@@ -373,10 +373,10 @@ namespace pukoframework\pte {
             exit();
         }
 
-        public abstract function OnInitialize();
+        public function OnInitialize(){}
     }
 
-    abstract class View
+    class View
     {
         public function __construct()
         {
@@ -392,6 +392,6 @@ namespace pukoframework\pte {
             exit();
         }
 
-        public abstract function OnInitialize();
+        public function OnInitialize(){}
     }
 }
