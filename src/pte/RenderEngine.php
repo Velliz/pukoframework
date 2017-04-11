@@ -70,7 +70,7 @@ namespace pukoframework\pte {
                                 break;
                             default:
                                 if ($key !== count($preg) - 1) {
-                                    $pteValue .= $v.' ';
+                                    $pteValue .= $v . ' ';
                                 } else {
                                     $pteValue .= $v;
                                 }
@@ -102,12 +102,12 @@ namespace pukoframework\pte {
             $target = (new \DateTime($val))->format('d-m-Y H:i:s');
             if (strcasecmp($key, 'before') === 0) {
                 if ($now > $target) {
-                    throw new \Exception('URL available before '.$val);
+                    throw new \Exception('URL available before ' . $val);
                 }
             }
             if (strcasecmp($key, 'after') === 0) {
                 if ($now < $target) {
-                    throw new \Exception('URL available after '.$val);
+                    throw new \Exception('URL available after ' . $val);
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace pukoframework\pte {
                 header('Cache-Control: no-store, no-cache, must-revalidate');
                 header('Cache-Control: post-check=0, pre-check=0', false);
                 header('Pragma: no-cache');
-                header('Last-Modified: '.gmdate('D, j M Y H:i:s').' GMT');
+                header('Last-Modified: ' . gmdate('D, j M Y H:i:s') . ' GMT');
 
                 if (!Session::IsSession()) {
                     throw new \Exception('Authentication Required');
@@ -218,9 +218,9 @@ namespace pukoframework\pte {
 
         public function TemplateParser($key, $value)
         {
-            $tagReplace = '{!'.$key.'}';
-            $openTag = '<!--{!'.$key.'}-->';
-            $closeTag = '<!--{/'.$key.'}-->';
+            $tagReplace = '{!' . $key . '}';
+            $openTag = '<!--{!' . $key . '}-->';
+            $closeTag = '<!--{/' . $key . '}-->';
             switch ($this->GetVarType($value)) {
                 case $this->ARRAYS:
                     foreach ($value as $key2 => $value2) {
@@ -236,7 +236,7 @@ namespace pukoframework\pte {
                         $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
                         foreach ($value2 as $key3 => $value3) {
                             if (!is_array($value3) && !is_bool($value3)) {
-                                $parsed = str_replace('{!'.$key3.'}', $value3, $parsed);
+                                $parsed = str_replace('{!' . $key3 . '}', $value3, $parsed);
                             }
                         }
                         $dynamicTags .= $parsed;
@@ -253,20 +253,20 @@ namespace pukoframework\pte {
                     break;
                 case $this->BOOLEANS:
                     $stanza = $this->BlockedConditions($this->htmlMaster, $key);
-                    if (is_null($stanza)) {
-                        if ($value !== true) {
+                    if ($stanza != null && $stanza != "") {
+                        if (!$value) {
                             $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
                             $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                        } elseif ($value) {
+                            $this->htmlMaster = str_replace($stanza, '', $this->htmlMaster);
                         }
-                    } elseif ($value === true) {
-                        $this->htmlMaster = str_replace($stanza, '', $this->htmlMaster);
                     }
                     break;
                 case $this->NULLS:
-                    $this->htmlMaster = preg_replace('({!('.$key.')*?})', '', $this->htmlMaster);
+                    $this->htmlMaster = preg_replace('({!(' . $key . ')*?})', '', $this->htmlMaster);
                     break;
                 case $this->UNDEFINED:
-                    $this->htmlMaster = preg_replace('(<!--('.$key.')*?-->)', '', $this->htmlMaster);
+                    $this->htmlMaster = preg_replace('(<!--(' . $key . ')*?-->)', '', $this->htmlMaster);
                     break;
                 default:
                     break;
@@ -277,13 +277,13 @@ namespace pukoframework\pte {
 
         public function AssetsParser($key)
         {
-            $openTag = '{!'.$key.'}';
-            $closeTag = '{/'.$key.'}';
+            $openTag = '{!' . $key . '}';
+            $closeTag = '{/' . $key . '}';
             $ember = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
             $this->htmlMaster = str_replace($openTag, '', $this->htmlMaster);
             $this->htmlMaster = str_replace($closeTag, '', $this->htmlMaster);
             $this->htmlMaster = str_replace($ember, '', $this->htmlMaster);
-            $this->htmlMaster = str_replace('{'.$key.'}', $ember, $this->htmlMaster);
+            $this->htmlMaster = str_replace('{' . $key . '}', $ember, $this->htmlMaster);
         }
 
         public function PTEMaster($filePath)
@@ -337,7 +337,7 @@ namespace pukoframework\pte {
 
         public function GetStringBetween($string, $start, $end)
         {
-            $string = ' '.$string;
+            $string = ' ' . $string;
             $ini = strpos($string, $start);
             if ($ini === false) {
                 return '';
@@ -350,7 +350,7 @@ namespace pukoframework\pte {
 
         public function BlockedConditions($stanza, $key)
         {
-            return $this->GetStringBetween($stanza, '<!--{!!'.$key.'}-->', '<!--{/'.$key.'}-->');
+            return $this->GetStringBetween($stanza, '<!--{!!' . $key . '}-->', '<!--{/' . $key . '}-->');
         }
     }
 
@@ -367,7 +367,7 @@ namespace pukoframework\pte {
 
         public function RedirectTo($url, $permanent = false)
         {
-            header('Location: '.$url, true, $permanent ? 301 : 302);
+            header('Location: ' . $url, true, $permanent ? 301 : 302);
             exit();
         }
 
@@ -386,7 +386,7 @@ namespace pukoframework\pte {
 
         public function RedirectTo($url, $permanent = false)
         {
-            header('Location: '.$url, true, $permanent ? 301 : 302);
+            header('Location: ' . $url, true, $permanent ? 301 : 302);
             exit();
         }
 
