@@ -201,6 +201,16 @@ namespace pukoframework\pte {
             }
 
             if ($this->clearOutput) {
+                preg_match_all('(<!--{![\s\S]*?}-->)', $this->htmlMaster, $result);
+                foreach ($result[0] as $key => $value) {
+                    if (strpos($value, '<!--{!!') !== false) {
+                        $parsed = $this->GetStringBetween($this->htmlMaster, $value, str_replace('<!--{!!', '<!--{/', $value));
+                        $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                    } else {
+                        $parsed = $this->GetStringBetween($this->htmlMaster, $value, str_replace('<!--{!', '<!--{/', $value));
+                        $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                    }
+                }
                 $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
                 $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
             }
