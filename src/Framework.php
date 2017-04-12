@@ -18,7 +18,6 @@
 namespace pukoframework;
 
 use Exception;
-use pukoframework\peh\PukoException;
 use pukoframework\peh\ValueException;
 use pukoframework\pte\RenderEngine;
 use pukoframework\pte\Service;
@@ -79,7 +78,7 @@ class Framework extends Lifecycle
                             $classSegment .= $rows;
                         }
                         if (($pos > 0) && ($pos + 1) < count($segment)) {
-                            $classSegment .= '\\'.$rows;
+                            $classSegment .= '\\' . $rows;
                         } else {
                             $this->request->fnName = $rows;
                         }
@@ -106,7 +105,7 @@ class Framework extends Lifecycle
     public function Start()
     {
         $this->Request($this->request);
-        $controller = '\\controller\\'.$this->request->className;
+        $controller = '\\controller\\' . $this->request->className;
         $controller = strtolower($controller);
         if (!class_exists($controller)) {
             $this->Render('404');
@@ -129,15 +128,15 @@ class Framework extends Lifecycle
                 $this->render->PDCParser($this->fnPdc, $this->funcReturn);
                 if (is_callable(array($this->object, $this->request->fnName))) {
                     if (empty($this->request->variable)) {
-                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func(array($this->object, $this->request->fnName)));
+                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func(array($this->object, $this->request->fnName)));
                     } else {
-                        $this->funcReturn = array_merge($this->funcReturn, (array) call_user_func_array(array($this->object, $this->request->fnName), $this->request->variable));
+                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func_array(array($this->object, $this->request->fnName), $this->request->variable));
                     }
                 } else {
-                    die('Puko Error (FW001) Function '.$this->request->fnName." must set 'public'.");
+                    die('Puko Error (FW001) Function ' . $this->request->fnName . " must set 'public'.");
                 }
             } else {
-                die("Puko Error (FW002) Function '".$this->request->fnName."' not found in class: ".$this->request->className);
+                die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
             }
         } catch (ValueException $ve) {
             $this->funcReturn = array_merge($this->funcReturn, $ve->getValidations());
@@ -154,11 +153,11 @@ class Framework extends Lifecycle
 
     private function Render($renderCode = '200')
     {
-        $html = ROOT.'/assets/html/';
-        $sys_html = ROOT.'/assets/system/';
+        $html = ROOT . '/assets/html/';
+        $sys_html = ROOT . '/assets/system/';
         if ($renderCode === '404') {
-            $this->render->PTEMaster($sys_html.$this->request->lang.'/master.html');
-            $template = $this->render->PTEParser($sys_html.$this->request->lang.'/404.html', $this->funcReturn);
+            $this->render->PTEMaster($sys_html . $this->request->lang . '/master.html');
+            $template = $this->render->PTEParser($sys_html . $this->request->lang . '/404.html', $this->funcReturn);
 
             return $template;
         }
@@ -166,8 +165,8 @@ class Framework extends Lifecycle
         $service = new ReflectionClass(pte\Service::class);
         try {
             if ($this->pdc->isSubclassOf($view)) {
-                $this->render->PTEMaster($html.$this->request->lang.'/'.$this->request->className.'/master.html');
-                $template = $this->render->PTEParser($html.$this->request->lang.'/'.$this->request->className.'/'.$this->request->fnName.'.html', $this->funcReturn);
+                $this->render->PTEMaster($html . $this->request->lang . '/' . $this->request->className . '/master.html');
+                $template = $this->render->PTEParser($html . $this->request->lang . '/' . $this->request->className . '/' . $this->request->fnName . '.html', $this->funcReturn);
 
                 return $template;
             }

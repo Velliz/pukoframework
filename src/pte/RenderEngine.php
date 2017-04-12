@@ -33,7 +33,8 @@ namespace pukoframework\pte {
 
         public $sourceFile;
 
-        public $htmlMaster;
+        public $htmlMaster = false;
+
         public $useMasterLayout = true;
         public $useHtmlLayout = true;
         public $clearOutput = true;
@@ -55,7 +56,7 @@ namespace pukoframework\pte {
          */
         public function PDCParser($phpDocs, &$arrData)
         {
-            preg_match_all('(#[ a-zA-Z0-9-:./]+)', $phpDocs, $result, PREG_PATTERN_ORDER);
+            preg_match_all('(#[ a-zA-Z0-9-:./_]+)', $phpDocs, $result, PREG_PATTERN_ORDER);
             if (count($result[0]) > 0) {
                 foreach ($result[0] as $key => $value) {
                     $preg = explode(' ', $value);
@@ -110,6 +111,11 @@ namespace pukoframework\pte {
                     throw new \Exception('URL available after ' . $val);
                 }
             }
+        }
+
+        public function Master($val)
+        {
+            $this->htmlMaster = file_get_contents(ROOT . '/assets/master/' . $val);
         }
 
         /**
@@ -290,7 +296,9 @@ namespace pukoframework\pte {
 
         public function PTEMaster($filePath)
         {
-            $this->htmlMaster = file_get_contents($filePath);
+            if (!$this->htmlMaster) {
+                $this->htmlMaster = file_get_contents($filePath);
+            }
         }
 
         public function PTEJson($arrayData)
@@ -373,7 +381,9 @@ namespace pukoframework\pte {
             exit();
         }
 
-        public function OnInitialize(){}
+        public function OnInitialize()
+        {
+        }
     }
 
     class View
@@ -392,6 +402,8 @@ namespace pukoframework\pte {
             exit();
         }
 
-        public function OnInitialize(){}
+        public function OnInitialize()
+        {
+        }
     }
 }
