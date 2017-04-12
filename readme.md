@@ -1,3 +1,5 @@
+<img align="left" src="https://github.com/Velliz/pukodocs/blob/gh-pages/icon/material/puko-material-50.png">
+
 # Puko Framework [Core]
 
 [![StyleCI Status](https://styleci.io/repos/65143717/shield)](https://styleci.io/repos/65143717/shield)
