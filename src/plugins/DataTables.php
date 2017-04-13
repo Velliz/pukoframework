@@ -42,7 +42,7 @@ class DataTables extends DBI
 
     public function SetQuery($query)
     {
-        $this->sQuery = 'SELECT * FROM ('.$query.') DTable ';
+        $this->sQuery = 'SELECT * FROM (' . $query . ') DTable ';
     }
 
     public function GetDataTables(callable $callback = null)
@@ -64,9 +64,9 @@ class DataTables extends DBI
             if (!empty($_GET['search']['value'])) {
                 for ($i = 0; $i < count($_GET['columns']); $i++) {
                     $column = $this->dtColumns[$_GET['columns'][$i]['data']];
-                    $where[] = "$column like '%".$_GET['search']['value']."%'";
+                    $where[] = "$column like '%" . $_GET['search']['value'] . "%'";
                 }
-                $where = 'WHERE '.implode(' OR ', $where);
+                $where = 'WHERE ' . implode(' OR ', $where);
                 $sql = sprintf('%s %s', $this->sQuery, $where);
                 $recordsFiltered = count($this->Prepare($sql)->GetData());
                 $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
