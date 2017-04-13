@@ -215,9 +215,8 @@ namespace pukoframework\pte {
                     }
                 }
                 $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
-                $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
             }
-
+            $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
             return $this->htmlMaster;
         }
 
