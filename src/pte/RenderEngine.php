@@ -34,7 +34,7 @@ namespace pukoframework\pte {
 
         public $useMasterLayout = true;
         public $useHtmlLayout = true;
-        public $clearOutput = true;
+        public $clearOutput = false;
         public $displayException = true;
 
         /**
