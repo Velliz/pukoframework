@@ -82,3 +82,6 @@ class Example extends Service {
 * Error & Global Exception Handler
 
 ### 1.0.3 TODO
+* Adding Controller on initialize.
+* Bugfix in PTE.
+* Master feature for PDC.
