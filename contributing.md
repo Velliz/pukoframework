@@ -8,4 +8,10 @@ So, let's breakdown it by chapter.
 For code style and rules. I use standard from CtyleCI.
 
 #### Features
-todo
+When i write this file, puko is prepared for version 1.0.3.
+That means in version 1.0.3 it will be only bug fix.
+before the release, welcome to reporting problem like feature not working or something broken.
+I will help resolve it ASAP.
+
+Or, if you want to contribute to develop a function or feature.
+you can cek todo.md
