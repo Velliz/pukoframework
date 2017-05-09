@@ -41,8 +41,6 @@ class ThrowView extends Exception
 
     /**
      * @param Exception $error
-     *
-     * @return mixed
      */
     public function ExceptionHandler($error)
     {

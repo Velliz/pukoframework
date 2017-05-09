@@ -1,15 +1,24 @@
 {
     "name": "puko/framework",
-    "description": "PSR 4 modular based MVC Puko Framework",
-    "type": "library",
-    "license": "MIT",
+    "description": "MVC framework for quick and fast PHP application development",
+    "type": "framework",
+    "version": "1.0.3",
+    "license": "GPL-3.0+",
     "authors": [
         {
             "name": "velliz",
-            "email": "diditvelliz@outlook.com"
+            "email": "diditvelliz@outlook.com",
+            "homepage": "http://velliz.github.io",
+            "role": "Lead Developer"
         }
     ],
-    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/Velliz/pukoframework"
+        }
+    ],
+    "minimum-stability": "RC",
     "autoload": {
         "psr-4": {
             "pukoframework\\": "src/"
@@ -17,7 +26,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "tests\\": "tests/"
+            "tests\\": "tests/",
+            "runner\\": "runner/"
         }
     },
     "require-dev": {

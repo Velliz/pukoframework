@@ -99,10 +99,14 @@ class Framework extends Lifecycle
         $this->route = $mapping;
     }
 
-    public function Start()
+    public function Start($controllerPath = null)
     {
         $this->Request($this->request);
-        $controller = '\\controller\\' . $this->request->className;
+        if ($controllerPath != null) {
+            $controller = $controllerPath . '\\controller\\' . $this->request->className;
+        } else {
+            $controller = '\\controller\\' . $this->request->className;
+        }
         $controller = strtolower($controller);
         if (!class_exists($controller)) {
             $this->Render('404');
