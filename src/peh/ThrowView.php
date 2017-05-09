@@ -25,7 +25,7 @@ class ThrowView extends Exception
     private $render;
 
     public $IsFatalError;
-    public $systemHtml = ROOT.'/assets/system/';
+    public $systemHtml;
 
     /**
      * PukoException constructor.
@@ -35,6 +35,7 @@ class ThrowView extends Exception
     public function __construct($message = '')
     {
         parent::__construct($message, 10122, null);
+        $this->systemHtml = ROOT.'/assets/system/';
         $this->render = new RenderEngine();
         $this->render->useMasterLayout = false;
     }
