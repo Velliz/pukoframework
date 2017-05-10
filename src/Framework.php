@@ -166,7 +166,6 @@ class Framework extends Lifecycle
         try {
             if ($this->pdc->isSubclassOf($view)) {
                 $cn = str_replace('\\', '/', $this->request->className);
-                var_dump($html . $this->request->lang . '/' . $cn . '/' . $this->request->fnName . '.html', $this->funcReturn);
                 $this->render->PTEMaster($html . $this->request->lang . '/' . $cn . '/master.html');
                 return $this->render->PTEParser($html . $this->request->lang . '/' . $cn . '/' . $this->request->fnName . '.html', $this->funcReturn);
             }
