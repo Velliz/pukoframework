@@ -175,6 +175,9 @@ class Framework extends Lifecycle
                 return json_encode($this->render->PTEJson($this->funcReturn));
             }
         } catch (Exception $error) {
+            echo '<pre>';
+            var_dump($error);
+            echo '</pre>';
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
         }
 
