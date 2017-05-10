@@ -178,7 +178,8 @@ class Framework extends Lifecycle
             echo '<pre>';
             var_dump($error);
             echo '</pre>';
-            die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
+            die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data. ' .
+                $html . $this->request->lang . '/' . $this->request->className . '/' . $this->request->fnName . '.html');
         }
 
         return '';

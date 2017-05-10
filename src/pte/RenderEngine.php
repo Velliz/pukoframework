@@ -177,13 +177,8 @@ class RenderEngine
             return;
         }
         if ($this->sourceFile === $source) {
-            if (!file_exists($filePath)) {
-                throw new \Exception('html template file not found.');
-            }
-            if (!file_get_contents($filePath)) {
-                throw new \Exception('html template file is not readable.');
-            }
             $filePath = file_get_contents($filePath);
+            $filePath = (!$filePath) ? '' : $filePath;
         }
         if ($this->useMasterLayout) {
             $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
