@@ -159,27 +159,22 @@ class Framework extends Lifecycle
         if ($renderCode === '404') {
             $this->render->PTEMaster($sys_html . $this->request->lang . '/master.html');
             $template = $this->render->PTEParser($sys_html . $this->request->lang . '/404.html', $this->funcReturn);
-
             return $template;
         }
         $view = new ReflectionClass(pte\View::class);
         $service = new ReflectionClass(pte\Service::class);
         try {
             if ($this->pdc->isSubclassOf($view)) {
-                $this->render->PTEMaster($html . $this->request->lang . '/' . $this->request->className . '/master.html');
-                $template = $this->render->PTEParser($html . $this->request->lang . '/' . $this->request->className . '/' . $this->request->fnName . '.html', $this->funcReturn);
-
-                return $template;
+                $cn = str_replace('\\', '/', $this->request->className);
+                var_dump($html . $this->request->lang . '/' . $cn . '/' . $this->request->fnName . '.html', $this->funcReturn);
+                $this->render->PTEMaster($html . $this->request->lang . '/' . $cn . '/master.html');
+                return $this->render->PTEParser($html . $this->request->lang . '/' . $cn . '/' . $this->request->fnName . '.html', $this->funcReturn);
             }
             if ($this->pdc->isSubclassOf($service)) {
                 return json_encode($this->render->PTEJson($this->funcReturn));
             }
         } catch (Exception $error) {
-            echo '<pre>';
-            var_dump($error);
-            echo '</pre>';
-            die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data. ' .
-                $html . $this->request->lang . '/' . $this->request->className . '/' . $this->request->fnName . '.html');
+            die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
         }
 
         return '';
