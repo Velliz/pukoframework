@@ -1,181 +1,166 @@
 <?php
 /**
  * pukoframework.
- *
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @author    Didit Velliz
- *
- * @link    https://github.com/velliz/pukoframework
- * @since    Version 0.9.0
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 0.9.0
  */
 
 namespace pukoframework;
 
 use Exception;
+use pukoframework\auth\Session;
 use pukoframework\peh\ValueException;
 use pukoframework\pte\RenderEngine;
 use pukoframework\pte\Service;
 use pukoframework\pte\View;
 use ReflectionClass;
 
+/**
+ * Class Framework
+ * @package pukoframework
+ */
 class Framework extends Lifecycle
 {
     /**
      * @var Request
      */
     private $request;
-    private $route;
+
+    /**
+     * @var Response
+     */
+    private $response;
 
     /**
      * @var RenderEngine
      */
     private $render;
-    private $funcReturn = array();
 
     /**
      * @var \ReflectionClass
      */
     private $pdc;
-    private $fnPdc;
-    private $classPdc;
+
+    private $fn_pdc;
+
+    private $fn_return = array();
+
+    private $class_pdc;
 
     /**
      * @var View|Service
      */
     private $object = null;
 
-    public function OnInitialize()
+    /**
+     * @param Response $response
+     */
+    public function Response(Response $response)
     {
-        $this->request = new Request();
-        $this->render = new RenderEngine();
+
     }
 
+    /**
+     * @param Request $request
+     */
     public function Request(Request $request)
     {
-        if (!isset($request->requestUrl)) {
-            return;
-        }
-        if (count($this->route) === 0) {
-            return;
-        }
-        if (!isset($_GET['request'])) {
-            return;
-        }
-        foreach ($this->route as $key => $value) {
-            if (strpos($request->requestUrl, $key) !== false) {
-                if (substr_count($value, '/') > 1) {
-                    $segment = explode('/', $value);
-                    $classSegment = '';
-                    foreach ($segment as $pos => $rows) {
-                        array_push($this->request->variable, $rows);
-                        if ($pos === 0) {
-                            $classSegment .= $rows;
-                        }
-                        if (($pos > 0) && ($pos + 1) < count($segment)) {
-                            $classSegment .= '\\' . $rows;
-                        } else {
-                            $this->request->fnName = $rows;
-                        }
-                    }
-                    $this->request->className = $classSegment;
 
-                    return;
-                } else {
-                    $value = str_replace($key, $value, $request->requestUrl);
-                    $_GET['request'] = $value;
-                    $this->request = new Request();
-
-                    return;
-                }
-            }
-        }
     }
 
-    public function RouteMapping($mapping = array())
+    public function Start($app_location = null)
     {
-        $this->route = $mapping;
-    }
 
-    public function Start($controllerPath = null)
-    {
-        $this->Request($this->request);
-        if ($controllerPath != null) {
-            $controller = $controllerPath . '\\controller\\' . $this->request->className;
-        } else {
-            $controller = '\\controller\\' . $this->request->className;
-        }
-        $controller = strtolower($controller);
-        if (!class_exists($controller)) {
-            $this->Render('404');
+        if (PHP_VERSION_ID < 506000) {
+            include "Compability.php";
         }
 
-        if (!isset($this->request->constant)) {
-            $this->object = new $controller();
-        } else {
-            $this->object = new $controller($this->request->constant);
+        $token = Request::Cookies('token', null);
+        if ($token === null) {
+            Session::GenerateSecureToken();
         }
+
+        $this->request = new Request();
+        $this->response = new Response();
+
+        $this->render = new RenderEngine();
+
+        if ($app_location != null) {
+            $controller = $app_location . "\\controller\\" . $this->request->controller_name;
+        } else {
+            $controller = "\\controller\\" . $this->request->controller_name;
+        }
+
+        $this->object = new $controller();
         $this->pdc = new ReflectionClass($this->object);
-        $this->classPdc = $this->pdc->getDocComment();
-        $this->render->PDCParser($this->classPdc, $this->funcReturn);
-        $this->fnPdc = $this->classPdc;
+
+        $this->class_pdc = $this->pdc->getDocComment();
+        $this->render->PDCParser($this->class_pdc, $this->fn_pdc);
+
+        $this->fn_pdc = $this->class_pdc;
 
         try {
-            $this->funcReturn['Exception'] = true;
-            if (method_exists($this->object, $this->request->fnName)) {
-                $this->fnPdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
-                $this->render->PDCParser($this->fnPdc, $this->funcReturn);
-                if (is_callable(array($this->object, $this->request->fnName))) {
+            $this->fn_return['Exception'] = true;
+            if (method_exists($this->object, $this->request->fn_name)) {
+                $this->fn_pdc = $this->pdc->getMethod($this->request->fn_name)->getDocComment();
+                $this->render->PDCParser($this->fn_pdc, $this->fn_return);
+                if (is_callable(array($this->object, $this->request->fn_name))) {
                     if (empty($this->request->variable)) {
-                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func(array($this->object, $this->request->fnName)));
+                        $this->fn_return = array_merge($this->fn_return, (array)call_user_func(array($this->object, $this->request->fn_name)));
                     } else {
-                        $this->funcReturn = array_merge($this->funcReturn, (array)call_user_func_array(array($this->object, $this->request->fnName), $this->request->variable));
+                        $this->fn_return = array_merge($this->fn_return, (array)call_user_func_array(array($this->object, $this->request->fn_name), $this->request->variable));
                     }
                 } else {
-                    die('Puko Error (FW001) Function ' . $this->request->fnName . " must set 'public'.");
+                    die('Puko Error (FW001) Function ' . $this->request->fn_name . " must set 'public'.");
                 }
             } else {
-                die("Puko Error (FW002) Function '" . $this->request->fnName . "' not found in class: " . $this->request->className);
+                die("Puko Error (FW002) Function '" . $this->request->fn_name . "' not found in class: " . $this->request->controller_name);
             }
         } catch (ValueException $ve) {
-            $this->funcReturn = array_merge($this->funcReturn, $ve->getValidations());
+            $this->fn_return = array_merge($this->fn_return, $ve->getValidations());
         }
 
         $setup = $this->object->OnInitialize();
+
         if (is_array($setup)) {
-            $this->funcReturn = array_merge($this->funcReturn, $this->object->OnInitialize());
+            $this->fn_return = array_merge($this->fn_return, $this->object->OnInitialize());
         }
-        $this->funcReturn['token'] = $_COOKIE['token'];
+
+        $this->fn_return['token'] = $_COOKIE['token'];
 
         echo $this->Render();
     }
 
-    private function Render($renderCode = '200')
+    private function Render()
     {
+
         $html = ROOT . '/assets/html/';
-        $sys_html = ROOT . '/assets/system/';
-        if ($renderCode === '404') {
-            $this->render->PTEMaster($sys_html . $this->request->lang . '/master.html');
-            $template = $this->render->PTEParser($sys_html . $this->request->lang . '/404.html', $this->funcReturn);
-            return $template;
-        }
-        $view = new ReflectionClass(pte\View::class);
-        $service = new ReflectionClass(pte\Service::class);
+        $render = "";
+
+        $view = new ReflectionClass(View::class);
+        $service = new ReflectionClass(Service::class);
+
         try {
             if ($this->pdc->isSubclassOf($view)) {
-                $cn = str_replace('\\', '/', $this->request->className);
+
+                $cn = str_replace('\\', '/', $this->request->controller_name);
+
                 $this->render->PTEMaster($html . $this->request->lang . '/' . $cn . '/master.html');
-                return $this->render->PTEParser($html . $this->request->lang . '/' . $cn . '/' . $this->request->fnName . '.html', $this->funcReturn);
+                $render = $this->render->PTEParser($html . $this->request->lang . '/' . $cn . '/' . $this->request->fn_name . '.html', $this->fn_return);
+
             }
             if ($this->pdc->isSubclassOf($service)) {
-                return json_encode($this->render->PTEJson($this->funcReturn));
+                $render = json_encode($this->render->PTEJson($this->fn_return));
             }
         } catch (Exception $error) {
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
         }
 
-        return '';
+        return $render;
+
     }
 }

@@ -16,8 +16,9 @@ namespace pukoframework\pte;
 
 use pukoframework\auth\Session;
 use pukoframework\Lifecycle;
+use pukoframework\Response;
 
-class RenderEngine
+class RenderEngine extends Response
 {
     protected $ARRAYS = 0;
     protected $STRINGS = 1;
