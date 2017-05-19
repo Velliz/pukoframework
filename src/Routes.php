@@ -62,23 +62,23 @@ class Routes
 
     /**
      * @param $request_url
-     * @param $request_type
+     * @param $request_accept
      */
-    public function Translate($request_url, $request_type)
+    public function Translate($request_url, $request_accept)
     {
         $this->routes_file = ROOT . '/config/routes.php';
         if (!file_exists($this->routes_file)) {
             die('Puko Fatal Error. Routes configuration file not found or ROOT is not set.');
         }
-        $this->RouteSet(include $this->routes_file, $request_url, $request_type);
+        $this->RouteSet(include $this->routes_file, $request_url, $request_accept);
     }
 
     /**
      * @param $source
      * @param $request_url
-     * @param $request_type
+     * @param $request_accept
      */
-    private function RouteSet($source, $request_url, $request_type)
+    private function RouteSet($source, $request_url, $request_accept)
     {
         $this->page = $source['page'];
         $this->error = $source['error'];
@@ -103,7 +103,7 @@ class Routes
                     }
                 }
                 if (!in_array(false, $match)) {
-                    if (!in_array($request_type, $val['type'])) {
+                    if (!in_array($request_accept, $val['accept'])) {
                         $this->controller_name = $this->error['controller'];
                         $this->fn_name = $this->error['function'];
                         $this->variable = $parameter;

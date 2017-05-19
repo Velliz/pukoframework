@@ -22,7 +22,7 @@ class Request extends Routes
      * @var string
      * [GET, POST, PUT, UPDATE, PATCH, DELETE]
      */
-    var $request_type;
+    var $request_accept;
 
     /**
      * @var string
@@ -47,13 +47,13 @@ class Request extends Routes
      */
     public function __construct()
     {
-        $this->request_type = $_SERVER['REQUEST_METHOD'];
+        $this->request_accept = $_SERVER['REQUEST_METHOD'];
         $this->client = $_SERVER['HTTP_USER_AGENT'];
 
         $this->request_url = Request::Get('request', '');
         $this->lang = Request::Cookies('lang', 'id');
 
-        $this->Translate($this->request_url, $this->request_type);
+        $this->Translate($this->request_url, $this->request_accept);
     }
 
     /**
