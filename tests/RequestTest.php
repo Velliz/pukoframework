@@ -21,7 +21,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
     public function testRender()
     {
         $pte = new RenderEngine('string');
-        $this->assertTrue($pte->clearOutput);
+        $this->assertFalse($pte->clearOutput);
     }
 
     public function testRequest()

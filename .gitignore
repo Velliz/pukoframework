@@ -1,4 +1,5 @@
 .idea
 vendor/
+runner/
 composer.lock
 exceptions.log

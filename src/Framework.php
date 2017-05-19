@@ -99,10 +99,14 @@ class Framework extends Lifecycle
         $this->route = $mapping;
     }
 
-    public function Start()
+    public function Start($controllerPath = null)
     {
         $this->Request($this->request);
-        $controller = '\\controller\\' . $this->request->className;
+        if ($controllerPath != null) {
+            $controller = $controllerPath . '\\controller\\' . $this->request->className;
+        } else {
+            $controller = '\\controller\\' . $this->request->className;
+        }
         $controller = strtolower($controller);
         if (!class_exists($controller)) {
             $this->Render('404');
@@ -155,17 +159,15 @@ class Framework extends Lifecycle
         if ($renderCode === '404') {
             $this->render->PTEMaster($sys_html . $this->request->lang . '/master.html');
             $template = $this->render->PTEParser($sys_html . $this->request->lang . '/404.html', $this->funcReturn);
-
             return $template;
         }
         $view = new ReflectionClass(pte\View::class);
         $service = new ReflectionClass(pte\Service::class);
         try {
             if ($this->pdc->isSubclassOf($view)) {
-                $this->render->PTEMaster($html . $this->request->lang . '/' . $this->request->className . '/master.html');
-                $template = $this->render->PTEParser($html . $this->request->lang . '/' . $this->request->className . '/' . $this->request->fnName . '.html', $this->funcReturn);
-
-                return $template;
+                $cn = str_replace('\\', '/', $this->request->className);
+                $this->render->PTEMaster($html . $this->request->lang . '/' . $cn . '/master.html');
+                return $this->render->PTEParser($html . $this->request->lang . '/' . $cn . '/' . $this->request->fnName . '.html', $this->funcReturn);
             }
             if ($this->pdc->isSubclassOf($service)) {
                 return json_encode($this->render->PTEJson($this->funcReturn));

@@ -13,15 +13,13 @@ use pukoframework\pda\DBI;
 class DataTables extends DBI
 {
     /**
-     * @var string
-     *             base sql query string
+     * @var string ase sql query string
      */
     public $sQuery;
     public $totalColumn;
 
     /**
-     * @var array
-     *            total columns for selector, order and sorting.
+     * @var array total columns for selector, order and sorting.
      */
     public $dtColumns = array();
 

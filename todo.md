@@ -33,3 +33,9 @@
 ### Modules
 * Adding feature import export Excel, Word, PDF.
 * Adding Mail utility.
+
+### Command Line
+* CLI based database setup guide [puko setup db]
+* CLI based encryption setup guide [puko setup secure]
+* CLI based model setup [puko model modelname]
+* CLI based modules setup
