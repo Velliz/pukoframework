@@ -17,7 +17,7 @@ namespace pukoframework\peh;
 use Exception;
 use pukoframework\auth\Session;
 
-class ValueException extends Exception
+class ValueException extends Exception implements PukoException
 {
     private $validation = array();
 
@@ -51,5 +51,26 @@ class ValueException extends Exception
 
             throw new self($message, $this->validation);
         }
+    }
+
+    /**
+     * @param $error
+     * @return mixed
+     */
+    public function ExceptionHandler($error)
+    {
+        // TODO: Implement ExceptionHandler() method.
+    }
+
+    /**
+     * @param $error
+     * @param $message
+     * @param $file
+     * @param $line
+     * @return mixed
+     */
+    public function ErrorHandler($error, $message, $file, $line)
+    {
+        // TODO: Implement ErrorHandler() method.
     }
 }

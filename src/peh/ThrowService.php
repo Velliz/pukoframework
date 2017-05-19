@@ -16,9 +16,8 @@ namespace pukoframework\peh;
 
 use Exception;
 use pukoframework\Lifecycle;
-use pukoframework\pte\RenderEngine;
 
-class ThrowService extends Exception
+class ThrowService extends Exception implements PukoException
 {
 
     public $IsFatalError;

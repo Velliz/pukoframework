@@ -14,7 +14,7 @@ namespace pukoframework\peh;
 use Exception;
 use pukoframework\pte\RenderEngine;
 
-class ThrowView extends Exception
+class ThrowView extends Exception implements PukoException
 {
     /**
      * @var RenderEngine
