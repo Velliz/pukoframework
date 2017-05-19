@@ -1,3 +1,5 @@
+<img align="left" src="https://github.com/Velliz/pukodocs/blob/gh-pages/icon/material/puko-material-50.png">
+
 ### 0.1.0-beta (14 October 2015)
 * Creating Puko Template Engine (PTE).
 
@@ -86,6 +88,7 @@ class Example extends Service {
 * Adding Controller on initialize.
 * Separate Master feature for PDC.
 * Bugfix in Framework and PDC.
+* Add Framework official icon.
 
 ### 1.1.0 TODO
 * Introduce new Router system.
