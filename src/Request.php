@@ -42,12 +42,17 @@ class Request extends Routes
      */
     public $lang;
 
+    /**
+     * Request constructor.
+     */
     public function __construct()
     {
         $this->request_type = $_SERVER['REQUEST_METHOD'];
         $this->client = $_SERVER['HTTP_USER_AGENT'];
+
         $this->request_url = Request::Get('request', '');
         $this->lang = Request::Cookies('lang', 'id');
+
         $this->Translate($this->request_url, $this->request_type);
     }
 

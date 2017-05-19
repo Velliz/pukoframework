@@ -18,12 +18,28 @@ namespace pukoframework;
 class Routes
 {
 
+    /**
+     * @var array
+     * store page routing rules
+     */
     var $page;
 
+    /**
+     * @var array
+     * store error routing rules
+     */
     var $error;
 
+    /**
+     * @var array
+     * store not_found routing rules
+     */
     var $not_found;
 
+    /**
+     * @var array
+     * store routes file path
+     */
     var $routes_file;
 
     /**
@@ -44,6 +60,10 @@ class Routes
      */
     var $variable = array();
 
+    /**
+     * @param $request_url
+     * @param $request_type
+     */
     public function Translate($request_url, $request_type)
     {
         $this->routes_file = ROOT . '/config/routes.php';
@@ -53,6 +73,11 @@ class Routes
         $this->RouteSet(include $this->routes_file, $request_url, $request_type);
     }
 
+    /**
+     * @param $source
+     * @param $request_url
+     * @param $request_type
+     */
     private function RouteSet($source, $request_url, $request_type)
     {
         $this->page = $source['page'];
