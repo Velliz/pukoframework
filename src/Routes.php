@@ -89,7 +89,7 @@ class Routes
 
         foreach ($this->page as $key => $val) {
             $url = explode('/', $key);
-            if (count($url) == count($request_url)) {
+            if (count($url) === count($request_url)) {
                 $match = array();
                 foreach ($url as $pointer => $segment) {
                     if ($segment === '{!}') {
@@ -104,21 +104,32 @@ class Routes
                 }
                 if (!in_array(false, $match)) {
                     if (!in_array($request_accept, $val['accept'])) {
-                        $this->controller_name = $this->error['controller'];
-                        $this->fn_name = $this->error['function'];
-                        $this->variable = $parameter;
+                        //not accept http request codes
+                        $this->Mapping($this->error, $parameter);
                     } else {
-                        $this->controller_name = $val['controller'];
-                        $this->fn_name = $val['function'];
-                        $this->variable = $parameter;
+                        //matched
+                        $this->Mapping($val, $parameter);
                     }
                     break;
                 } else {
-                    $this->controller_name = $this->not_found['controller'];
-                    $this->fn_name = $this->not_found['function'];
-                    $this->variable = $parameter;
+                    //not find match
+                    $this->Mapping($this->not_found, $parameter);
                 }
+            } else {
+                //not find anything
+                $this->Mapping($this->not_found, $parameter);
             }
         }
+    }
+
+    /**
+     * @param array $data_specs
+     * @param array $parameter
+     */
+    private function Mapping($data_specs = array(), $parameter = array())
+    {
+        $this->controller_name = $data_specs['controller'];
+        $this->fn_name = $data_specs['function'];
+        $this->variable = $parameter;
     }
 }
