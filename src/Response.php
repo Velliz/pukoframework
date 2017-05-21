@@ -14,5 +14,12 @@ namespace pukoframework;
 
 class Response
 {
+    public $sourceFile;
 
+    public $htmlMaster = false;
+
+    public $useMasterLayout = true;
+    public $useHtmlLayout = true;
+    public $clearOutput = false;
+    public $displayException = true;
 }

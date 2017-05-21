@@ -32,7 +32,11 @@ class Service extends Controller implements Auth
     {
     }
 
+    /**
+     * @return array|string|bool|null
+     */
     public function OnInitialize()
     {
+        return null;
     }
 }

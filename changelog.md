@@ -12,7 +12,7 @@
 * Creating URL REST Routing style.
 * Host code on GitHub repository.
 
-### 0.4.0-beta (17 March 2015)
+### 0.4.0-beta (17 March 2016)
 * Creating Micro Model-View style code and Class Autoloader PSR-0.
 
 ### 0.5.0-beta (15 April 2016)

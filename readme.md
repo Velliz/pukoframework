@@ -10,8 +10,6 @@
 
 Puko Framework is MVC PHP Framework for quick and fast PHP Application Development.
 
-
-
 **this is [Core] module only for Puko Framework**
 
 ## Feature

@@ -13,6 +13,7 @@ namespace pukoframework;
 
 use Exception;
 use pukoframework\auth\Session;
+use pukoframework\pdc\DocsEngine;
 use pukoframework\peh\ValueException;
 use pukoframework\pte\RenderEngine;
 use pukoframework\pte\Service;
@@ -41,6 +42,11 @@ class Framework extends Lifecycle
     private $render;
 
     /**
+     * @var DocsEngine
+     */
+    private $docs_engine;
+
+    /**
      * @var \ReflectionClass
      */
     private $pdc;
@@ -61,7 +67,7 @@ class Framework extends Lifecycle
      */
     public function Response(Response $response)
     {
-
+        //TODO: implement custom response callbacks
     }
 
     /**
@@ -69,7 +75,7 @@ class Framework extends Lifecycle
      */
     public function Request(Request $request)
     {
-
+        //TODO: implement request response callbacks
     }
 
     public function Start($app_location = null)
@@ -88,6 +94,7 @@ class Framework extends Lifecycle
         $this->response = new Response();
 
         $this->render = new RenderEngine();
+        $this->docs_engine = new DocsEngine();
 
         if ($app_location != null) {
             $controller = $app_location . "\\controller\\" . $this->request->controller_name;
@@ -99,7 +106,7 @@ class Framework extends Lifecycle
         $this->pdc = new ReflectionClass($this->object);
 
         $this->class_pdc = $this->pdc->getDocComment();
-        $this->render->PDCParser($this->class_pdc, $this->fn_pdc);
+        $this->docs_engine->PDCParser($this->class_pdc, $this->fn_pdc);
 
         $this->fn_pdc = $this->class_pdc;
 
@@ -107,7 +114,7 @@ class Framework extends Lifecycle
             $this->fn_return['Exception'] = true;
             if (method_exists($this->object, $this->request->fn_name)) {
                 $this->fn_pdc = $this->pdc->getMethod($this->request->fn_name)->getDocComment();
-                $this->render->PDCParser($this->fn_pdc, $this->fn_return);
+                $this->docs_engine->PDCParser($this->fn_pdc, $this->fn_return);
                 if (is_callable(array($this->object, $this->request->fn_name))) {
                     if (empty($this->request->variable)) {
                         $this->fn_return = array_merge($this->fn_return, (array)call_user_func(array($this->object, $this->request->fn_name)));
