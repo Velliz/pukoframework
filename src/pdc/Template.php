@@ -39,5 +39,7 @@ class Template extends Response implements Pdc
                 }
                 break;
         }
+
+        return true;
     }
 }

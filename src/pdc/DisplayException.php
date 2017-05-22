@@ -2,7 +2,9 @@
 
 namespace pukoframework\pdc;
 
-class DisplayException implements Pdc
+use pukoframework\Response;
+
+class DisplayException extends Response implements Pdc
 {
     var $key;
     var $value;

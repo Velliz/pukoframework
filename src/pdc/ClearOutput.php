@@ -2,7 +2,9 @@
 
 namespace pukoframework\pdc;
 
-class ClearOutput implements Pdc
+use pukoframework\Response;
+
+class ClearOutput extends Response implements Pdc
 {
     var $key;
     var $value;
