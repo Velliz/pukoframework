@@ -14,6 +14,7 @@
 
 namespace pukoframework\pte;
 
+use pukoframework\Lifecycle;
 use pukoframework\Response;
 
 class RenderEngine
@@ -169,7 +170,7 @@ class RenderEngine
         }
     }
 
-    public function PTEJson($arrayData, $start)
+    public function PTEJson($arrayData)
     {
 
         header('Author: Puko Framework');
@@ -184,7 +185,7 @@ class RenderEngine
             $arrayData['Exception'] = true;
         }
         $data = array(
-            'time' => microtime(true) - $start,
+            'time' => microtime(true) - Lifecycle::$start,
             'status' => $success,
         );
         $data['data'] = $arrayData;

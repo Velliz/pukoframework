@@ -24,7 +24,7 @@ use ReflectionClass;
  * Class Framework
  * @package pukoframework
  */
-class Framework extends Lifecycle
+class Framework
 {
     /**
      * @var Request
@@ -61,22 +61,6 @@ class Framework extends Lifecycle
      * @var View|Service
      */
     private $object = null;
-
-    /**
-     * @param Response $response
-     */
-    public function Response(Response $response)
-    {
-        //TODO: implement custom response callbacks
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function Request(Request $request)
-    {
-        //TODO: implement request response callbacks
-    }
 
     public function Start($app_location = null)
     {
@@ -173,7 +157,7 @@ class Framework extends Lifecycle
 
             }
             if ($this->pdc->isSubclassOf($service)) {
-                $render = json_encode($this->render->PTEJson($this->fn_return, $this->start));
+                $render = json_encode($this->render->PTEJson($this->fn_return));
             }
         } catch (Exception $error) {
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');
