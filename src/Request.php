@@ -153,12 +153,12 @@ class Request extends Routes
      */
     public static function IsPost()
     {
-        $submit = Request::Vars('_submit', null);
+        $submit = Request::Post('_submit', null);
         if ($submit === null) {
             return false;
         }
 
-        $session_token = Request::Vars('token', null);
+        $session_token = Request::Post('token', null);
         $cookies_token = Request::Cookies('token', null);
         if (!hash_equals($session_token, $cookies_token)) {
             return false;

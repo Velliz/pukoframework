@@ -93,7 +93,7 @@ class Example extends Service {
 * Add Framework official icon.
 
 ### 1.1.0 TODO
-* Introduce new Router system.
-* Introduce new Exception Handler system.
-* Introduce new Puko Command Line Interface (PCLI).
-* Adding Scaffolding for models.
+* Introduce new Router system. [QA]
+* Introduce new Exception Handler system. [Update Error Page]
+* Introduce new Puko Command Line Interface (PCLI). [QA]
+* Adding Scaffolding for models. [QA]
