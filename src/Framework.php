@@ -146,7 +146,7 @@ class Framework extends Lifecycle
     {
 
         $html = ROOT . '/assets/html/';
-        $render = "";
+        $render = '';
 
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
