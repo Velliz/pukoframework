@@ -5,6 +5,7 @@ namespace tests;
 use PHPUnit_Framework_TestCase;
 use pukoframework\pte\RenderEngine;
 use pukoframework\Request;
+use pukoframework\Response;
 
 class RequestTest extends PHPUnit_Framework_TestCase
 {
@@ -20,8 +21,15 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testRender()
     {
-        $pte = new RenderEngine('string');
-        $this->assertFalse($pte->clearOutput);
+        $response = new Response();
+        $this->assertNull($response->sourceFile);
+        $this->assertFalse($response->htmlMaster);
+        $this->assertTrue($response->useMasterLayout);
+        $this->assertTrue($response->useHtmlLayout);
+        $this->assertFalse($response->clearOutput);
+        $this->assertTrue($response->displayException);
+
+        $pte = new RenderEngine($response, 'string');
     }
 
     public function testRequest()
