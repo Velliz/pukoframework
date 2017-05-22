@@ -164,10 +164,8 @@ class RenderEngine
             if (file_exists($filePath)) {
                 $this->response->htmlMaster = file_get_contents($filePath);
             } else {
-                $this->response->htmlMaster = "{CONTENT}";
+                $this->response->htmlMaster = ($this->response->htmlMaster == false) ? "{CONTENT}" : $this->response->htmlMaster;
             }
-        } else {
-            $this->response->htmlMaster = "{CONTENT}";
         }
     }
 
