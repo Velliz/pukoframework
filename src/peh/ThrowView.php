@@ -13,6 +13,7 @@ namespace pukoframework\peh;
 
 use Exception;
 use pukoframework\pte\RenderEngine;
+use pukoframework\Response;
 
 class ThrowView extends Exception implements PukoException
 {
@@ -30,18 +31,20 @@ class ThrowView extends Exception implements PukoException
      * PukoException constructor.
      *
      * @param string $message
+     * @param Response $response
      */
-    public function __construct($message = '')
+    public function __construct($message = '', Response $response)
     {
         parent::__construct($message, 10122, null);
         $this->message = $message;
         $this->systemHtml = ROOT . '/assets/system/';
-        $this->render = new RenderEngine();
-        $this->render->useMasterLayout = false;
+        $this->render = new RenderEngine($response);
+        $response->useMasterLayout = false;
     }
 
     /**
      * @param Exception $error
+     * @return mixed|void
      */
     public function ExceptionHandler($error)
     {
@@ -66,6 +69,7 @@ class ThrowView extends Exception implements PukoException
      * @param $message
      * @param $file
      * @param $line
+     * @return mixed|void
      */
     public function ErrorHandler($error, $message, $file, $line)
     {

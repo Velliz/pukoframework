@@ -93,7 +93,6 @@ class Framework extends Lifecycle
         $this->request = new Request();
         $this->response = new Response();
 
-        $this->render = new RenderEngine();
         $this->docs_engine = new DocsEngine();
 
         if ($app_location != null) {
@@ -139,6 +138,8 @@ class Framework extends Lifecycle
 
         $this->fn_return['token'] = $_COOKIE['token'];
 
+        $this->render = new RenderEngine($this->docs_engine->GetObjects());
+
         echo $this->Render();
     }
 
@@ -161,7 +162,7 @@ class Framework extends Lifecycle
 
             }
             if ($this->pdc->isSubclassOf($service)) {
-                $render = json_encode($this->render->PTEJson($this->fn_return));
+                $render = json_encode($this->render->PTEJson($this->fn_return, $this->start));
             }
         } catch (Exception $error) {
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');

@@ -4,6 +4,7 @@ namespace pukoframework\pdc;
 
 use Error;
 use Exception;
+use pukoframework\Response;
 
 class DocsEngine
 {
@@ -15,7 +16,14 @@ class DocsEngine
      */
     var $clause;
 
+    /**
+     * @var Pdc|Response
+     */
+    var $command_objects;
+
     var $command;
+
+    var $return_command;
 
     var $value = '';
 
@@ -53,22 +61,36 @@ class DocsEngine
                     }
                 }
                 try {
-                    $command = new $this->clause();
-                    $command->SetCommand($this->clause, $this->command, $this->value);
-                    $return_command = $command->SetStrategy();
+                    $class = '\\pukoframework\\pdc\\' . $this->clause;
+                    $this->command_objects = new $class();
+                    $this->command_objects->SetCommand($this->clause, $this->command, $this->value);
+                    $this->return_command = $this->command_objects->SetStrategy();
                 } catch (Error $error) {
                     $false = "Puko Error (PTE001) PTE Command <b>#%s %s %s</b> unregistered.";
                     $false = sprintf($false, $this->clause, $this->command, $this->value);
                     throw new Exception($false);
                 }
 
-                if (is_array($return_data) && is_array($return_command)) {
-                    foreach ($return_command as $k => $v) {
+                if (is_array($return_data) && is_array($this->return_command)) {
+                    foreach ($this->return_command as $k => $v) {
                         $return_data[$k] = $v;
                     }
                 }
             }
         }
+    }
+
+    /**
+     * @return Pdc|Response
+     */
+    public function GetObjects()
+    {
+        return $this->command_objects;
+    }
+
+    public function GetReturns()
+    {
+        return $this->return_command;
     }
 
 }

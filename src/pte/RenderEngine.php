@@ -14,11 +14,9 @@
 
 namespace pukoframework\pte;
 
-use pukoframework\auth\Session;
-use pukoframework\Lifecycle;
 use pukoframework\Response;
 
-class RenderEngine extends Response
+class RenderEngine
 {
     protected $ARRAYS = 0;
     protected $STRINGS = 1;
@@ -28,13 +26,20 @@ class RenderEngine extends Response
     protected $UNDEFINED = 6;
 
     /**
+     * @var Response
+     */
+    var $response;
+
+    /**
      * RenderEngine constructor.
      *
+     * @param Response $response
      * @param string $sourceFile
      */
-    public function __construct($sourceFile = 'file')
+    public function __construct(Response $response, $sourceFile = 'file')
     {
         $this->sourceFile = $sourceFile;
+        $this->response = $response;
     }
 
     public function PTEParser($filePath, $arrayData, $source = 'file')
@@ -43,44 +48,44 @@ class RenderEngine extends Response
         header('Author: Puko Framework');
         header('Content-Type: text/html');
 
-        if (!$this->useHtmlLayout) {
-            return;
+        if (!$this->response->useHtmlLayout) {
+            return "";
         }
         if ($this->sourceFile === $source) {
             $filePath = file_get_contents($filePath);
             $filePath = (!$filePath) ? '' : $filePath;
         }
-        if ($this->useMasterLayout) {
-            $this->htmlMaster = str_replace('{CONTENT}', $filePath, $this->htmlMaster);
+        if ($this->response->useMasterLayout) {
+            $this->response->htmlMaster = str_replace('{CONTENT}', $filePath, $this->response->htmlMaster);
         }
-        if (!$this->useMasterLayout) {
-            $this->htmlMaster = $filePath;
+        if (!$this->response->useMasterLayout) {
+            $this->response->htmlMaster = $filePath;
         }
         $this->AssetsParser('CSS');
         $this->AssetsParser('JS');
-        $this->htmlMaster = str_replace('{URL}', BASE_URL, $this->htmlMaster);
+        $this->response->htmlMaster = str_replace('{URL}', BASE_URL, $this->response->htmlMaster);
         if (count($arrayData) <= 0) {
-            return $this->htmlMaster;
+            return $this->response->htmlMaster;
         }
         foreach ($arrayData as $key => $value) {
             $this->TemplateParser($key, $value);
         }
 
-        if ($this->clearOutput) {
-            preg_match_all('(<!--{![\s\S]*?}-->)', $this->htmlMaster, $result);
+        if ($this->response->clearOutput) {
+            preg_match_all('(<!--{![\s\S]*?}-->)', $this->response->htmlMaster, $result);
             foreach ($result[0] as $key => $value) {
                 if (strpos($value, '<!--{!!') !== false) {
-                    $parsed = $this->GetStringBetween($this->htmlMaster, $value, str_replace('<!--{!!', '<!--{/', $value));
-                    $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                    $parsed = $this->GetStringBetween($this->response->htmlMaster, $value, str_replace('<!--{!!', '<!--{/', $value));
+                    $this->response->htmlMaster = str_replace($parsed, '', $this->response->htmlMaster);
                 } else {
-                    $parsed = $this->GetStringBetween($this->htmlMaster, $value, str_replace('<!--{!', '<!--{/', $value));
-                    $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                    $parsed = $this->GetStringBetween($this->response->htmlMaster, $value, str_replace('<!--{!', '<!--{/', $value));
+                    $this->response->htmlMaster = str_replace($parsed, '', $this->response->htmlMaster);
                 }
             }
-            $this->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->htmlMaster);
+            $this->response->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->response->htmlMaster);
         }
-        $this->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->htmlMaster);
-        return $this->htmlMaster;
+        $this->response->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->response->htmlMaster);
+        return $this->response->htmlMaster;
     }
 
     public function TemplateParser($key, $value)
@@ -98,9 +103,9 @@ class RenderEngine extends Response
                     }
                 }
                 $dynamicTags = '';
-                $ember = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
+                $ember = $this->GetStringBetween($this->response->htmlMaster, $openTag, $closeTag);
                 foreach ($value as $key2 => $value2) {
-                    $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
+                    $parsed = $this->GetStringBetween($this->response->htmlMaster, $openTag, $closeTag);
                     foreach ($value2 as $key3 => $value3) {
                         if (!is_array($value3) && !is_bool($value3)) {
                             $parsed = str_replace('{!' . $key3 . '}', $value3, $parsed);
@@ -108,59 +113,59 @@ class RenderEngine extends Response
                     }
                     $dynamicTags .= $parsed;
                 }
-                $this->htmlMaster = str_replace($ember, $dynamicTags, $this->htmlMaster);
+                $this->response->htmlMaster = str_replace($ember, $dynamicTags, $this->response->htmlMaster);
                 break;
             case $this->NUMERIC:
                 //todo: prevent also replacing tag in loop
-                $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
+                $this->response->htmlMaster = str_replace($tagReplace, $value, $this->response->htmlMaster);
                 break;
             case $this->STRINGS:
                 //todo: prevent also replacing tag in loop
-                $this->htmlMaster = str_replace($tagReplace, $value, $this->htmlMaster);
+                $this->response->htmlMaster = str_replace($tagReplace, $value, $this->response->htmlMaster);
                 break;
             case $this->BOOLEANS:
-                $stanza = $this->BlockedConditions($this->htmlMaster, $key);
+                $stanza = $this->BlockedConditions($this->response->htmlMaster, $key);
                 if ($stanza != null && $stanza != "") {
                     if (!$value) {
-                        $parsed = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
-                        $this->htmlMaster = str_replace($parsed, '', $this->htmlMaster);
+                        $parsed = $this->GetStringBetween($this->response->htmlMaster, $openTag, $closeTag);
+                        $this->response->htmlMaster = str_replace($parsed, '', $this->response->htmlMaster);
                     } elseif ($value) {
-                        $this->htmlMaster = str_replace($stanza, '', $this->htmlMaster);
+                        $this->response->htmlMaster = str_replace($stanza, '', $this->response->htmlMaster);
                     }
                 }
                 break;
             case $this->NULLS:
-                $this->htmlMaster = preg_replace('({!(' . $key . ')*?})', '', $this->htmlMaster);
+                $this->response->htmlMaster = preg_replace('({!(' . $key . ')*?})', '', $this->response->htmlMaster);
                 break;
             case $this->UNDEFINED:
-                $this->htmlMaster = preg_replace('(<!--(' . $key . ')*?-->)', '', $this->htmlMaster);
+                $this->response->htmlMaster = preg_replace('(<!--(' . $key . ')*?-->)', '', $this->response->htmlMaster);
                 break;
             default:
                 break;
         }
-        $this->htmlMaster = str_replace($openTag, '', $this->htmlMaster);
-        $this->htmlMaster = str_replace($closeTag, '', $this->htmlMaster);
+        $this->response->htmlMaster = str_replace($openTag, '', $this->response->htmlMaster);
+        $this->response->htmlMaster = str_replace($closeTag, '', $this->response->htmlMaster);
     }
 
     public function AssetsParser($key)
     {
         $openTag = '{!' . $key . '}';
         $closeTag = '{/' . $key . '}';
-        $ember = $this->GetStringBetween($this->htmlMaster, $openTag, $closeTag);
-        $this->htmlMaster = str_replace($openTag, '', $this->htmlMaster);
-        $this->htmlMaster = str_replace($closeTag, '', $this->htmlMaster);
-        $this->htmlMaster = str_replace($ember, '', $this->htmlMaster);
-        $this->htmlMaster = str_replace('{' . $key . '}', $ember, $this->htmlMaster);
+        $ember = $this->GetStringBetween($this->response->htmlMaster, $openTag, $closeTag);
+        $this->response->htmlMaster = str_replace($openTag, '', $this->response->htmlMaster);
+        $this->response->htmlMaster = str_replace($closeTag, '', $this->response->htmlMaster);
+        $this->response->htmlMaster = str_replace($ember, '', $this->response->htmlMaster);
+        $this->response->htmlMaster = str_replace('{' . $key . '}', $ember, $this->response->htmlMaster);
     }
 
     public function PTEMaster($filePath)
     {
-        if (!$this->htmlMaster) {
-            $this->htmlMaster = file_get_contents($filePath);
+        if (!$this->response->htmlMaster) {
+            $this->response->htmlMaster = file_get_contents($filePath);
         }
     }
 
-    public function PTEJson($arrayData)
+    public function PTEJson($arrayData, $start)
     {
 
         header('Author: Puko Framework');
@@ -175,7 +180,7 @@ class RenderEngine extends Response
             $arrayData['Exception'] = true;
         }
         $data = array(
-            'time' => microtime(true) - Lifecycle::$start,
+            'time' => microtime(true) - $start,
             'status' => $success,
         );
         $data['data'] = $arrayData;

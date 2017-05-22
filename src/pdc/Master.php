@@ -8,6 +8,7 @@ use pukoframework\Response;
 class Master extends Response
 {
     var $key;
+
     var $value;
 
     /**
@@ -27,6 +28,11 @@ class Master extends Response
      */
     public function SetStrategy()
     {
-        return file_get_contents(ROOT . '/assets/master/' . $this->value);
+        if (file_exists(ROOT . '/assets/master/' . $this->value)) {
+            $this->htmlMaster = file_get_contents(ROOT . '/assets/master/' . $this->value);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
