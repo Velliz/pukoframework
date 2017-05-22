@@ -45,6 +45,8 @@ class DocsEngine
                 $this->clause = str_replace('#', '', $preg[0]);
                 $this->command = $preg[1];
 
+                $this->value = '';
+
                 foreach ($preg as $k => $v) {
                     switch ($k) {
                         case 0:
@@ -52,7 +54,7 @@ class DocsEngine
                         case 1:
                             break;
                         default:
-                            if ($key !== count($preg) - 1) {
+                            if ($k !== sizeof($preg) - 1) {
                                 $this->value .= $v . ' ';
                             } else {
                                 $this->value .= $v;

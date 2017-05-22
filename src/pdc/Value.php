@@ -15,8 +15,8 @@ class Value implements Pdc
      */
     public function SetCommand($clause, $command, $value = null)
     {
-        $this->key = $clause;
-        $this->value = $command;
+        $this->key = $command;
+        $this->value = $value;
     }
 
     /**
