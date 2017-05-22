@@ -6,6 +6,7 @@ class Value implements Pdc
 {
 
     var $key;
+
     var $value;
 
     /**
