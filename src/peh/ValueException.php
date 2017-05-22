@@ -1,15 +1,12 @@
 <?php
 /**
  * pukoframework.
- *
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @author	Didit Velliz
- *
- * @link	https://github.com/velliz/pukoframework
- * @since	Version 1.0.2
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 1.0.2
  */
 
 namespace pukoframework\peh;
@@ -17,28 +14,52 @@ namespace pukoframework\peh;
 use Exception;
 use pukoframework\auth\Session;
 
-class ValueException extends Exception implements PukoException
+/**
+ * Class ValueException
+ * @package pukoframework\peh
+ */
+class ValueException extends Exception
 {
+
+    /**
+     * @var array
+     */
     private $validation = array();
 
+    /**
+     * ValueException constructor.
+     * @param string $message
+     * @param array $validate
+     */
     public function __construct($message = '', $validate = array())
     {
-        parent::__construct($message, 10701, null);
+        parent::__construct($message, PukoException::value);
         $this->validation = $validate;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function Prepare($key, $value)
     {
-        $this->validation['#'.$key] = $value;
+        $this->validation['#' . $key] = $value;
     }
 
+    /**
+     * @return array
+     */
     public function getValidations()
     {
-        $error = $this->validation;
-
-        return $error;
+        return $this->validation;
     }
 
+    /**
+     * @param $arrayData
+     * @param string $message
+     *
+     * @throws ValueException
+     */
     public function Throws($arrayData, $message = '')
     {
         Session::GenerateSecureToken();
@@ -51,26 +72,5 @@ class ValueException extends Exception implements PukoException
 
             throw new self($message, $this->validation);
         }
-    }
-
-    /**
-     * @param $error
-     * @return mixed
-     */
-    public function ExceptionHandler($error)
-    {
-        // TODO: Implement ExceptionHandler() method.
-    }
-
-    /**
-     * @param $error
-     * @param $message
-     * @param $file
-     * @param $line
-     * @return mixed
-     */
-    public function ErrorHandler($error, $message, $file, $line)
-    {
-        // TODO: Implement ErrorHandler() method.
     }
 }

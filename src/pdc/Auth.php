@@ -4,8 +4,10 @@ namespace pukoframework\pdc;
 
 use Exception;
 use pukoframework\auth\Session;
+use pukoframework\pte\RenderEngine;
+use pukoframework\Response;
 
-class Auth implements Pdc
+class Auth extends Response implements Pdc
 {
 
     var $key;
@@ -43,7 +45,14 @@ class Auth implements Pdc
     {
         if ($this->value === 'true') {
             if (!Session::IsSession()) {
-                throw new Exception('Authentication Required');
+
+                $this->useMasterLayout = false;
+                $render = new RenderEngine($this);
+                echo $render->PTEParser(ROOT . '/assets/system/auth.html', array(
+                    'exception' => 'Authentication Required'
+                ));
+
+                exit;
             }
         }
         return true;

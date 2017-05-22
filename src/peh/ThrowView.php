@@ -22,9 +22,14 @@ class ThrowView extends Exception implements PukoException
      */
     private $render;
 
-    public $IsFatalError;
-    public $systemHtml;
+    /**
+     * @var string
+     */
+    public $system_html;
 
+    /**
+     * @var string
+     */
     public $message;
 
     /**
@@ -33,13 +38,15 @@ class ThrowView extends Exception implements PukoException
      * @param string $message
      * @param Response $response
      */
-    public function __construct($message = '', Response $response)
+    public function __construct($message, Response $response)
     {
-        parent::__construct($message, 10122, null);
+        parent::__construct($message, PukoException::view);
+
+        $this->system_html = ROOT . '/assets/system/';
         $this->message = $message;
-        $this->systemHtml = ROOT . '/assets/system/';
-        $this->render = new RenderEngine($response);
+
         $response->useMasterLayout = false;
+        $this->render = new RenderEngine($response);
     }
 
     /**
@@ -60,8 +67,7 @@ class ThrowView extends Exception implements PukoException
             $emg['Stacktrace'][$key] = $val;
         }
 
-        echo $this->render->PTEParser($this->systemHtml . '/exception.html', $emg);
-        exit;
+        echo $this->render->PTEParser($this->system_html . '/exception.html', $emg);
     }
 
     /**
@@ -85,7 +91,6 @@ class ThrowView extends Exception implements PukoException
             $emg['Stacktrace'][$key] = $val;
         }
 
-        echo $this->render->PTEParser($this->systemHtml . '/error.html', $emg);
-        exit;
+        echo $this->render->PTEParser($this->system_html . '/error.html', $emg);
     }
 }

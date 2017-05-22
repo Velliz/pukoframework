@@ -32,7 +32,7 @@ class Controller
      * @param int $length
      * @return string
      */
-    public function RandomToken($length = 6)
+    public function GetRandomToken($length = 6)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -47,7 +47,7 @@ class Controller
      * @return string
      * get system date information
      */
-    public function Now()
+    public function GetServerDateTime()
     {
         return date('c');
     }

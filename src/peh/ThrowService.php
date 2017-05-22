@@ -1,41 +1,36 @@
 <?php
 /**
  * pukoframework.
- *
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @author    Didit Velliz
- *
- * @link    https://github.com/velliz/pukoframework
- * @since    Version 1.0.2
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 1.0.2
  */
 
 namespace pukoframework\peh;
 
 use Exception;
-use pukoframework\Lifecycle;
 
+/**
+ * Class ThrowService
+ * @package pukoframework\peh
+ */
 class ThrowService extends Exception implements PukoException
 {
 
-    public $IsFatalError;
-
     /**
      * PukoException constructor.
-     *
      * @param string $message
      */
-    public function __construct($message = '')
+    public function __construct($message)
     {
-        parent::__construct($message, 10222, null);
+        parent::__construct($message, PukoException::service);
     }
 
     /**
      * @param Exception $error
-     *
-     * @return mixed
      */
     public function ExceptionHandler($error)
     {
@@ -45,7 +40,7 @@ class ThrowService extends Exception implements PukoException
         header('Content-Type: application/json');
 
         $data = array(
-            'time' => microtime(true) - Lifecycle::$start,
+            'time' => microtime(true) - START,
             'status' => 'failed',
             'exception' => $emg
         );
@@ -58,8 +53,6 @@ class ThrowService extends Exception implements PukoException
      * @param $message
      * @param $file
      * @param $line
-     *
-     * @return array
      */
     public function ErrorHandler($error, $message, $file, $line)
     {
@@ -70,7 +63,7 @@ class ThrowService extends Exception implements PukoException
         header('Content-Type: application/json');
 
         $data = array(
-            'time' => microtime(true) - Lifecycle::$start,
+            'time' => microtime(true) - START,
             'status' => 'failed',
             'exception' => $emg
         );

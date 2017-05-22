@@ -1,24 +1,25 @@
 <?php
 /**
  * pukoframework.
- *
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @author    Didit Velliz
- *
- * @link    https://github.com/velliz/pukoframework
- * @since    Version 0.9.2
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 0.9.2
  */
 
 namespace pukoframework\pte;
 
-use pukoframework\Lifecycle;
 use pukoframework\Response;
 
+/**
+ * Class RenderEngine
+ * @package pukoframework\pte
+ */
 class RenderEngine
 {
+
     protected $ARRAYS = 0;
     protected $STRINGS = 1;
     protected $BOOLEANS = 2;
@@ -185,7 +186,7 @@ class RenderEngine
             $arrayData['Exception'] = true;
         }
         $data = array(
-            'time' => microtime(true) - Lifecycle::$start,
+            'time' => microtime(true) - START,
             'status' => $success,
         );
         $data['data'] = $arrayData;

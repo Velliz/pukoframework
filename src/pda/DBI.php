@@ -299,6 +299,7 @@ class DBI
 
     /**
      * @return bool|string
+     * @deprecated moved to controller in version 1.1.0
      */
     public static function NOW()
     {

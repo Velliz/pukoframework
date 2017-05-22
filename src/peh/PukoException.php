@@ -19,8 +19,22 @@ interface PukoException
 {
 
     /**
+     * error code for service
+     */
+    const service = 1011;
+
+    /**
+     * error code for view
+     */
+    const view = 1012;
+
+    /**
+     * error code for value
+     */
+    const value = 1013;
+
+    /**
      * @param $error
-     * @return mixed
      */
     public function ExceptionHandler($error);
 
@@ -29,7 +43,6 @@ interface PukoException
      * @param $message
      * @param $file
      * @param $line
-     * @return mixed
      */
     public function ErrorHandler($error, $message, $file, $line);
 }
