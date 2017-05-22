@@ -138,7 +138,11 @@ class Framework extends Lifecycle
 
         $this->fn_return['token'] = $_COOKIE['token'];
 
-        $this->render = new RenderEngine($this->docs_engine->GetObjects());
+        if (is_object($this->docs_engine->GetObjects())) {
+            $this->render = new RenderEngine($this->docs_engine->GetObjects());
+        } else {
+            $this->render = new RenderEngine(new Response());
+        }
 
         echo $this->Render();
     }

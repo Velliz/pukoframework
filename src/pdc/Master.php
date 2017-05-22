@@ -5,7 +5,7 @@ namespace pukoframework\pdc;
 use Exception;
 use pukoframework\Response;
 
-class Master extends Response
+class Master extends Response implements Pdc
 {
     var $key;
 

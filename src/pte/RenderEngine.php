@@ -160,8 +160,14 @@ class RenderEngine
 
     public function PTEMaster($filePath)
     {
-        if (!$this->response->htmlMaster) {
-            $this->response->htmlMaster = file_get_contents($filePath);
+        if ($this->response->useMasterLayout) {
+            if (file_exists($filePath)) {
+                $this->response->htmlMaster = file_get_contents($filePath);
+            } else {
+                $this->response->htmlMaster = "{CONTENT}";
+            }
+        } else {
+            $this->response->htmlMaster = "{CONTENT}";
         }
     }
 
