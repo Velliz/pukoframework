@@ -142,7 +142,7 @@ class Framework extends Lifecycle
             if ($this->docs_engine->GetObjects() instanceof Response) {
                 $this->render = new RenderEngine($this->docs_engine->GetObjects());
             } else {
-                if (is_array($this->fn_return)) {
+                if (is_array($this->fn_return && is_array($this->docs_engine->GetReturns()))) {
                     $this->fn_return = array_merge($this->fn_return, $this->docs_engine->GetReturns());
                 }
                 $this->render = new RenderEngine(new Response());
