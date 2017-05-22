@@ -8,6 +8,7 @@ class Template extends Response implements Pdc
 {
     var $key;
     var $value;
+    var $switch;
 
     /**
      * @param $clause
@@ -18,6 +19,7 @@ class Template extends Response implements Pdc
     {
         $this->key = $clause;
         $this->value = $command;
+        $this->switch = $value;
     }
 
     /**
@@ -27,12 +29,12 @@ class Template extends Response implements Pdc
     {
         switch ($this->value) {
             case 'master':
-                if (strcasecmp(str_replace(' ', '', $this->value), 'false') === 0) {
+                if (strcasecmp(str_replace(' ', '', $this->switch), 'false') === 0) {
                     $this->useMasterLayout = false;
                 }
                 break;
             case 'html':
-                if (strcasecmp(str_replace(' ', '', $this->value), 'false') === 0) {
+                if (strcasecmp(str_replace(' ', '', $this->switch), 'false') === 0) {
                     $this->useHtmlLayout = false;
                 }
                 break;

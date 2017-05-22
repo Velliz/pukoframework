@@ -11,7 +11,6 @@
 
 namespace pukoframework;
 
-
 class Response
 {
     public $sourceFile;
@@ -25,4 +24,5 @@ class Response
     public $clearOutput = false;
 
     public $displayException = true;
+
 }
