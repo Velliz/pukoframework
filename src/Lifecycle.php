@@ -18,11 +18,11 @@ abstract class Lifecycle
      * frameowrk time start
      * for performance log
      */
-    var $start;
+    static $start;
 
     public function __construct()
     {
-        $this->start = microtime(true);
+        self::$start = microtime(true);
     }
 
     abstract public function Request(Request $request);
