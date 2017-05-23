@@ -2,6 +2,8 @@
 
 ## Puko Framework Changelog
 
+**The 0.x.x version is not released because it's not production ready**
+
 ### 0.1.0-beta (14 October 2015)
 * Creating Puko Template Engine (PTE).
 
@@ -63,10 +65,14 @@ class Example extends Service {
 * Adding Value, Date, User Puko Doc Command (PDC).
 * Set minimum requirement to PHP 5.6 for security.
 
+**First release begin**
+
 ### 0.9.4-RC (7 July 2016)
 * Customize PHP error handler.
 * Optimize PDC loop tag.
 * Bugfix.
+
+**Stable release begin** 
 
 ### 1.0.0 (21 October 2016)
 * Initial Release, Add license and author information.
