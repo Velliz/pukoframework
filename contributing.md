@@ -30,11 +30,11 @@ You can check a compete development history from this [link](https://github.com/
 
 You can also check the on going feature from this [link](https://github.com/Velliz/pukoframework/blob/master/todo.md)
 
-#### Code standard
+### Code standard
 
 For coding style and rules i use standard from CtyleCI. so it can done automaticly.
 
-#### Contributing mechanism
+### Contributing mechanism
 
 **Contribute to code**
 
@@ -51,7 +51,7 @@ If you want to contribute to write docs or translating the docs you can get from
 
 If you want to contribute to provide sample app. Get the projects from this [link](https://github.com/Velliz/pukoexample)
 
-#### Framework logo
+### Framework logo
 
 <img src="https://github.com/Velliz/pukodocs/blob/gh-pages/icon/material/puko-material-200.png">
 
