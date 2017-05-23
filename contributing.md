@@ -36,9 +36,20 @@ For coding style and rules i use standard from CtyleCI. so it can done automatic
 
 #### Contributing mechanism
 
+**Contribute to code**
+
 Make a fork to project you want to contribute and make a pull request if you already done.
 you can proposed new feature or help me with on going feature from this [link](https://github.com/Velliz/pukoframework/blob/master/todo.md).
 I will review it and merge the changes as fast as posible.
+
+**Contribute to documentation**
+
+Documentation was built with jekyll and hosted in the github page. 
+If you want to contribute to write docs or translating the docs you can get from this [link](https://github.com/Velliz/pukodocs)
+
+**Contribute to example projects**
+
+If you want to contribute to provide sample app. Get the projects from this [link](https://github.com/Velliz/pukoexample)
 
 #### Framework logo
 
