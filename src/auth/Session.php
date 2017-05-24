@@ -1,16 +1,12 @@
 <?php
 /**
- * pukoframework
- *
+ * pukoframework.
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package    puko/framework
- * @author    Didit Velliz
- * @link    https://github.com/velliz/pukoframework
- * @since    Version 0.9.3
- *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 0.9.3
  */
 namespace pukoframework\auth;
 
@@ -50,6 +46,7 @@ class Session
 
     public static function GenerateSecureToken()
     {
+        //todo: change crypt lib because deprecated
         if (function_exists('mcrypt_create_iv')) $token = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
         else $token = bin2hex(openssl_random_pseudo_bytes(32));
         setcookie('token', $token, time() + (86400 * 30), '/', $_SERVER['SERVER_NAME']);

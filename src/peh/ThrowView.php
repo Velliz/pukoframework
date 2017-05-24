@@ -15,6 +15,10 @@ use Exception;
 use pukoframework\pte\RenderEngine;
 use pukoframework\Response;
 
+/**
+ * Class ThrowView
+ * @package pukoframework\peh
+ */
 class ThrowView extends Exception implements PukoException
 {
     /**

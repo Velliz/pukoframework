@@ -1,10 +1,23 @@
 <?php
+/**
+ * pukoframework.
+ * MVC PHP Framework for quick and fast PHP Application Development.
+ * Copyright (c) 2016, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 1.1.0
+ */
 
 namespace pukoframework\pdc;
 
 use Exception;
 use pukoframework\Response;
 
+/**
+ * Class Master
+ * @package pukoframework\pdc
+ */
 class Master extends Response implements Pdc
 {
     var $key;

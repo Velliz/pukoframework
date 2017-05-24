@@ -1,19 +1,20 @@
 <?php
 /**
  * pukoframework.
- *
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @author	Didit Velliz
- *
- * @link	https://github.com/velliz/pukoframework
- * @since	Version 0.9.3
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 0.9.3
  */
 
 namespace pukoframework\auth;
 
+/**
+ * Interface Auth
+ * @package pukoframework\auth
+ */
 interface Auth
 {
     const EXPIRED_ON_CLOSE = null;

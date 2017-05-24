@@ -1,16 +1,12 @@
 <?php
 /**
- * pukoframework
- *
+ * pukoframework.
  * MVC PHP Framework for quick and fast PHP Application Development.
- *
  * Copyright (c) 2016, Didit Velliz
  *
- * @package    puko/framework
- * @author    Didit Velliz
- * @link    https://github.com/velliz/pukoframework
- * @since    Version 0.9.1
- *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 0.9.1
  */
 namespace pukoframework\pda;
 
