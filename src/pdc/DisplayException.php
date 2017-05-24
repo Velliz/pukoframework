@@ -17,7 +17,7 @@ use pukoframework\Response;
  * Class DisplayException
  * @package pukoframework\pdc
  */
-class DisplayException extends Response implements Pdc
+class DisplayException implements Pdc
 {
     var $key;
     var $value;
@@ -36,12 +36,14 @@ class DisplayException extends Response implements Pdc
     /**
      * @return mixed
      */
-    public function SetStrategy()
+    public function SetStrategy(Response $response)
     {
         if ($this->value === 'true') {
-            $this->displayException = true;
+            $response->displayException = true;
         } elseif ($this->value === 'false') {
-            $this->displayException = false;
+            $response->displayException = false;
         }
+
+        return true;
     }
 }

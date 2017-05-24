@@ -11,6 +11,8 @@
 
 namespace pukoframework\pdc;
 
+use pukoframework\Response;
+
 /**
  * Class Value
  * @package pukoframework\pdc
@@ -34,9 +36,10 @@ class Value implements Pdc
     }
 
     /**
+     * @param Response $response
      * @return mixed
      */
-    public function SetStrategy()
+    public function SetStrategy(Response $response)
     {
         return array($this->key => $this->value);
     }

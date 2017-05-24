@@ -11,14 +11,13 @@
 
 namespace pukoframework\pdc;
 
-use Exception;
 use pukoframework\Response;
 
 /**
  * Class Master
  * @package pukoframework\pdc
  */
-class Master extends Response implements Pdc
+class Master implements Pdc
 {
     var $key;
 
@@ -36,13 +35,13 @@ class Master extends Response implements Pdc
     }
 
     /**
+     * @param Response $response
      * @return mixed
-     * @throws Exception
      */
-    public function SetStrategy()
+    public function SetStrategy(Response $response)
     {
         if (file_exists(ROOT . '/assets/master/' . $this->value)) {
-            $this->htmlMaster = file_get_contents(ROOT . '/assets/master/' . $this->value);
+            $response->htmlMaster = file_get_contents(ROOT . '/assets/master/' . $this->value);
             return true;
         } else {
             return false;

@@ -13,6 +13,7 @@ namespace pukoframework\pdc;
 
 use DateTime;
 use Exception;
+use pukoframework\Response;
 
 /**
  * Class Date
@@ -36,10 +37,11 @@ class Date implements Pdc
     }
 
     /**
+     * @param Response $response
      * @return mixed
      * @throws Exception
      */
-    public function SetStrategy()
+    public function SetStrategy(Response $response)
     {
         $now = date('d-m-Y H:i:s');
         $target = (new DateTime($this->value))->format('d-m-Y H:i:s');

@@ -11,7 +11,7 @@
 
 namespace pukoframework\pdc;
 
-use Exception;
+use pukoframework\Response;
 
 /**
  * Interface Pdc
@@ -28,9 +28,9 @@ interface Pdc
     public function SetCommand($clause, $command, $value = null);
 
     /**
+     * @param Response $response
      * @return mixed
-     * @throws Exception
      */
-    public function SetStrategy();
+    public function SetStrategy(Response $response);
 
 }

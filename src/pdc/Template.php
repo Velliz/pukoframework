@@ -17,7 +17,7 @@ use pukoframework\Response;
  * Class Template
  * @package pukoframework\pdc
  */
-class Template extends Response implements Pdc
+class Template implements Pdc
 {
     var $key;
     var $value;
@@ -38,17 +38,17 @@ class Template extends Response implements Pdc
     /**
      * @return mixed
      */
-    public function SetStrategy()
+    public function SetStrategy(Response $response)
     {
         switch ($this->value) {
             case 'master':
                 if (strcasecmp(str_replace(' ', '', $this->switch), 'false') === 0) {
-                    $this->useMasterLayout = false;
+                    $response->useMasterLayout = false;
                 }
                 break;
             case 'html':
                 if (strcasecmp(str_replace(' ', '', $this->switch), 'false') === 0) {
-                    $this->useHtmlLayout = false;
+                    $response->useHtmlLayout = false;
                 }
                 break;
         }

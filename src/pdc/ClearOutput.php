@@ -17,7 +17,7 @@ use pukoframework\Response;
  * Class ClearOutput
  * @package pukoframework\pdc
  */
-class ClearOutput extends Response implements Pdc
+class ClearOutput implements Pdc
 {
     var $key;
     var $value;
@@ -34,14 +34,15 @@ class ClearOutput extends Response implements Pdc
     }
 
     /**
+     * @param Response $response
      * @return mixed
      */
-    public function SetStrategy()
+    public function SetStrategy(Response $response)
     {
         if ($this->value === 'true') {
-            $this->clearOutput = true;
+            $response->clearOutput = true;
         } elseif ($this->value === 'false') {
-            $this->clearOutput = false;
+            $response->clearOutput = false;
         }
     }
 

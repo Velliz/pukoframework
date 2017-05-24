@@ -79,6 +79,8 @@ class Framework
 
         $this->docs_engine = new DocsEngine();
 
+        $this->docs_engine->SetResponseObjects($this->response);
+
         if ($app_location != null) {
             $controller = $app_location . "\\controller\\" . $this->request->controller_name;
         } else {
@@ -122,17 +124,10 @@ class Framework
 
         $this->fn_return['token'] = $_COOKIE['token'];
 
-        if (is_object($this->docs_engine->GetObjects())) {
-            if ($this->docs_engine->GetObjects() instanceof Response) {
-                $this->render = new RenderEngine($this->docs_engine->GetObjects());
-            } else {
-                if (is_array($this->fn_return && is_array($this->docs_engine->GetReturns()))) {
-                    $this->fn_return = array_merge($this->fn_return, $this->docs_engine->GetReturns());
-                }
-                $this->render = new RenderEngine(new Response());
-            }
-        } else {
-            $this->render = new RenderEngine(new Response());
+        $this->render = new RenderEngine($this->docs_engine->GetResponseObjects());
+
+        if (is_array($this->fn_return && is_array($this->docs_engine->GetReturns()))) {
+            $this->fn_return = array_merge($this->fn_return, $this->docs_engine->GetReturns());
         }
 
         echo $this->Render();
