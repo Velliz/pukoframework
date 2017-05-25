@@ -58,7 +58,7 @@ class Auth implements Pdc
         if ($this->value === 'true') {
             if (!Session::IsSession()) {
 
-                $this->useMasterLayout = false;
+                $response->useMasterLayout = false;
                 $render = new RenderEngine($response);
                 echo $render->PTEParser(ROOT . '/assets/system/auth.html', array(
                     'exception' => 'Authentication Required'

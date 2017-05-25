@@ -34,6 +34,7 @@ class DisplayException implements Pdc
     }
 
     /**
+     * @param Response $response
      * @return mixed
      */
     public function SetStrategy(Response $response)
