@@ -117,9 +117,8 @@ class Framework
         }
 
         $setup = $this->object->OnInitialize();
-
         if (is_array($setup)) {
-            $this->fn_return = array_merge($this->fn_return, $this->object->OnInitialize());
+            $this->fn_return = array_merge($this->fn_return, $setup);
         }
 
         $this->fn_return['token'] = $_COOKIE['token'];
