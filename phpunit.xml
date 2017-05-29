@@ -9,6 +9,7 @@
         <server name='SERVER_NAME' value='http://pukoframework.cf'/>
         <server name='SERVER_PORT' value='80'/>
         <server name='REMOTE_ADDR' value='127.0.0.1'/>
+        <server name='HTTP_USER_AGENT' value='testing'/>
         <includePath>.</includePath>
         <ini name="foo" value="bar"/>
         <const name="foo" value="bar"/>

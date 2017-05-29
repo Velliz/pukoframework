@@ -11,6 +11,8 @@
 
 namespace pukoframework;
 
+use Exception;
+
 /**
  * Class Routes
  * @package pukoframework
@@ -63,12 +65,13 @@ class Routes
     /**
      * @param $request_url
      * @param $request_accept
+     * @throws Exception
      */
     public function Translate($request_url, $request_accept)
     {
         $this->routes_file = ROOT . '/config/routes.php';
         if (!file_exists($this->routes_file)) {
-            die('Puko Fatal Error. Routes configuration file not found or ROOT is not set.');
+            throw new Exception('Puko Fatal Error. Routes configuration file not found or ROOT is not set.');
         }
         $this->RouteSet(include $this->routes_file, $request_url, $request_accept);
     }
