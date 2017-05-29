@@ -65,10 +65,10 @@ class Request extends Routes
     public static function Get($key, $default)
     {
         if (!isset($_GET[$key])) {
-            return $default;
+            return filter_var($default, FILTER_SANITIZE_STRING);
         }
 
-        return $_GET[$key];
+        return filter_var($_GET[$key], FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -79,10 +79,10 @@ class Request extends Routes
     public static function Post($key, $default)
     {
         if (!isset($_POST[$key])) {
-            return $default;
+            return filter_var($default, FILTER_SANITIZE_STRING);
         }
 
-        return $_POST[$key];
+        return filter_var($_POST[$key], FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -93,10 +93,10 @@ class Request extends Routes
     public static function Cookies($key, $default)
     {
         if (!isset($_COOKIE[$key])) {
-            return $default;
+            return filter_var($default, FILTER_SANITIZE_STRING);
         }
 
-        return $_COOKIE[$key];
+        return filter_var($_COOKIE[$key], FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -107,10 +107,10 @@ class Request extends Routes
     public static function Vars($key, $default)
     {
         if (!isset($key)) {
-            return $default;
+            return filter_var($default, FILTER_SANITIZE_STRING);
         }
 
-        return $key;
+        return filter_var($key, FILTER_SANITIZE_STRING);
     }
 
     /**

@@ -10,7 +10,6 @@ Some of draft and great idea to work, for a better puko framework.
 
 ### Puko Doc Command (PDC)
 * Adding #Throws Exception true.
-* Adding #Validation name required,number,min[30],max[40] ??
 * Adding #....
 
 ### Puko Exception Handler (PEH)
@@ -21,8 +20,11 @@ Some of draft and great idea to work, for a better puko framework.
 * Migrate engine to Abstract Syntax Three (AST) method.
 
 ### Puko Command Line Interface (PCLI)
-* CLI based model setup. [puko model modelname]
+* CLI based model setup. [QA]
 * CLI based modules setup.
+```
+php puko modules authentication
+```
 
 ### Security
 * Sanitize input and output and eliminates html character.
