@@ -41,7 +41,7 @@ class DocsEngine
 
     var $command;
 
-    var $return_command;
+    var $return_command = array();
 
     var $value = '';
 
@@ -84,7 +84,10 @@ class DocsEngine
                     $class = '\\pukoframework\\pdc\\' . $this->clause;
                     $this->class = new $class();
                     $this->class->SetCommand($this->clause, $this->command, $this->value);
-                    $this->return_command = $this->class->SetStrategy($this->response_objects);
+                    $returns = $this->class->SetStrategy($this->response_objects);
+                    if (is_array($returns)) {
+                        $this->return_command = array_merge($this->return_command, $returns);
+                    }
                 } catch (Error $error) {
                     $false = "Puko Error (PTE001) PTE Command <b>#%s %s %s</b> unregistered.";
                     $false = sprintf($false, $this->clause, $this->command, $this->value);
