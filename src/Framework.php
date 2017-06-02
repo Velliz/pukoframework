@@ -121,7 +121,7 @@ class Framework
             $this->fn_return = array_merge($this->fn_return, $setup);
         }
 
-        $this->fn_return['token'] = $_COOKIE['token'];
+        $this->fn_return['token'] = isset($_COOKIE['token']) ? $_COOKIE['token'] : Session::GenerateSecureToken();
 
         $this->render = new RenderEngine($this->docs_engine->GetResponseObjects());
 

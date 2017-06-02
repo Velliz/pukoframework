@@ -51,6 +51,7 @@ class Session
         else $token = bin2hex(openssl_random_pseudo_bytes(32));
         setcookie('token', $token, time() + (86400 * 30), '/', $_SERVER['SERVER_NAME']);
         $_COOKIE['token'] = $token;
+        return $token;
     }
 
     private function Encrypt($string)
