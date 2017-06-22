@@ -27,9 +27,13 @@ class Session
 
     private function __construct(Auth $authentication)
     {
-        if (is_object(self::$session)) return;
+        if (is_object(self::$session)) {
+            return;
+        }
         $secure = ROOT . "/config/encryption.php";
-        if (!file_exists($secure)) die("Puko Error (AUTH001) Authentication configuration file not found.");
+        if (!file_exists($secure)) {
+            die("Puko Error (AUTH001) Authentication configuration file not found.");
+        }
         $secure = include $secure;
         $this->key = $secure['key'];
         $this->method = $secure['method'];
@@ -40,15 +44,19 @@ class Session
 
     public static function Get(Auth $authentication)
     {
-        if (is_object(self::$session)) return self::$session;
+        if (is_object(self::$session)) {
+            return self::$session;
+        }
         return self::$session = new Session($authentication);
     }
 
     public static function GenerateSecureToken()
     {
-        //todo: change crypt lib because deprecated
-        if (function_exists('mcrypt_create_iv')) $token = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
-        else $token = bin2hex(openssl_random_pseudo_bytes(32));
+        if (function_exists('random_bytes')) {
+            $token = bin2hex(random_bytes(32));
+        } else {
+            $token = bin2hex(openssl_random_pseudo_bytes(32));
+        }
         setcookie('token', $token, time() + (86400 * 30), '/', $_SERVER['SERVER_NAME']);
         $_COOKIE['token'] = $token;
         return $token;
@@ -77,7 +85,9 @@ class Session
 
     public function GetSession($val)
     {
-        if (!isset($_COOKIE[$val])) return false;
+        if (!isset($_COOKIE[$val])) {
+            return false;
+        }
         return $this->Decrypt($_COOKIE[$val]);
     }
 
@@ -92,7 +102,9 @@ class Session
         $secure = ROOT . "/config/encryption.php";
         if (!file_exists($secure)) die("Puko Error (AUTH001) Authentication configuration file not found.");
         $secure = include $secure;
-        if (isset($_COOKIE[$secure['cookies']])) return true;
+        if (isset($_COOKIE[$secure['cookies']])) {
+            return true;
+        }
         return false;
     }
 
@@ -106,7 +118,9 @@ class Session
     public function Login($username, $password, $expired = Auth::EXPIRED_1_HOUR)
     {
         $secure = $this->authentication->Login($username, $password);
-        if ($secure == false || $secure == null) return false;
+        if ($secure == false || $secure == null) {
+            return false;
+        }
         $secure = $this->Encrypt($secure);
         setcookie(self::$cookies, $secure, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
         $_COOKIE[self::$cookies] = $secure;
@@ -117,13 +131,17 @@ class Session
     {
         $secure = $this->authentication->Logout();
         $this->ClearSession();
-        if ($secure == false || $secure == null) return false;
+        if ($secure == false || $secure == null) {
+            return false;
+        }
         return true;
     }
 
     public function GetLoginData()
     {
-        if (!isset($_COOKIE[self::$cookies])) return false;
+        if (!isset($_COOKIE[self::$cookies])) {
+            return false;
+        }
         return $this->authentication->GetLoginData($this->Decrypt($_COOKIE[self::$cookies]));
     }
     #end region authentication
