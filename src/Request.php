@@ -113,6 +113,15 @@ class Request extends Routes
         return filter_var($key, FILTER_SANITIZE_STRING);
     }
 
+    public static function Files($key, $default)
+    {
+        if (!isset($_FILES[$key])) {
+            return $default;
+        }
+
+        return $_FILES[$key];
+    }
+
     /**
      * @return bool
      * start the php output buffer
