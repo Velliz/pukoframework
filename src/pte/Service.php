@@ -14,5 +14,18 @@ abstract class Service extends Controller
         set_error_handler(array($exception_handler, 'ErrorHandler'));
     }
 
-    public abstract function OnInitialize();
+    /**
+     * @deprecated
+     */
+    public function OnInitialize()
+    {
+    }
+
+    public function BeforeInitialize()
+    {
+    }
+
+    public function AfterInitialize()
+    {
+    }
 }

@@ -95,6 +95,11 @@ class Framework
 
         $this->fn_pdc = $this->class_pdc;
 
+        $setup = $this->object->BeforeInitialize();
+        if (is_array($setup)) {
+            $this->fn_return = array_merge($this->fn_return, $setup);
+        }
+
         try {
             $this->fn_return['Exception'] = true;
             if (method_exists($this->object, $this->request->fn_name)) {
@@ -117,6 +122,11 @@ class Framework
         }
 
         $setup = $this->object->OnInitialize();
+        if (is_array($setup)) {
+            $this->fn_return = array_merge($this->fn_return, $setup);
+        }
+
+        $setup = $this->object->AfterInitialize();
         if (is_array($setup)) {
             $this->fn_return = array_merge($this->fn_return, $setup);
         }
