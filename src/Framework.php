@@ -50,12 +50,10 @@ class Framework
      * @var \ReflectionClass
      */
     private $pdc;
-
     private $fn_pdc;
+    private $class_pdc;
 
     private $fn_return = array();
-
-    private $class_pdc;
 
     /**
      * @var View|Service
@@ -91,9 +89,7 @@ class Framework
         $this->pdc = new ReflectionClass($this->object);
 
         $this->class_pdc = $this->pdc->getDocComment();
-        $this->docs_engine->PDCParser($this->class_pdc, $this->fn_pdc);
-
-        $this->fn_pdc = $this->class_pdc;
+        $this->docs_engine->PDCParser($this->class_pdc, $this->fn_return);
 
         $setup = $this->object->BeforeInitialize();
         if (is_array($setup)) {
