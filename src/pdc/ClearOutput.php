@@ -44,6 +44,7 @@ class ClearOutput implements Pdc
         } elseif ($this->value === 'false') {
             $response->clearOutput = false;
         }
+        return false;
     }
 
 }

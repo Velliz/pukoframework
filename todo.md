@@ -22,7 +22,6 @@ Some of draft and great idea to work, for a better puko framework.
 * Migrate engine to Abstract Syntax Three (AST) method.
 
 ### Puko Command Line Interface (PCLI)
-* CLI based model setup. [QA]
 * CLI based modules setup.
 ```
 php puko modules authentication
@@ -30,10 +29,8 @@ php puko modules authentication
 
 ### Security
 * Sanitize input and output and eliminates html character.
-* Sanitize URL routing params.
 
 ### Modules
 * Adding feature import export Excel, Word, PDF.
 * Adding Mail utility.
 * Adding authentication modules.
-* Adding model modules via Scaffolding.

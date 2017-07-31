@@ -249,57 +249,11 @@ class DBI
     }
 
     /**
-     * @param $key
-     * @return string
-     *
-     * @deprecated SQL Injections vulnerability
-     */
-    private function queryParseReplace($key)
-    {
-        $aKey = ((int)$key[1] - 1);
-        if (isset($this->queryParams[$aKey])) {
-            $var = $this->queryParams[$aKey];
-            if (is_string($var)) {
-                return ("'" . $var . "'");
-            } else {
-                if (is_bool($var)) {
-                    return ($var ? '1' : '0');
-                } else {
-                    if (is_array($var)) {
-                        $s = '';
-                        foreach ($var as $item) {
-                            if (is_string($item)) {
-                                $s .= (",'" . $item . "'");
-                            } else {
-                                $s .= (',' . $item);
-                            }
-                        }
-                        $s[0] = '(';
-                        return ($s . ')');
-                    } else {
-                        return $var;
-                    }
-                }
-            }
-        }
-        return '';
-    }
-
-    /**
      * @return string
      */
     private function queryPrepareSelect()
     {
         return '?';
-    }
-
-    /**
-     * @return bool|string
-     * @deprecated moved to controller in version 1.1.0
-     */
-    public static function NOW()
-    {
-        return date('c');
     }
 
 }
