@@ -54,7 +54,7 @@ class DocsEngine
      */
     public function PDCParser($raw_docs, &$return_data)
     {
-        preg_match_all('(#[ a-zA-Z0-9-:./_]+)', $raw_docs, $result, PREG_PATTERN_ORDER);
+        preg_match_all('(#[ a-zA-Z0-9-:.+/_]+)', $raw_docs, $result, PREG_PATTERN_ORDER);
         if (count($result[0]) > 0) {
             foreach ($result[0] as $key => $value) {
 

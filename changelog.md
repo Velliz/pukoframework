@@ -103,3 +103,7 @@ class Example extends Service {
 * Introduce new Exception Handler system.
 * Introduce new Puko Command Line Interface (PCLI).
 * Adding Scaffolding for models.
+
+### 1.1.1 (TBA)
+* Introduce Permissions.
+* Introduce Router Generator.

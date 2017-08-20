@@ -23,7 +23,8 @@ class Auth implements Pdc
 {
 
     var $key;
-    var $value;
+    var $switch;
+    var $permission;
 
     /**
      * DocsAuth constructor.
@@ -43,10 +44,11 @@ class Auth implements Pdc
      * @param $command
      * @param $value
      */
-    public function SetCommand($clause, $command, $value = null)
+    public function SetCommand($clause, $command, $value)
     {
         $this->key = $clause;
-        $this->value = $command;
+        $this->switch = $command;
+        $this->permission = $value;
     }
 
     /**
@@ -55,17 +57,28 @@ class Auth implements Pdc
      */
     public function SetStrategy(Response $response)
     {
-        if ($this->value === 'true') {
+        if ($this->switch === 'true') {
             if (!Session::IsSession()) {
-
                 $response->useMasterLayout = false;
                 $render = new RenderEngine($response);
                 echo $render->PTEParser(ROOT . '/assets/system/auth.html', array(
                     'exception' => 'Authentication Required'
                 ));
-
                 exit;
             }
+            if ($this->permission === '+') {
+                return true;
+            }
+            if (Session::IsHasPermission($this->permission)) {
+                return true;
+            }
+
+            $response->useMasterLayout = false;
+            $render = new RenderEngine($response);
+            echo $render->PTEParser(ROOT . '/assets/system/permission.html', array(
+                'exception' => 'Permission Required'
+            ));
+            exit;
         }
         return true;
     }

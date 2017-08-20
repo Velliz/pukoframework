@@ -25,7 +25,7 @@ interface Pdc
      * @param $command
      * @param $value
      */
-    public function SetCommand($clause, $command, $value = null);
+    public function SetCommand($clause, $command, $value);
 
     /**
      * @param Response $response

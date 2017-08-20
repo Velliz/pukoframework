@@ -8,6 +8,7 @@
  * @link https://github.com/velliz/pukoframework
  * @since Version 0.9.3
  */
+
 namespace pukoframework\auth;
 
 /**
@@ -108,10 +109,36 @@ class Session
         return false;
     }
 
+    public static function IsHasPermission($code)
+    {
+        $secure = ROOT . "/config/encryption.php";
+        if (!file_exists($secure)) {
+            die("Puko Error (AUTH001) Authentication configuration file not found.");
+        }
+
+        $secure = include $secure;
+        $key = $secure['key'];
+        $method = $secure['method'];
+        $identifier = $secure['identifier'];
+
+        $string = $_COOKIE['x_' . $secure['cookies']];
+
+        $key = hash('sha256', $key);
+        $iv = substr(hash('sha256', $identifier), 0, 16);
+        $permission_array = json_decode(openssl_decrypt(base64_decode($string), $method, $key, 0, $iv), true);
+
+        if (!array_diff($permission_array, explode(' ', $code))) {
+            return true;
+        }
+        return false;
+    }
+
     public static function ClearSession()
     {
         setcookie(self::$cookies, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
         $_COOKIE[self::$cookies] = null;
+        setcookie('x_' . self::$cookies, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
+        $_COOKIE['x_' . self::$cookies] = null;
     }
 
     #region authentication
@@ -124,6 +151,14 @@ class Session
         $secure = $this->Encrypt($secure);
         setcookie(self::$cookies, $secure, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
         $_COOKIE[self::$cookies] = $secure;
+        return true;
+    }
+
+    public function SetPermission($data = array(), $expired = Auth::EXPIRED_1_HOUR)
+    {
+        $permission = $this->Encrypt(json_encode($data));
+        setcookie('x_' . self::$cookies, $permission, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
+        $_COOKIE['x_' . self::$cookies] = $permission;
         return true;
     }
 
