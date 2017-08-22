@@ -95,7 +95,7 @@ class Routes
             if (count($url) === count($request_url)) {
                 $match = array();
                 foreach ($url as $pointer => $segment) {
-                    if ($segment === '{!}') {
+                    if ($segment === '{!}' || $segment === '{?}') {
                         array_push($parameter, $request_url[$pointer]);
                         $segment = $request_url[$pointer];
                     }
