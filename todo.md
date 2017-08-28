@@ -15,7 +15,7 @@ Some of draft and great idea to work, for a better puko framework.
 * Value validation exception handler.
 
 ### Puko Template Engine (PTE)
-* Migrate engine to Abstract Syntax Three (AST) method.
+* Migrate engine to Abstract Syntax Three (AST) method. [todo version 2.0.0]
 
 ### Puko Command Line Interface (PCLI)
 * CLI based modules setup.
