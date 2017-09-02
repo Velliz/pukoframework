@@ -5,23 +5,9 @@
         stopOnFailure="false"
         bootstrap="vendor/autoload.php">
     <php>
-        <server name='HTTP_HOST' value='http://localhost'/>
-        <server name='SERVER_NAME' value='http://pukoframework.cf'/>
-        <server name='SERVER_PORT' value='80'/>
-        <server name='REMOTE_ADDR' value='127.0.0.1'/>
-        <server name='HTTP_USER_AGENT' value='testing'/>
-        <includePath>.</includePath>
-        <ini name="foo" value="bar"/>
-        <const name="foo" value="bar"/>
-        <var name="foo" value="bar"/>
-        <env name="foo" value="bar"/>
-        <post name="foo" value="bar"/>
-        <get name="foo" value="bar"/>
-        <cookie name="foo" value="bar"/>
-        <server name="REQUEST_SCHEME" value="localhost"/>
-        <server name="SERVER_NAME" value="pukoframework"/>
-        <files name="foo" value="bar"/>
-        <request name="foo" value="bar"/>
+        <server name="HTTP_USER_AGENT" value="phpunit"/>
+        <server name="REQUEST_SCHEME" value="http"/>
+        <server name="SERVER_NAME" value="localhost"/>
     </php>
     <testsuites>
         <testsuite name="Puko Framework Start Test">
