@@ -58,7 +58,7 @@ class Session
         } else {
             $token = bin2hex(openssl_random_pseudo_bytes(32));
         }
-        setcookie('token', $token, time() + (86400 * 30), '/', $_SERVER['SERVER_NAME']);
+        setcookie('token', $token, time() + (86400 * 30), '/');
         $_COOKIE['token'] = $token;
         return $token;
     }
@@ -80,7 +80,7 @@ class Session
 
     public function PutSession($key, $val, $expired = 0)
     {
-        setcookie($key, $this->Encrypt($val), (time() + $expired), "/", $_SERVER['SERVER_NAME']);
+        setcookie($key, $this->Encrypt($val), (time() + $expired), "/");
         $_COOKIE[$key] = $this->Encrypt($val);
     }
 
@@ -94,7 +94,7 @@ class Session
 
     public static function RemoveSession($key)
     {
-        setcookie($key, '', (time() - Auth::EXPIRED_1_MONTH), '/', $_SERVER['SERVER_NAME']);
+        setcookie($key, '', (time() - Auth::EXPIRED_1_MONTH), '/');
         $_COOKIE[$key] = '';
     }
 
@@ -135,9 +135,9 @@ class Session
 
     public static function ClearSession()
     {
-        setcookie(self::$cookies, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
+        setcookie(self::$cookies, '', (time() - 18144000), '/');
         $_COOKIE[self::$cookies] = null;
-        setcookie('x_' . self::$cookies, '', (time() - 18144000), '/', $_SERVER['SERVER_NAME']);
+        setcookie('x_' . self::$cookies, '', (time() - 18144000), '/');
         $_COOKIE['x_' . self::$cookies] = null;
     }
 
@@ -149,7 +149,7 @@ class Session
             return false;
         }
         $secure = $this->Encrypt($secure);
-        setcookie(self::$cookies, $secure, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
+        setcookie(self::$cookies, $secure, (time() + $expired), "/");
         $_COOKIE[self::$cookies] = $secure;
         return true;
     }
@@ -157,7 +157,7 @@ class Session
     public function SetPermission($data = array(), $expired = Auth::EXPIRED_1_HOUR)
     {
         $permission = $this->Encrypt(json_encode($data));
-        setcookie('x_' . self::$cookies, $permission, (time() + $expired), "/", $_SERVER['SERVER_NAME']);
+        setcookie('x_' . self::$cookies, $permission, (time() + $expired), "/");
         $_COOKIE['x_' . self::$cookies] = $permission;
         return true;
     }
