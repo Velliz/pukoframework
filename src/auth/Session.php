@@ -127,6 +127,10 @@ class Session
         $iv = substr(hash('sha256', $identifier), 0, 16);
         $permission_array = json_decode(openssl_decrypt(base64_decode($string), $method, $key, 0, $iv), true);
 
+        if (count($permission_array) === 0) {
+            return false;
+        }
+
         if (!array_diff($permission_array, explode(' ', $code))) {
             return true;
         }
