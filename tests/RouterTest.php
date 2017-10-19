@@ -1,16 +1,20 @@
 <?php
+
 namespace tests;
 
 use PHPUnit_Framework_TestCase;
+use pukoframework\auth\Auth;
+use pukoframework\auth\Session;
 use pukoframework\Request;
 use pukoframework\Response;
 
-class RouterTest extends PHPUnit_Framework_TestCase
+class RouterTest extends PHPUnit_Framework_TestCase implements Auth
 {
 
     public function setUp()
     {
         $_COOKIE['token'] = 'pukoframework';
+        $_COOKIE['x_default'] = 'pukoframework';
     }
 
     public function tearDown()
@@ -54,6 +58,16 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($isPost);
     }
 
+    public function testAuth()
+    {
+        define('ROOT', __DIR__);
+
+        $this->assertFalse(Session::IsSession());
+        $this->assertFalse(Request::IsPost());
+        $this->assertFalse(Session::IsHasPermission('ADMIN'));
+        //$this->assertTrue(Session::Get($this)->Logout());
+    }
+
     public function testOutputBuffers()
     {
         Request::OutputBufferStart();
@@ -62,5 +76,20 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $save = Request::OutputBufferFlush();
         imagedestroy($thumb);
         $this->assertNotNull($save);
+    }
+
+    public function Login($username, $password)
+    {
+        // TODO: Implement Login() method.
+    }
+
+    public function Logout()
+    {
+        // TODO: Implement Logout() method.
+    }
+
+    public function GetLoginData($id)
+    {
+        // TODO: Implement GetLoginData() method.
     }
 }

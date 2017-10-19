@@ -64,7 +64,7 @@ class Framework
     {
 
         if (PHP_VERSION_ID < 506000) {
-            include "Compability.php";
+            include "Compatibility.php";
         }
 
         $token = Request::Cookies('token', null);
@@ -115,11 +115,6 @@ class Framework
             }
         } catch (ValueException $ve) {
             $this->fn_return = array_merge($this->fn_return, $ve->getValidations());
-        }
-
-        $setup = $this->object->OnInitialize();
-        if (is_array($setup)) {
-            $this->fn_return = array_merge($this->fn_return, $setup);
         }
 
         $setup = $this->object->AfterInitialize();

@@ -40,10 +40,12 @@ class ValueException extends Exception
     /**
      * @param $key
      * @param $value
+     * @return $this
      */
     public function Prepare($key, $value)
     {
         $this->validation['#' . $key] = $value;
+        return $this;
     }
 
     /**
