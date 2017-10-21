@@ -16,9 +16,11 @@ abstract class Service extends Controller
 
     public function BeforeInitialize()
     {
+        return array();
     }
 
     public function AfterInitialize()
     {
+        return array();
     }
 }

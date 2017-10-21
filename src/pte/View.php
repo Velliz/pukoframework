@@ -17,9 +17,11 @@ abstract class View extends Controller
 
     public function BeforeInitialize()
     {
+        return array();
     }
 
     public function AfterInitialize()
     {
+        return array();
     }
 }

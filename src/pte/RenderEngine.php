@@ -46,13 +46,13 @@ class RenderEngine
 
     public function PTEParser($filePath, $arrayData, $source = 'file')
     {
+        if (!$this->response->useHtmlLayout) {
+            return null;
+        }
 
         header('Author: Puko Framework');
         header('Content-Type: text/html');
 
-        if (!$this->response->useHtmlLayout) {
-            return "";
-        }
         if ($this->sourceFile === $source) {
             $filePath = file_get_contents($filePath);
             $filePath = (!$filePath) ? '' : $filePath;
