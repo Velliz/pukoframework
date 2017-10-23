@@ -85,8 +85,8 @@ class RenderEngine
                 }
             }
             $this->response->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->response->htmlMaster);
+            $this->response->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->response->htmlMaster);
         }
-        $this->response->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->response->htmlMaster);
         return $this->response->htmlMaster;
     }
 
