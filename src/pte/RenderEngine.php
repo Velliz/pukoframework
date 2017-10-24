@@ -40,8 +40,8 @@ class RenderEngine
      */
     public function __construct(Response $response, $sourceFile = 'file')
     {
-        $this->response->sourceFile = $sourceFile;
         $this->response = $response;
+        $this->response->sourceFile = $sourceFile;
     }
 
     public function PTEParser($filePath, $arrayData, $source = 'file')
