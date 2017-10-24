@@ -40,7 +40,7 @@ class RenderEngine
      */
     public function __construct(Response $response, $sourceFile = 'file')
     {
-        $this->sourceFile = $sourceFile;
+        $this->response->sourceFile = $sourceFile;
         $this->response = $response;
     }
 
@@ -53,7 +53,7 @@ class RenderEngine
         header('Author: Puko Framework');
         header('Content-Type: text/html');
 
-        if ($this->sourceFile === $source) {
+        if ($this->response->sourceFile === $source) {
             $filePath = file_get_contents($filePath);
             $filePath = (!$filePath) ? '' : $filePath;
         }
@@ -73,7 +73,7 @@ class RenderEngine
             $this->TemplateParser($key, $value);
         }
 
-        if ($this->response->clearOutput) {
+        if ($this->response->clearBlocks) {
             preg_match_all('(<!--{![\s\S]*?}-->)', $this->response->htmlMaster, $result);
             foreach ($result[0] as $key => $value) {
                 if (strpos($value, '<!--{!!') !== false) {
@@ -84,7 +84,11 @@ class RenderEngine
                     $this->response->htmlMaster = str_replace($parsed, '', $this->response->htmlMaster);
                 }
             }
+        }
+        if ($this->response->clearComments) {
             $this->response->htmlMaster = preg_replace('(<!--(.|\s)*?-->)', '', $this->response->htmlMaster);
+        }
+        if ($this->response->clearValues) {
             $this->response->htmlMaster = preg_replace('({!(.|\s)*?})', '', $this->response->htmlMaster);
         }
         return $this->response->htmlMaster;

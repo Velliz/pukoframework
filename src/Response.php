@@ -40,7 +40,17 @@ class Response
     /**
      * @var bool
      */
-    public $clearOutput = false;
+    public $clearValues = true;
+
+    /**
+     * @var bool
+     */
+    public $clearBlocks = false;
+
+    /**
+     * @var bool
+     */
+    public $clearComments = true;
 
     /**
      * @var bool

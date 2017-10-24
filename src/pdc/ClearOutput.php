@@ -20,6 +20,7 @@ use pukoframework\Response;
 class ClearOutput implements Pdc
 {
     var $key;
+    var $command;
     var $value;
 
     /**
@@ -30,7 +31,8 @@ class ClearOutput implements Pdc
     public function SetCommand($clause, $command, $value = null)
     {
         $this->key = $clause;
-        $this->value = $command;
+        $this->command = $command;
+        $this->value = $value;
     }
 
     /**
@@ -40,9 +42,29 @@ class ClearOutput implements Pdc
     public function SetStrategy(Response $response)
     {
         if ($this->value === 'true') {
-            $response->clearOutput = true;
+            switch ($this->command) {
+                case 'value':
+                    $response->clearValues = true;
+                    break;
+                case 'block':
+                    $response->clearBlocks = true;
+                    break;
+                case 'comment':
+                    $response->clearComments = true;
+                    break;
+            }
         } elseif ($this->value === 'false') {
-            $response->clearOutput = false;
+            switch ($this->command) {
+                case 'value':
+                    $response->clearValues = false;
+                    break;
+                case 'block':
+                    $response->clearBlocks = false;
+                    break;
+                case 'comment':
+                    $response->clearComments = false;
+                    break;
+            }
         }
         return false;
     }
