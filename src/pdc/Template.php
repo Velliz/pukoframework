@@ -36,10 +36,10 @@ class Template implements Pdc
     }
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      */
-    public function SetStrategy(Response $response)
+    public function SetStrategy(Response &$response)
     {
         switch ($this->value) {
             case 'master':

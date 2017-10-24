@@ -37,11 +37,11 @@ class Date implements Pdc
     }
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      * @throws Exception
      */
-    public function SetStrategy(Response $response)
+    public function SetStrategy(Response &$response)
     {
         $now = date('d-m-Y H:i:s');
         $target = (new DateTime($this->value))->format('d-m-Y H:i:s');

@@ -52,10 +52,10 @@ class Auth implements Pdc
     }
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      */
-    public function SetStrategy(Response $response)
+    public function SetStrategy(Response &$response)
     {
         if ($this->switch === 'true') {
             if (!Session::IsSession()) {

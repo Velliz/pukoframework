@@ -28,9 +28,9 @@ interface Pdc
     public function SetCommand($clause, $command, $value);
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      */
-    public function SetStrategy(Response $response);
+    public function SetStrategy(Response &$response);
 
 }

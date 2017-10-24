@@ -36,10 +36,10 @@ class Value implements Pdc
     }
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      */
-    public function SetStrategy(Response $response)
+    public function SetStrategy(Response &$response)
     {
         return array($this->key => $this->value);
     }

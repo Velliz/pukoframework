@@ -35,10 +35,10 @@ class Master implements Pdc
     }
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      */
-    public function SetStrategy(Response $response)
+    public function SetStrategy(Response &$response)
     {
         if (file_exists(ROOT . '/assets/master/' . $this->value)) {
             $response->htmlMaster = file_get_contents(ROOT . '/assets/master/' . $this->value);

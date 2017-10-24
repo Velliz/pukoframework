@@ -36,10 +36,10 @@ class ClearOutput implements Pdc
     }
 
     /**
-     * @param Response $response
+     * @param Response &$response
      * @return mixed
      */
-    public function SetStrategy(Response $response)
+    public function SetStrategy(Response &$response)
     {
         if ($this->value === 'true') {
             switch ($this->command) {
@@ -66,7 +66,8 @@ class ClearOutput implements Pdc
                     break;
             }
         }
-        return false;
+
+        return true;
     }
 
 }
