@@ -112,7 +112,7 @@ class DBI
             $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
                 if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) $blob = file_get_contents($values[$no], 'rb');
+                    if (!$hasBinary) $blob = file_get_contents($values[$no]);
                     else $blob = $key;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $values[$no]);
@@ -169,14 +169,14 @@ class DBI
             $statement = self::$dbi->prepare($update_text);
             foreach ($array as $key => $val) {
                 if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) $blob = file_get_contents($val, 'rb');
+                    if (!$hasBinary) $blob = file_get_contents($val);
                     else $blob = $val;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $val);
             }
             foreach ($id as $key => $val) {
                 if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) $blob = file_get_contents($val, 'rb');
+                    if (!$hasBinary) $blob = file_get_contents($val);
                     else $blob = $val;
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
                 } else $statement->bindValue(':' . $key, $val);
@@ -246,6 +246,12 @@ class DBI
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());
         }
+    }
+
+    //todo: prepare query for execute stored procedure
+    public function Call()
+    {
+
     }
 
     /**
