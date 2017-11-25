@@ -79,10 +79,17 @@ class Request extends Routes
     public static function Post($key, $default)
     {
         if (!isset($_POST[$key])) {
-            return filter_var($default, FILTER_SANITIZE_STRING);
+            if (!is_array($_POST[$key])) {
+                return filter_var($default, FILTER_SANITIZE_STRING);
+            } else {
+                return $default;
+            }
         }
-
-        return filter_var($_POST[$key], FILTER_SANITIZE_STRING);
+        if (!is_array($_POST[$key])) {
+            return filter_var($_POST[$key], FILTER_SANITIZE_STRING);
+        } else {
+            return $_POST[$key];
+        }
     }
 
     /**

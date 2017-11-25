@@ -5,11 +5,10 @@ namespace pukoframework\plugins;
 use pukoframework\pda\DBI;
 
 /**
- * Class TableServerProcessing.
+ * Class DataTables.
  *
  * @copyright DV 2016
  * @author Didit Velliz diditvelliz@gmail.com
- * TODO: update this classes
  */
 class DataTables extends DBI
 {
@@ -23,6 +22,16 @@ class DataTables extends DBI
      * @var array total columns for selector, order and sorting.
      */
     public $dtColumns = array();
+
+    /**
+     * DataTables constructor.
+     * @param string $query
+     */
+    public function __construct($query = "")
+    {
+        parent::__construct($query);
+    }
+
 
     public function SetColumnSpec($columns)
     {
@@ -41,9 +50,15 @@ class DataTables extends DBI
 
     public function SetQuery($query)
     {
-        $this->sQuery = 'SELECT * FROM (' . $query . ') DTable ';
+        $this->sQuery = sprintf("SELECT * FROM (%s) tb ", $query);
     }
 
+    /**
+     * @param callable|null $callback
+     * @return string
+     *
+     * DataTables get ajax requests
+     */
     public function GetDataTables(callable $callback = null)
     {
         if (!empty($_GET)) {

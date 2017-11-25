@@ -56,7 +56,7 @@ class DBI
      * @param $query
      * @throws Exception
      */
-    private function __construct($query)
+    protected function __construct($query)
     {
         $this->query = $query;
         if (is_object(self::$dbi)) return;
