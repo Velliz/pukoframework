@@ -12,6 +12,8 @@
 namespace pukoframework;
 
 use Exception;
+use pte\CustomRender;
+use pte\Pte;
 use pukoframework\auth\Session;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\peh\ValueException;
@@ -142,17 +144,21 @@ class Framework
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
 
+        $pte = new Pte(false);
+        $pte->SetValue($this->object, $this->fn_return);
+
         try {
             if ($this->pdc->isSubclassOf($view)) {
 
                 $cn = str_replace('\\', '/', $this->request->controller_name);
 
-                $this->render->PTEMaster($html . $this->request->lang . '/' . $cn . '/master.html');
-                $render = $this->render->PTEParser($html . $this->request->lang . '/' . $cn . '/' . $this->request->fn_name . '.html', $this->fn_return);
+                $pte->SetMaster($html . $this->request->lang . '/' . $cn . '/master.html');
+                $pte->SetHtml($html . $this->request->lang . '/' . $cn . '/' . $this->request->fn_name . '.html');
 
+                $pte->Output(Pte::VIEW_HTML, array());
             }
             if ($this->pdc->isSubclassOf($service)) {
-                $render = json_encode($this->render->PTEJson($this->fn_return));
+                $pte->Output(Pte::VIEW_JSON, array());
             }
         } catch (Exception $error) {
             die('Puko Error (FW003) PTE failed to parse the template. You have error in returned data.');

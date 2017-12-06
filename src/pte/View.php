@@ -2,11 +2,18 @@
 
 namespace pukoframework\pte;
 
+use pte\CustomRender;
 use pukoframework\peh\ThrowView;
 use pukoframework\Response;
 
-abstract class View extends Controller
+abstract class View extends Controller implements CustomRender
 {
+
+    var $fn;
+    var $param;
+
+    var $tempJs = '';
+    var $tempCss = '';
 
     public function __construct()
     {
@@ -23,5 +30,27 @@ abstract class View extends Controller
     public function AfterInitialize()
     {
         return array();
+    }
+
+
+    /**
+     * @param $fnName
+     * @param $paramArray
+     */
+    public function Register($fnName, $paramArray)
+    {
+        $this->fn = $fnName;
+        $this->param = $paramArray;
+    }
+
+    /**
+     * @return string
+     */
+    public function Parse()
+    {
+        if ($this->fn === 'url') {
+            return 'http://localhost/pte' . $this->param;
+        }
+        return '';
     }
 }

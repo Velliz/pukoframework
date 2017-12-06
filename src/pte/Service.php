@@ -2,9 +2,10 @@
 
 namespace pukoframework\pte;
 
+use pte\CustomRender;
 use pukoframework\peh\ThrowService;
 
-abstract class Service extends Controller
+abstract class Service extends Controller implements CustomRender
 {
 
     public function __construct()
@@ -22,5 +23,21 @@ abstract class Service extends Controller
     public function AfterInitialize()
     {
         return array();
+    }
+
+    /**
+     * @param $fnName
+     * @param $paramArray
+     */
+    public function Register($fnName, $paramArray)
+    {
+    }
+
+    /**
+     * @return string
+     */
+    public function Parse()
+    {
+        return null;
     }
 }
