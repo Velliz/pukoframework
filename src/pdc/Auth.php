@@ -11,15 +11,16 @@
 
 namespace pukoframework\pdc;
 
+use pte\CustomRender;
+use pte\Pte;
 use pukoframework\auth\Session;
-use pukoframework\pte\RenderEngine;
 use pukoframework\Response;
 
 /**
  * Class Auth
  * @package pukoframework\pdc
  */
-class Auth implements Pdc
+class Auth implements Pdc, CustomRender
 {
 
     var $key;
@@ -57,14 +58,18 @@ class Auth implements Pdc
      */
     public function SetStrategy(Response &$response)
     {
+        $render = new Pte(false);
+
         if ($this->switch === 'true') {
             if (!Session::IsSession()) {
                 $response->useMasterLayout = false;
-                $render = new RenderEngine($response);
-                echo $render->PTEParser(ROOT . '/assets/system/auth.html', array(
+
+                $render->SetHtml(ROOT . '/assets/system/auth.html');
+                $render->SetValue($this, array(
                     'exception' => 'Authentication Required'
                 ));
-                exit;
+                $render->Output();
+                die();
             }
             if ($this->permission === '+') {
                 return true;
@@ -74,13 +79,31 @@ class Auth implements Pdc
             }
 
             $response->useMasterLayout = false;
-            $render = new RenderEngine($response);
-            echo $render->PTEParser(ROOT . '/assets/system/permission.html', array(
+
+            $render->SetHtml(ROOT . '/assets/system/permission.html');
+            $render->SetValue($this, array(
                 'exception' => 'Permission Required'
             ));
-            exit;
+            $render->Output();
+            die();
         }
         return true;
     }
 
+    /**
+     * @param $fnName
+     * @param $paramArray
+     */
+    public function Register($fnName, $paramArray)
+    {
+        // TODO: Implement Register() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function Parse()
+    {
+        // TODO: Implement Parse() method.
+    }
 }

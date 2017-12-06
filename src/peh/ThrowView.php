@@ -12,6 +12,8 @@
 namespace pukoframework\peh;
 
 use Exception;
+use pte\CustomRender;
+use pte\Pte;
 use pukoframework\pte\RenderEngine;
 use pukoframework\Response;
 
@@ -19,10 +21,10 @@ use pukoframework\Response;
  * Class ThrowView
  * @package pukoframework\peh
  */
-class ThrowView extends Exception implements PukoException
+class ThrowView extends Exception implements PukoException, CustomRender
 {
     /**
-     * @var RenderEngine
+     * @var Pte
      */
     private $render;
 
@@ -50,7 +52,7 @@ class ThrowView extends Exception implements PukoException
         $this->message = $message;
 
         $response->useMasterLayout = false;
-        $this->render = new RenderEngine($response);
+        $this->render = new Pte(false);
     }
 
     /**
@@ -70,8 +72,9 @@ class ThrowView extends Exception implements PukoException
             unset($val['args']);
             $emg['Stacktrace'][$key] = $val;
         }
-
-        echo $this->render->PTEParser($this->system_html . '/exception.html', $emg);
+        $this->render->SetHtml($this->system_html . '/exception.html');
+        $this->render->SetValue($this, $emg);
+        $this->render->Output();
     }
 
     /**
@@ -95,6 +98,25 @@ class ThrowView extends Exception implements PukoException
             $emg['Stacktrace'][$key] = $val;
         }
 
-        echo $this->render->PTEParser($this->system_html . '/error.html', $emg);
+        $this->render->SetHtml($this->system_html . '/error.html');
+        $this->render->SetValue($this, $emg);
+        $this->render->Output();
+    }
+
+    /**
+     * @param $fnName
+     * @param $paramArray
+     */
+    public function Register($fnName, $paramArray)
+    {
+        // TODO: Implement Register() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function Parse()
+    {
+        // TODO: Implement Parse() method.
     }
 }

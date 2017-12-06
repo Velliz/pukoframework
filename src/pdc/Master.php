@@ -41,7 +41,7 @@ class Master implements Pdc
     public function SetStrategy(Response &$response)
     {
         if (file_exists(ROOT . '/assets/master/' . $this->value)) {
-            $response->htmlMaster = file_get_contents(ROOT . '/assets/master/' . $this->value);
+            $response->htmlMaster = ROOT . '/assets/master/' . $this->value;
             return true;
         } else {
             return false;
