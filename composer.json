@@ -18,19 +18,13 @@
       "url": "https://github.com/Velliz/pukoframework"
     }
   ],
+  "require": {
+    "velliz/pte": "0.1.0"
+  },
   "minimum-stability": "RC",
   "autoload": {
     "psr-4": {
       "pukoframework\\": "src/"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "tests\\": "tests/",
-      "runner\\": "runner/"
-    }
-  },
-  "require-dev": {
-    "phpunit/phpunit": "5.5.*"
   }
 }
