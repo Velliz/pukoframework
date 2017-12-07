@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "velliz/pte": "dev-master"
+    "velliz/pte": "0.1.1"
   },
   "autoload": {
     "psr-4": {
