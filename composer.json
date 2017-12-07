@@ -21,7 +21,6 @@
   "require": {
     "velliz/pte": "dev-master"
   },
-  "minimum-stability": "RC",
   "autoload": {
     "psr-4": {
       "pukoframework\\": "src/"
