@@ -147,7 +147,7 @@ class Framework
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
 
-        $this->render = new Pte(false);
+        $this->render = new Pte(false, $this->response->useMasterLayout, $this->response->useHtmlLayout);
         $this->render->SetValue($this->object, $this->fn_return);
 
         if ($this->pdc->isSubclassOf($view)) {
