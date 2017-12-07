@@ -8,11 +8,13 @@
  * @link https://github.com/velliz/pukoframework
  * @since Version 0.9.1
  */
+
 namespace pukoframework\pda;
 
 use Exception;
 use PDO;
 use PDOException;
+use pukoframework\config\Config;
 
 /**
  * Class DBI
@@ -36,7 +38,6 @@ class DBI
     private $port;
 
     private $queryPattern = '#@([0-9]+)#';
-    private $connectionPath;
 
     /**
      * @param $connection array
@@ -59,12 +60,11 @@ class DBI
     protected function __construct($query)
     {
         $this->query = $query;
-        if (is_object(self::$dbi)) return;
-        $this->connectionPath = ROOT . "/config/database.php";
-        if (!file_exists($this->connectionPath))
-            die("Puko Error (PDA001) Database configuration file not found or ROOT is not set.");
+        if (is_object(self::$dbi)) {
+            return;
+        }
 
-        $this->DBISet(include "$this->connectionPath");
+        $this->DBISet(Config::Data('database'));
         $pdoConnection = "$this->db_type:host=$this->host;port=$this->port;dbname=$this->db_name";
         self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
 
@@ -241,7 +241,7 @@ class DBI
         if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
         try {
             $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0)  return $statement->execute($parameters);
+            if ($argCount > 0) return $statement->execute($parameters);
             else return $statement->execute();
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());

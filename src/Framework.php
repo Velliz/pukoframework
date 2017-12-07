@@ -14,8 +14,8 @@ namespace pukoframework;
 use pte\Pte;
 use pukoframework\auth\Session;
 use pukoframework\pdc\DocsEngine;
-use pukoframework\pte\Service;
-use pukoframework\pte\View;
+use pukoframework\middleware\Service;
+use pukoframework\middleware\View;
 use ReflectionClass;
 
 /**
@@ -125,14 +125,14 @@ class Framework
                 }
             } else {
                 $error = sprintf(
-                    "Puko Error (FW001) Function '%s' must set public.",
+                    "Puko Fatal Error (FW001) Function '%s' must set public.",
                     $this->request->fn_name
                 );
                 die($error);
             }
         } else {
             $error = sprintf(
-                "Puko Error (FW002) Function '%s' not found in class: %s",
+                "Puko Fatal Error (FW002) Function '%s' not found in class: %s",
                 $this->request->fn_name,
                 $this->request->controller_name
             );

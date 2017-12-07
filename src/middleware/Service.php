@@ -1,23 +1,16 @@
 <?php
 
-namespace pukoframework\pte;
+namespace pukoframework\middleware;
 
 use pte\CustomRender;
-use pukoframework\peh\ThrowView;
-use pukoframework\Response;
+use pukoframework\peh\ThrowService;
 
-abstract class View extends Controller implements CustomRender
+abstract class Service extends Controller implements CustomRender
 {
-
-    var $fn;
-    var $param;
-
-    var $tempJs = '';
-    var $tempCss = '';
 
     public function __construct()
     {
-        $exception_handler = new ThrowView('View Error', new Response());
+        $exception_handler = new ThrowService('Service Error');
         set_exception_handler(array($exception_handler, 'ExceptionHandler'));
         set_error_handler(array($exception_handler, 'ErrorHandler'));
     }
@@ -32,15 +25,12 @@ abstract class View extends Controller implements CustomRender
         return array();
     }
 
-
     /**
      * @param $fnName
      * @param $paramArray
      */
     public function Register($fnName, $paramArray)
     {
-        $this->fn = $fnName;
-        $this->param = $paramArray;
     }
 
     /**
@@ -48,9 +38,6 @@ abstract class View extends Controller implements CustomRender
      */
     public function Parse()
     {
-        if ($this->fn === 'url') {
-            return 'http://localhost/pte' . $this->param;
-        }
-        return '';
+        return null;
     }
 }

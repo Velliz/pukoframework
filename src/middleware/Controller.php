@@ -9,7 +9,7 @@
  * @since Version 1.0.3
  */
 
-namespace pukoframework\pte;
+namespace pukoframework\middleware;
 
 /**
  * Class Controller

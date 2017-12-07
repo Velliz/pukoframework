@@ -11,6 +11,8 @@
 
 namespace pukoframework\auth;
 
+use pukoframework\config\Config;
+
 /**
  * Class Session
  * @package pukoframework\auth
@@ -31,15 +33,15 @@ class Session
         if (is_object(self::$session)) {
             return;
         }
-        $secure = ROOT . "/config/encryption.php";
-        if (!file_exists($secure)) {
-            die("Puko Error (AUTH001) Authentication configuration file not found.");
-        }
-        $secure = include $secure;
+
+        $secure = Config::Data('encryption');
+
         $this->key = $secure['key'];
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
+
         self::$cookies = $secure['cookies'];
+
         $this->authentication = $authentication;
     }
 
@@ -100,9 +102,7 @@ class Session
 
     public static function IsSession()
     {
-        $secure = ROOT . "/config/encryption.php";
-        if (!file_exists($secure)) die("Puko Error (AUTH001) Authentication configuration file not found.");
-        $secure = include $secure;
+        $secure = Config::Data('encryption');
         if (isset($_COOKIE[$secure['cookies']])) {
             return true;
         }
@@ -111,12 +111,7 @@ class Session
 
     public static function IsHasPermission($code)
     {
-        $secure = ROOT . "/config/encryption.php";
-        if (!file_exists($secure)) {
-            die("Puko Error (AUTH001) Authentication configuration file not found.");
-        }
-
-        $secure = include $secure;
+        $secure = Config::Data('encryption');
         $key = $secure['key'];
         $method = $secure['method'];
         $identifier = $secure['identifier'];
