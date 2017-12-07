@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "velliz/pte": "0.1.0"
+    "velliz/pte": "dev-master"
   },
   "minimum-stability": "RC",
   "autoload": {
