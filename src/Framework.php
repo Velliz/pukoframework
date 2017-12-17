@@ -64,7 +64,7 @@ class Framework
     public function __construct()
     {
         if (PHP_VERSION_ID < 506000) {
-            include "Compatibility.php";
+            include 'Compatibility.php';
         }
 
         $this->request = new Request();
@@ -125,14 +125,14 @@ class Framework
                 }
             } else {
                 $error = sprintf(
-                    "Puko Fatal Error (FW001) Function '%s' must set public.",
+                    'Puko Fatal Error (FW001) Function %s must set public.',
                     $this->request->fn_name
                 );
                 die($error);
             }
         } else {
             $error = sprintf(
-                "Puko Fatal Error (FW002) Function '%s' not found in class: %s",
+                'Puko Fatal Error (FW002) Function %s not found in class: %s',
                 $this->request->fn_name,
                 $this->request->controller_name
             );
@@ -148,7 +148,9 @@ class Framework
         $service = new ReflectionClass(Service::class);
 
         $this->render = new Pte(false, $this->response->useMasterLayout, $this->response->useHtmlLayout);
-        $this->render->SetValue($this->object, $this->fn_return);
+        $this->render->SetValue($this->fn_return);
+
+        $output = null;
 
         if ($this->pdc->isSubclassOf($view)) {
             if ($this->response->useMasterLayout) {
@@ -163,11 +165,13 @@ class Framework
                 );
                 $this->render->SetHtml(sprintf('%s/assets/html/%s', ROOT, $htmlPath));
             }
-            $this->render->Output(Pte::VIEW_HTML);
+            $output = $this->render->Output($this->object, Pte::VIEW_HTML);
         }
         if ($this->pdc->isSubclassOf($service)) {
-            $this->render->Output(Pte::VIEW_JSON);
+            $output = $this->render->Output($this->object, Pte::VIEW_JSON);
         }
+
+        echo $output;
     }
 
 }

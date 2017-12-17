@@ -170,6 +170,10 @@ class Request extends Routes
      */
     public static function IsPost()
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return false;
+        }
+
         $submit = Request::Post('_submit', null);
         if ($submit === null) {
             return false;
