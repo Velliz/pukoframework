@@ -5,6 +5,10 @@ namespace pukoframework\middleware;
 use pte\CustomRender;
 use pukoframework\peh\ThrowService;
 
+/**
+ * Class Service
+ * @package pukoframework\middleware
+ */
 abstract class Service extends Controller implements CustomRender
 {
 
@@ -29,7 +33,7 @@ abstract class Service extends Controller implements CustomRender
      * @param $fnName
      * @param $paramArray
      */
-    public function Register($fnName, $paramArray)
+    public function RegisterFunction($fnName, $paramArray)
     {
     }
 

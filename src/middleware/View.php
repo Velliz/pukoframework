@@ -6,6 +6,10 @@ use pte\CustomRender;
 use pukoframework\peh\ThrowView;
 use pukoframework\Response;
 
+/**
+ * Class View
+ * @package pukoframework\middleware
+ */
 abstract class View extends Controller implements CustomRender
 {
 
@@ -37,7 +41,7 @@ abstract class View extends Controller implements CustomRender
      * @param $fnName
      * @param $paramArray
      */
-    public function Register($fnName, $paramArray)
+    public function RegisterFunction($fnName, $paramArray)
     {
         $this->fn = $fnName;
         $this->param = $paramArray;
