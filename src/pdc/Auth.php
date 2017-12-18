@@ -65,10 +65,10 @@ class Auth implements Pdc, CustomRender
                 $response->useMasterLayout = false;
 
                 $render->SetHtml(ROOT . '/assets/system/auth.html');
-                $render->SetValue($this, array(
+                $render->SetValue(array(
                     'exception' => 'Authentication Required'
                 ));
-                $render->Output();
+                $render->Output($this);
                 die();
             }
             if ($this->permission === '+') {
@@ -81,10 +81,10 @@ class Auth implements Pdc, CustomRender
             $response->useMasterLayout = false;
 
             $render->SetHtml(ROOT . '/assets/system/permission.html');
-            $render->SetValue($this, array(
+            $render->SetValue(array(
                 'exception' => 'Permission Required'
             ));
-            $render->Output();
+            $render->Output($this);
             die();
         }
         return true;
@@ -94,7 +94,7 @@ class Auth implements Pdc, CustomRender
      * @param $fnName
      * @param $paramArray
      */
-    public function Register($fnName, $paramArray)
+    public function RegisterFunction($fnName, $paramArray)
     {
         // TODO: Implement Register() method.
     }
@@ -104,6 +104,6 @@ class Auth implements Pdc, CustomRender
      */
     public function Parse()
     {
-        // TODO: Implement Parse() method.
+        return null;
     }
 }
