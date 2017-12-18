@@ -87,7 +87,7 @@ class DocsEngine
                     $returns = $this->class->SetStrategy($this->response_objects);
                     if (is_array($returns)) {
                         $this->return_command = array_merge($this->return_command, $returns);
-                    }
+                }
                 } catch (Error $error) {
                     $false = "Puko Error (PTE001) PTE Command <b>#%s %s %s</b> unregistered.";
                     $false = sprintf($false, $this->clause, $this->command, $this->value);

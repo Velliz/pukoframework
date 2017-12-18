@@ -84,8 +84,8 @@ class Auth implements Pdc, CustomRender
             $render->SetValue(array(
                 'exception' => 'Permission Required'
             ));
-            $render->Output($this);
-            die();
+            echo $render->Output($this);
+            exit();
         }
         return true;
     }

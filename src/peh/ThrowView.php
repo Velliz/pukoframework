@@ -72,8 +72,8 @@ class ThrowView extends Exception implements PukoException, CustomRender
             $emg['Stacktrace'][$key] = $val;
         }
         $this->render->SetHtml($this->system_html . '/exception.html');
-        $this->render->SetValue($this, $emg);
-        $this->render->Output();
+        $this->render->SetValue($emg);
+        echo $this->render->Output($this);
     }
 
     /**
@@ -98,15 +98,15 @@ class ThrowView extends Exception implements PukoException, CustomRender
         }
 
         $this->render->SetHtml($this->system_html . '/error.html');
-        $this->render->SetValue($this, $emg);
-        $this->render->Output();
+        $this->render->SetValue($emg);
+        echo $this->render->Output($this);
     }
 
     /**
      * @param $fnName
      * @param $paramArray
      */
-    public function Register($fnName, $paramArray)
+    public function RegisterFunction($fnName, $paramArray)
     {
         // TODO: Implement Register() method.
     }
@@ -116,6 +116,6 @@ class ThrowView extends Exception implements PukoException, CustomRender
      */
     public function Parse()
     {
-        // TODO: Implement Parse() method.
+        return null;
     }
 }
