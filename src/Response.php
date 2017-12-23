@@ -40,6 +40,11 @@ class Response
     /**
      * @var bool
      */
+    public $useCacheLayout = false;
+
+    /**
+     * @var bool
+     */
     public $clearValues = true;
 
     /**

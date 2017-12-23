@@ -52,6 +52,11 @@ class Template implements Pdc
                     $response->useHtmlLayout = false;
                 }
                 break;
+            case 'cache':
+                if (strcasecmp(str_replace(' ', '', $this->switch), 'true') === 0) {
+                    $response->useCacheLayout = true;
+                }
+                break;
         }
 
         return true;

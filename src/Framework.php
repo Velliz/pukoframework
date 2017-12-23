@@ -147,7 +147,11 @@ class Framework
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
 
-        $this->render = new Pte(false, $this->response->useMasterLayout, $this->response->useHtmlLayout);
+        $this->render = new Pte(
+            $this->response->useCacheLayout,
+            $this->response->useMasterLayout,
+            $this->response->useHtmlLayout
+        );
         $this->render->SetValue($this->fn_return);
 
         $output = null;
