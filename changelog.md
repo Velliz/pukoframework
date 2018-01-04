@@ -104,6 +104,15 @@ class Example extends Service {
 * Introduce new Puko Command Line Interface (PCLI).
 * Adding Scaffolding for models.
 
-### 1.1.1 (TBA)
+### 1.1.1 (2 December 2017)
 * Introduce Permissions.
 * Introduce Router Generator.
+
+### 1.1.2 (23 December 2017)
+* Introduce new template engine.
+* Introduce view elements.
+
+### 1.1.3 (TBA 2018)
+* Renamed Permission into Role.
+* Add permission into model.
+* Enhance model.
