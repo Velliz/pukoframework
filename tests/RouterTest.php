@@ -8,7 +8,7 @@ use pukoframework\auth\Session;
 use pukoframework\Request;
 use pukoframework\Response;
 
-class RouterTest extends PHPUnit_Framework_TestCase implements Auth
+class RouterTest extends PHPUnit_Framework_TestCase
 {
 
     public function setUp()
@@ -21,6 +21,7 @@ class RouterTest extends PHPUnit_Framework_TestCase implements Auth
     {
     }
 
+    /*
     public function testRender()
     {
         $response = new Response();
@@ -41,6 +42,7 @@ class RouterTest extends PHPUnit_Framework_TestCase implements Auth
         $fw = Request::Post('framework', 0);
         $this->assertEquals('puko', $fw);
     }
+    */
 
     public function testGet()
     {
@@ -50,22 +52,6 @@ class RouterTest extends PHPUnit_Framework_TestCase implements Auth
 
         $fw = Request::Get('framework', 0);
         $this->assertEquals(0, $fw);
-    }
-
-    public function testIsPost()
-    {
-        $isPost = Request::IsPost();
-        $this->assertFalse($isPost);
-    }
-
-    public function testAuth()
-    {
-        define('ROOT', __DIR__);
-
-        $this->assertFalse(Session::IsSession());
-        $this->assertFalse(Request::IsPost());
-        $this->assertFalse(Session::IsHasPermission('ADMIN'));
-        //$this->assertTrue(Session::Get($this)->Logout());
     }
 
     public function testOutputBuffers()
