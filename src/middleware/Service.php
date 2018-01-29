@@ -9,7 +9,7 @@ use pukoframework\peh\ThrowService;
  * Class Service
  * @package pukoframework\middleware
  */
-abstract class Service extends Controller implements CustomRender
+abstract class Service extends Controller
 {
 
     public function __construct()
@@ -29,19 +29,4 @@ abstract class Service extends Controller implements CustomRender
         return array();
     }
 
-    /**
-     * @param $fnName
-     * @param $paramArray
-     */
-    public function RegisterFunction($fnName, $paramArray)
-    {
-    }
-
-    /**
-     * @return string
-     */
-    public function Parse()
-    {
-        return null;
-    }
 }
