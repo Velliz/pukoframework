@@ -10,8 +10,12 @@ use pukoframework\pda\DBI;
  * @copyright DV 2016
  * @author Didit Velliz diditvelliz@gmail.com
  */
-class DataTables extends DBI
+class DataTables
 {
+
+    const GET = 'GET';
+    const POST = 'POST';
+
     /**
      * @var string ase sql query string
      */
@@ -24,12 +28,18 @@ class DataTables extends DBI
     public $dtColumns = array();
 
     /**
-     * DataTables constructor.
-     * @param string $query
+     * @var string
      */
-    public function __construct($query = "")
+    private $httpVerb;
+
+    /**
+     * DataTables constructor.
+     * @param string $httpVerb
+     * @internal param string $query
+     */
+    public function __construct($httpVerb = 'GET')
     {
-        parent::__construct($query);
+        $this->httpVerb = $httpVerb;
     }
 
 
@@ -50,7 +60,8 @@ class DataTables extends DBI
 
     public function SetQuery($query)
     {
-        $this->sQuery = sprintf("SELECT * FROM (%s) tb ", $query);
+        $sql = sprintf('SELECT ' . '*' . ' FROM (%s) onions ', $query);
+        $this->sQuery = str_replace(';', '', $sql);
     }
 
     /**
@@ -61,69 +72,130 @@ class DataTables extends DBI
      */
     public function GetDataTables(callable $callback = null)
     {
-        if (!empty($_GET)) {
-            $draw = $_GET['draw'];
+        $response = array(
+            'draw' => 1,
+            'recordsTotal' => 0,
+            'recordsFiltered' => 0,
+            'error' => 'No data from DataTable frontend',
+        );
 
-            $orderByColumnIndex = $_GET['order'][0]['column'];
-            $orderBy = $_GET['columns'][$orderByColumnIndex]['data'];
-            $orderType = $_GET['order'][0]['dir'];
+        switch ($this->httpVerb) {
+            case DataTables::GET:
+                if (!empty($_GET)) {
+                    $draw = $_GET['draw'];
 
-            $start = $_GET['start'];
-            $length = $_GET['length'];
+                    $orderByColumnIndex = $_GET['order'][0]['column'];
+                    $orderBy = $_GET['columns'][$orderByColumnIndex]['data'];
+                    $orderType = $_GET['order'][0]['dir'];
 
-            $where = array();
+                    $start = $_GET['start'];
+                    $length = $_GET['length'];
 
-            $recordsTotal = count($this->Prepare($this->sQuery)->GetData());
+                    $where = array();
 
-            if (!empty($_GET['search']['value'])) {
-                for ($i = 0; $i < count($_GET['columns']); $i++) {
-                    $column = $this->dtColumns[$_GET['columns'][$i]['data']];
-                    $where[] = "$column like '%" . $_GET['search']['value'] . "%'";
+                    $recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+
+                    if (!empty($_GET['search']['value'])) {
+                        for ($i = 0; $i < count($_GET['columns']); $i++) {
+                            $column = $this->dtColumns[$_GET['columns'][$i]['data']];
+                            $where[] = "$column like '%" . $_GET['search']['value'] . "%'";
+                        }
+                        $where = 'WHERE ' . implode(' OR ', $where);
+                        $sql = sprintf('%s %s', $this->sQuery, $where);
+                        $recordsFiltered = count(DBI::Prepare($sql)->GetData());
+                        $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                        $data = DBI::Prepare($sql)->GetData();
+                    } else {
+                        $sql = sprintf('%s ORDER BY %s %s limit %d,%d ', $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                        $data = DBI::Prepare($sql)->GetData();
+                        $recordsFiltered = $recordsTotal;
+                    }
+
+                    $response = array(
+                        'draw' => intval($draw),
+                        'recordsTotal' => $recordsTotal,
+                        'recordsFiltered' => $recordsFiltered,
+                        'data' => array(),
+                    );
+
+                    if ($callback !== null) {
+                        $data = $callback($data);
+                    }
+
+                    $counter = 0;
+                    foreach ($data as $aRow) {
+                        $row = array();
+                        $counter++;
+                        for ($i = 0; $i < count($this->dtColumns); $i++) {
+                            $row[] = $aRow[$this->dtColumns[$i]];
+                        }
+                        $tData = count($this->dtColumns);
+                        for ($j = $tData; $j < $this->totalColumn; $j++) {
+                            $row[] = '-';
+                        }
+                        $response['data'][] = $row;
+                    }
                 }
-                $where = 'WHERE ' . implode(' OR ', $where);
-                $sql = sprintf('%s %s', $this->sQuery, $where);
-                $recordsFiltered = count($this->Prepare($sql)->GetData());
-                $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
-                $data = $this->Prepare($sql)->GetData();
-            } else {
-                $sql = sprintf('%s ORDER BY %s %s limit %d,%d ', $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
-                $data = $this->Prepare($sql)->GetData();
-                $recordsFiltered = $recordsTotal;
-            }
+                break;
+            case DataTables::POST:
+                if (!empty($_POST)) {
+                    $draw = $_POST['draw'];
 
-            $response = array(
-                'draw' => intval($draw),
-                'recordsTotal' => $recordsTotal,
-                'recordsFiltered' => $recordsFiltered,
-                'data' => array(),
-            );
+                    $orderByColumnIndex = $_POST['order'][0]['column'];
+                    $orderBy = $_POST['columns'][$orderByColumnIndex]['data'];
+                    $orderType = $_POST['order'][0]['dir'];
 
-            if ($callback !== null) {
-                $data = $callback($data);
-            }
+                    $start = $_POST['start'];
+                    $length = $_POST['length'];
 
-            $counter = 0;
-            foreach ($data as $aRow) {
-                $row = array();
-                $counter++;
-                for ($i = 0; $i < count($this->dtColumns); $i++) {
-                    $row[] = $aRow[$this->dtColumns[$i]];
+                    $where = array();
+
+                    $recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+
+                    if (!empty($_POST['search']['value'])) {
+                        for ($i = 0; $i < count($_POST['columns']); $i++) {
+                            $column = $this->dtColumns[$_POST['columns'][$i]['data']];
+                            $where[] = "$column like '%" . $_POST['search']['value'] . "%'";
+                        }
+                        $where = 'WHERE ' . implode(' OR ', $where);
+                        $sql = sprintf('%s %s', $this->sQuery, $where);
+                        $recordsFiltered = count(DBI::Prepare($sql)->GetData());
+                        $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                        $data = DBI::Prepare($sql)->GetData();
+                    } else {
+                        $sql = sprintf('%s ORDER BY %s %s limit %d,%d ', $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                        $data = DBI::Prepare($sql)->GetData();
+                        $recordsFiltered = $recordsTotal;
+                    }
+
+                    $response = array(
+                        'draw' => intval($draw),
+                        'recordsTotal' => $recordsTotal,
+                        'recordsFiltered' => $recordsFiltered,
+                        'data' => array(),
+                    );
+
+                    if ($callback !== null) {
+                        $data = $callback($data);
+                    }
+
+                    $counter = 0;
+                    foreach ($data as $aRow) {
+                        $row = array();
+                        $counter++;
+                        for ($i = 0; $i < count($this->dtColumns); $i++) {
+                            $row[] = $aRow[$this->dtColumns[$i]];
+                        }
+                        $tData = count($this->dtColumns);
+                        for ($j = $tData; $j < $this->totalColumn; $j++) {
+                            $row[] = '-';
+                        }
+                        $response['data'][] = $row;
+                    }
                 }
-                $tData = count($this->dtColumns);
-                for ($j = $tData; $j < $this->totalColumn; $j++) {
-                    $row[] = '-';
-                }
-                $response['data'][] = $row;
-            }
-        } else {
-            $response = array(
-                'draw' => 1,
-                'recordsTotal' => 0,
-                'recordsFiltered' => 0,
-                'error' => 'NO POST Query from DataTable',
-            );
+                break;
         }
 
-        return json_encode($response);
+        return $response;
     }
 }
