@@ -194,6 +194,8 @@ class DataTables
                     }
                 }
                 break;
+            default:
+                break;
         }
 
         return $response;
