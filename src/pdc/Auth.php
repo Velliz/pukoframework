@@ -39,7 +39,6 @@ class Auth implements Pdc, CustomRender
         header('Last-Modified: ' . gmdate('D, j M Y H:i:s') . ' GMT');
     }
 
-
     /**
      * @param $clause
      * @param $command
@@ -68,7 +67,7 @@ class Auth implements Pdc, CustomRender
                 $render->SetValue(array(
                     'exception' => 'Authentication Required'
                 ));
-                $render->Output($this);
+                echo $render->Output($this);
                 die();
             }
             if ($this->permission === '+') {

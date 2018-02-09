@@ -66,9 +66,13 @@ class DBI
 
         $this->DBISet(Config::Data('database'));
         $pdoConnection = "$this->db_type:host=$this->host;port=$this->port;dbname=$this->db_name";
-        self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
 
-        self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
+            self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            throw new Exception("Connection failed: " . $e->getMessage());
+        }
     }
 
     /**
