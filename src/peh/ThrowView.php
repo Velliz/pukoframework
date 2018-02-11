@@ -74,6 +74,7 @@ class ThrowView extends Exception implements PukoException, CustomRender
         $this->render->SetHtml($this->system_html . '/exception.html');
         $this->render->SetValue($emg);
         echo $this->render->Output($this);
+        die();
     }
 
     /**
@@ -100,6 +101,7 @@ class ThrowView extends Exception implements PukoException, CustomRender
         $this->render->SetHtml($this->system_html . '/error.html');
         $this->render->SetValue($emg);
         echo $this->render->Output($this);
+        die();
     }
 
     /**

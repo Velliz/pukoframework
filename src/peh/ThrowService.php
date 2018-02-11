@@ -34,7 +34,12 @@ class ThrowService extends Exception implements PukoException
      */
     public function ExceptionHandler($error)
     {
+        $emg['ErrorCount'] = $error;
+        $emg['ErrorCode'] = $error->getCode();
         $emg['Message'] = $error->getMessage();
+        $emg['File'] = $error->getFile();
+        $emg['LineNumber'] = $error->getLine();
+        $emg['Stacktrace'] = $error->getTrace();
 
         header('Author: Puko Framework');
         header('Content-Type: application/json');
@@ -46,6 +51,7 @@ class ThrowService extends Exception implements PukoException
         );
 
         echo json_encode($data);
+        die();
     }
 
     /**
@@ -56,8 +62,12 @@ class ThrowService extends Exception implements PukoException
      */
     public function ErrorHandler($error, $message, $file, $line)
     {
-        $emg['Error'] = $error;
+        $emg['ErrorCount'] = $error;
+        $emg['ErrorCode'] = $this->getCode();
         $emg['Message'] = $message;
+        $emg['File'] = $file;
+        $emg['LineNumber'] = $line;
+        $emg['Stacktrace'] = $this->getTrace();
 
         header('Author: Puko Framework');
         header('Content-Type: application/json');
@@ -69,5 +79,6 @@ class ThrowService extends Exception implements PukoException
         );
 
         echo json_encode($data);
+        die();
     }
 }
