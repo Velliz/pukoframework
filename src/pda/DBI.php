@@ -252,10 +252,22 @@ class DBI
         }
     }
 
-    //todo: prepare query for execute stored procedure
-    public function Call()
+    public function Call($name, $arrData)
     {
-
+        $argCount = count($arrData);
+        $call = "CALL $name(";
+        foreach ($arrData as $col => $value) {
+            $call .= "'" . $value . "', ";
+        }
+        $call_text = substr($call, 0, -2);
+        $call_text .= ");";
+        try {
+            $statement = self::$dbi->prepare($call_text);
+            if ($argCount > 0) return $statement->execute($arrData);
+            else return $statement->execute();
+        } catch (PDOException $ex) {
+            throw new Exception('Database error: ' . $ex->getMessage());
+        }
     }
 
     /**
