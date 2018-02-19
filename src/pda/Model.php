@@ -90,11 +90,8 @@ class Model
                     }
                 }
             }
-
-        } else {
-            return;
         }
-
+        return $this;
     }
 
     public function save()
