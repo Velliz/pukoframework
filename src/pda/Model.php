@@ -104,7 +104,8 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table)->Save($insert);
+        $lastid = DBI::Prepare($this->_table)->Save($insert);
+        $this->__construct($lastid);
     }
 
     public function modify()
@@ -118,11 +119,13 @@ class Model
             }
         }
         DBI::Prepare($this->_table)->Update(array($this->_primary => $this->{$this->_primary}), $insert);
+        $this->__construct($this->{$this->_primary});
     }
 
     public function remove()
     {
         DBI::Prepare($this->_table)->Delete(array($this->_primary => $this->{$this->_primary}));
+        $this->__construct();
     }
 
     /**
