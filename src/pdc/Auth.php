@@ -58,17 +58,23 @@ class Auth implements Pdc, CustomRender
     public function SetStrategy(Response &$response)
     {
         $render = new Pte(false);
+        if ($response->useMasterLayout) {
+            $render->SetMaster($response->htmlMaster);
+        }
 
         if ($this->switch === 'true') {
             if (!Session::IsSession()) {
-                $response->useMasterLayout = false;
-
-                $render->SetHtml(ROOT . '/assets/system/auth.html');
-                $render->SetValue(array(
+                $data = array(
                     'exception' => 'Authentication Required'
-                ));
-                echo $render->Output($this);
-                die();
+                );
+                $render->SetValue($data);
+                if ($response->useHtmlLayout) {
+                    $render->SetHtml(sprintf('%s/assets/system/auth.html', ROOT));
+                    echo $render->Output($this, Pte::VIEW_HTML);
+                } else {
+                    echo $render->Output($this, Pte::VIEW_JSON);
+                }
+                exit();
             }
             if ($this->permission === '+') {
                 return true;
@@ -76,16 +82,19 @@ class Auth implements Pdc, CustomRender
             if (Session::IsHasPermission($this->permission)) {
                 return true;
             }
-
-            $response->useMasterLayout = false;
-
-            $render->SetHtml(ROOT . '/assets/system/permission.html');
-            $render->SetValue(array(
+            $data = array(
                 'exception' => 'Permission Required'
-            ));
-            echo $render->Output($this);
+            );
+            $render->SetValue($data);
+            if ($response->useHtmlLayout) {
+                $render->SetHtml(sprintf('%s/assets/system/permission.html', ROOT));
+                echo $render->Output($this, Pte::VIEW_HTML);
+            } else {
+                echo $render->Output($this, Pte::VIEW_JSON);
+            }
             exit();
         }
+
         return true;
     }
 
