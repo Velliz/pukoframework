@@ -28,8 +28,8 @@ class DBI
     protected $query;
     protected $queryParams;
 
-    protected $db_type;
-    protected $db_name;
+    protected $dbType;
+    protected $dbName;
 
     private $username;
     private $password;
@@ -44,10 +44,10 @@ class DBI
      */
     protected function DBISet($connection)
     {
-        $this->db_type = $connection['dbType'];
+        $this->dbType = $connection['dbType'];
         $this->host = $connection['host'];
         $this->port = $connection['port'];
-        $this->db_name = $connection['dbName'];
+        $this->dbName = $connection['dbName'];
         $this->username = $connection['user'];
         $this->password = $connection['pass'];
     }
@@ -65,7 +65,7 @@ class DBI
         }
 
         $this->DBISet(Config::Data('database'));
-        $pdoConnection = "$this->db_type:host=$this->host;port=$this->port;dbname=$this->db_name";
+        $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
 
         try {
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
@@ -116,13 +116,21 @@ class DBI
             $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
                 if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) $blob = file_get_contents($values[$no]);
-                    else $blob = $key;
+                    if (!$hasBinary) {
+                        $blob = file_get_contents($values[$no]);
+                    } else {
+                        $blob = $values[$no];
+                    }
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
-                } else $statement->bindValue(':' . $key, $values[$no]);
+                } else {
+                    $statement->bindValue(':' . $key, $values[$no]);
+                }
             }
-            if ($statement->execute()) return self::$dbi->lastInsertId();
-            else return false;
+            if ($statement->execute()) {
+                return self::$dbi->lastInsertId();
+            } else {
+                return false;
+            }
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -180,10 +188,15 @@ class DBI
             }
             foreach ($id as $key => $val) {
                 if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) $blob = file_get_contents($val);
-                    else $blob = $val;
+                    if (!$hasBinary) {
+                        $blob = file_get_contents($val);
+                    } else {
+                        $blob = $val;
+                    }
                     $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
-                } else $statement->bindValue(':' . $key, $val);
+                } else {
+                    $statement->bindValue(':' . $key, $val);
+                }
             }
             return $statement->execute();
         } catch (PDOException $ex) {
@@ -200,11 +213,16 @@ class DBI
         $parameters = func_get_args();
         $argCount = count($parameters);
         $this->queryParams = $parameters;
-        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        if ($argCount > 0) {
+            $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        }
         try {
             $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0) $statement->execute($parameters);
-            else $statement->execute();
+            if ($argCount > 0) {
+                $statement->execute($parameters);
+            } else {
+                $statement->execute();
+            }
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());
@@ -220,11 +238,16 @@ class DBI
         $parameters = func_get_args();
         $argCount = count($parameters);
         $this->queryParams = $parameters;
-        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        if ($argCount > 0) {
+            $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        }
         try {
             $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0) $statement->execute($parameters);
-            else $statement->execute();
+            if ($argCount > 0) {
+                $statement->execute($parameters);
+            } else {
+                $statement->execute();
+            }
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
@@ -242,11 +265,16 @@ class DBI
         $parameters = func_get_args();
         $argCount = count($parameters);
         $this->queryParams = $parameters;
-        if ($argCount > 0) $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        if ($argCount > 0) {
+            $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+        }
         try {
             $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0) return $statement->execute($parameters);
-            else return $statement->execute();
+            if ($argCount > 0) {
+                return $statement->execute($parameters);
+            } else {
+                return $statement->execute();
+            }
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -263,8 +291,11 @@ class DBI
         $call_text .= ");";
         try {
             $statement = self::$dbi->prepare($call_text);
-            if ($argCount > 0) return $statement->execute($arrData);
-            else return $statement->execute();
+            if ($argCount > 0) {
+                return $statement->execute($arrData);
+            } else {
+                return $statement->execute();
+            }
         } catch (PDOException $ex) {
             throw new Exception('Database error: ' . $ex->getMessage());
         }
