@@ -84,7 +84,8 @@ class Routes
         $this->error = $source['error'];
         $this->not_found = $source['not_found'];
 
-        $request_url = explode('/', $request_url);
+        $temp = explode('?', $request_url);
+        $request_url = explode('/', $temp[0]);
         $parameter = array();
 
         foreach ($this->page as $key => $val) {
