@@ -64,58 +64,54 @@ class Auth implements Pdc, CustomRender
             $render->SetMaster($response->htmlMaster);
         }
 
-        if ($this->permission === 'true') {
-            $hasPermission = false;
-            if ($this->switch === 'cookies') {
-                $hasPermission = Cookies::Is();
-            }
-            if ($this->switch === 'session') {
-                $hasPermission = Session::Is();
-            }
-            if ($this->switch === 'bearer') {
-                $hasPermission = Bearer::Is();
-            }
-            if (!$hasPermission) {
-                $data = array(
-                    'exception' => 'Authentication Required'
-                );
-                $render->SetValue($data);
-                if ($response->useHtmlLayout) {
-                    $render->SetHtml(sprintf('%s/assets/system/auth.html', ROOT));
-                    echo $render->Output($this, Pte::VIEW_HTML);
-                } else {
-                    echo $render->Output($this, Pte::VIEW_JSON);
-                }
-                exit();
-            }
-            if ($this->permission === '+') {
-                return true;
-            }
-
-            $isHasPermission = false;
-            if ($this->switch === 'cookies') {
-                $isHasPermission = Cookies::IsHasPermission($this->permission);
-            }
-            if ($this->switch === 'session') {
-                $isHasPermission = Session::IsHasPermission($this->permission);
-            }
-            if ($isHasPermission) {
-                return true;
-            }
+        $hasPermission = false;
+        if ($this->switch === 'cookies') {
+            $hasPermission = Cookies::Is();
+        }
+        if ($this->switch === 'session') {
+            $hasPermission = Session::Is();
+        }
+        if ($this->switch === 'bearer') {
+            $hasPermission = Bearer::Is();
+        }
+        if (!$hasPermission) {
             $data = array(
-                'exception' => 'Permission Required'
+                'exception' => 'Authentication Required'
             );
             $render->SetValue($data);
             if ($response->useHtmlLayout) {
-                $render->SetHtml(sprintf('%s/assets/system/permission.html', ROOT));
+                $render->SetHtml(sprintf('%s/assets/system/auth.html', ROOT));
                 echo $render->Output($this, Pte::VIEW_HTML);
             } else {
                 echo $render->Output($this, Pte::VIEW_JSON);
             }
             exit();
         }
+        if ($this->permission === '+') {
+            return true;
+        }
 
-        return true;
+        $isHasPermission = false;
+        if ($this->switch === 'cookies') {
+            $isHasPermission = Cookies::IsHasPermission($this->permission);
+        }
+        if ($this->switch === 'session') {
+            $isHasPermission = Session::IsHasPermission($this->permission);
+        }
+        if ($isHasPermission) {
+            return true;
+        }
+        $data = array(
+            'exception' => 'Permission Required'
+        );
+        $render->SetValue($data);
+        if ($response->useHtmlLayout) {
+            $render->SetHtml(sprintf('%s/assets/system/permission.html', ROOT));
+            echo $render->Output($this, Pte::VIEW_HTML);
+        } else {
+            echo $render->Output($this, Pte::VIEW_JSON);
+        }
+        exit();
     }
 
     /**
