@@ -11,6 +11,8 @@
 
 namespace pukoframework\auth;
 
+use DateTime;
+use Exception;
 use pukoframework\config\Config;
 
 /**
@@ -72,7 +74,13 @@ class Bearer
         if ($secure == false || $secure == null) {
             return false;
         }
-        $secure = $this->Encrypt($secure);
+        $date = new DateTime();
+        $data = array(
+            'secure' => $secure,
+            'generated' => $date->format('Y-m-d H:i:s'),
+            'expired' => $date->modify('+7 day')->format('Y-m-d H:i:s')
+        );
+        $secure = $this->Encrypt(json_encode($data));
         return $secure;
     }
 
@@ -83,28 +91,37 @@ class Bearer
 
     public function GetLoginData()
     {
-        if ($this->getBearerToken() === null) {
-            return false;
+        $data = json_decode($this->Decrypt($this->getBearerToken()), true);
+        if ($data === null) {
+            throw new Exception('token bearer miss match');
         }
-        return $this->authentication->GetLoginData($this->Decrypt($this->getBearerToken()));
+
+        $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
+        if ($date < new DateTime()) {
+            throw new Exception('token bearer expired');
+        }
+
+        return $this->authentication->GetLoginData($data['secure']);
     }
     #end region authentication
 
     /**
      * Get hearder Authorization
-     * */
+     */
     private function getAuthorizationHeader()
     {
         $headers = null;
         if (isset($_SERVER['Authorization'])) {
             $headers = trim($_SERVER["Authorization"]);
         } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            //Nginx or fast CGI
             $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
         } elseif (function_exists('apache_request_headers')) {
             $requestHeaders = apache_request_headers();
-            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
-            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+            $requestHeaders = array_combine(array_map(
+                'ucwords',
+                array_keys($requestHeaders)),
+                array_values($requestHeaders)
+            );
             if (isset($requestHeaders['Authorization'])) {
                 $headers = trim($requestHeaders['Authorization']);
             }
@@ -114,11 +131,10 @@ class Bearer
 
     /**
      * get access token from header
-     * */
+     */
     private function getBearerToken()
     {
         $headers = $this->getAuthorizationHeader();
-        // HEADER: Get the access token from the header
         if (!empty($headers)) {
             if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
                 return $matches[1];
