@@ -13,6 +13,7 @@ namespace pukoframework\pdc;
 
 use pte\CustomRender;
 use pte\Pte;
+use pukoframework\auth\Cookies;
 use pukoframework\auth\Session;
 use pukoframework\Response;
 
@@ -63,7 +64,7 @@ class Auth implements Pdc, CustomRender
         }
 
         if ($this->switch === 'true') {
-            if (!Session::IsSession()) {
+            if (!Cookies::Is()) {
                 $data = array(
                     'exception' => 'Authentication Required'
                 );

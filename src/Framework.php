@@ -12,7 +12,7 @@
 namespace pukoframework;
 
 use pte\Pte;
-use pukoframework\auth\Session;
+use pukoframework\auth\Cookies;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
 use pukoframework\middleware\View;
@@ -75,7 +75,7 @@ class Framework
 
         $token = Request::Cookies('token', null);
         if ($token === null) {
-            $token = Session::GenerateSecureToken();
+            $token = Cookies::GenerateSecureToken();
         }
         $this->fn_return['token'] = $token;
     }

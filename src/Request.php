@@ -11,7 +11,7 @@
 
 namespace pukoframework;
 
-use pukoframework\auth\Session;
+use pukoframework\auth\Cookies;
 
 /**
  * Class Request
@@ -100,10 +100,9 @@ class Request extends Routes
     public static function Cookies($key, $default)
     {
         if (!isset($_COOKIE[$key])) {
-            return filter_var($default, FILTER_SANITIZE_STRING);
+            return $default;
         }
-
-        return filter_var($_COOKIE[$key], FILTER_SANITIZE_STRING);
+        return $_COOKIE[$key];
     }
 
     /**
@@ -120,6 +119,21 @@ class Request extends Routes
         return filter_var($key, FILTER_SANITIZE_STRING);
     }
 
+    /**
+     * @param $key
+     * @param $default
+     * @return mixed
+     */
+    public static function Header($key, $default)
+    {
+        return isset(getallheaders()[$key]) ? getallheaders()[$key] : $default;
+    }
+
+    /**
+     * @param $key
+     * @param $default
+     * @return mixed
+     */
     public static function Files($key, $default)
     {
         if (!isset($_FILES[$key])) {
@@ -186,7 +200,7 @@ class Request extends Routes
         }
 
         //re-create secure token
-        Session::GenerateSecureToken();
+        Cookies::GenerateSecureToken();
         return true;
     }
 
