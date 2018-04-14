@@ -13,6 +13,7 @@ namespace pukoframework\pdc;
 
 use pte\CustomRender;
 use pte\Pte;
+use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
 use pukoframework\auth\Session;
 use pukoframework\Response;
@@ -70,6 +71,9 @@ class Auth implements Pdc, CustomRender
             }
             if ($this->switch === 'session') {
                 $hasPermission = Session::Is();
+            }
+            if ($this->switch === 'bearer') {
+                $hasPermission = Bearer::Is();
             }
             if (!$hasPermission) {
                 $data = array(

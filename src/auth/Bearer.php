@@ -67,6 +67,16 @@ class Bearer
         return openssl_decrypt(base64_decode($string), $this->method, $key, 0, $iv);
     }
 
+    public static function Is()
+    {
+        $data = Bearer::getBearerToken();
+        if ($data === null) {
+            return false;
+        }
+
+        return true;
+    }
+
     #region authentication
     public function Login($username, $password)
     {
