@@ -53,12 +53,14 @@ class Cookies
         return self::$cookiesObject = new Cookies($authentication);
     }
 
-    public static function GenerateSecureToken()
+    public static function GenerateSecureToken($token = null)
     {
-        if (function_exists('random_bytes')) {
-            $token = bin2hex(random_bytes(32));
-        } else {
-            $token = bin2hex(openssl_random_pseudo_bytes(32));
+        if ($token === null) {
+            if (function_exists('random_bytes')) {
+                $token = bin2hex(random_bytes(32));
+            } else {
+                $token = bin2hex(openssl_random_pseudo_bytes(32));
+            }
         }
         setcookie('token', $token, time() + Auth::EXPIRED_1_DAY, '/');
         $_COOKIE['token'] = $token;

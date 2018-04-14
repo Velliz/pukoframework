@@ -97,6 +97,19 @@ class Request extends Routes
      * @param $default
      * @return mixed
      */
+    public static function Session($key, $default)
+    {
+        if (!isset($_SESSION[$key])) {
+            return $default;
+        }
+        return $_SESSION[$key];
+    }
+
+    /**
+     * @param $key
+     * @param $default
+     * @return mixed
+     */
     public static function Cookies($key, $default)
     {
         if (!isset($_COOKIE[$key])) {

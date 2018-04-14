@@ -12,6 +12,7 @@
 namespace pukoframework\auth;
 
 use pukoframework\config\Config;
+use pukoframework\Request;
 
 /**
  * Class Bearer
@@ -25,7 +26,6 @@ class Bearer
     private $identifier;
     private $authentication;
 
-    private static $bearer;
     public static $bearerObject;
 
     private function __construct(Auth $authentication)
@@ -39,8 +39,6 @@ class Bearer
         $this->key = $secure['key'];
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
-
-        self::$bearer = $secure['session'];
 
         $this->authentication = $authentication;
     }
@@ -60,7 +58,6 @@ class Bearer
         } else {
             $token = bin2hex(openssl_random_pseudo_bytes(32));
         }
-        $_SESSION['token'] = $token;
         return $token;
     }
 
@@ -79,28 +76,30 @@ class Bearer
         return openssl_decrypt(base64_decode($string), $this->method, $key, 0, $iv);
     }
 
-    public function PutSession($key, $val)
+    public function PutBearer($key, $val)
     {
-        $_SESSION[$key] = $this->Encrypt($val);
+        $_bearer[$key] = $this->Encrypt($val);
+        $authorization = "Authorization: Bearer 080042cad6356ad5dc0a720c18b53b8e53d4c274";
     }
 
-    public function GetSession($val)
+    public function GetBearer($val)
     {
-        if (!isset($_SESSION[$val])) {
+        if (!isset($_bearer[$val])) {
             return false;
         }
-        return $this->Decrypt($_SESSION[$val]);
+        return $this->Decrypt($_bearer[$val]);
     }
 
-    public static function RemoveSession($key)
+    public static function RemoveBearer($key)
     {
-        $_SESSION[$key] = '';
+
     }
 
-    public static function IsSession()
+    public static function Is()
     {
         $secure = Config::Data('encryption');
-        if (isset($_SESSION[$secure['session']])) {
+        $bearer = Request::Header($secure['bearer'], null);
+        if (isset($bearer)) {
             return true;
         }
         return false;
@@ -113,7 +112,7 @@ class Bearer
         $method = $secure['method'];
         $identifier = $secure['identifier'];
 
-        $string = $_SESSION['x_' . $secure['session']];
+        $string = 'x_' . $secure['bearer'];
 
         $key = hash('sha256', $key);
         $iv = substr(hash('sha256', $identifier), 0, 16);
@@ -129,11 +128,9 @@ class Bearer
         return false;
     }
 
-    public static function ClearSession()
+    public static function ClearBearer()
     {
-        $_SESSION[self::$bearer] = null;
-        $_SESSION['x_' . self::$bearer] = null;
-        session_destroy();
+
     }
 
     #region authentication
@@ -144,21 +141,19 @@ class Bearer
             return false;
         }
         $secure = $this->Encrypt($secure);
-        $_SESSION[self::$bearer] = $secure;
-        return true;
+        return $secure;
     }
 
     public function SetPermission($data = array())
     {
         $permission = $this->Encrypt(json_encode($data));
-        $_SESSION['x_' . self::$bearer] = $permission;
-        return true;
+        return $permission;
     }
 
     public function Logout()
     {
         $secure = $this->authentication->Logout();
-        $this->ClearSession();
+        $this->Clearbearer();
         if ($secure == false || $secure == null) {
             return false;
         }
@@ -167,10 +162,47 @@ class Bearer
 
     public function GetLoginData()
     {
-        if (!isset($_SESSION[self::$bearer])) {
+        if (!isset($_bearer[self::$bearer])) {
             return false;
         }
-        return $this->authentication->GetLoginData($this->Decrypt($_SESSION[self::$bearer]));
+        return $this->authentication->GetLoginData($this->Decrypt($_bearer[self::$bearer]));
     }
     #end region authentication
+
+    /**
+     * Get hearder Authorization
+     * */
+    function getAuthorizationHeader()
+    {
+        $headers = null;
+        if (isset($_SERVER['Authorization'])) {
+            $headers = trim($_SERVER["Authorization"]);
+        } else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
+            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+        } elseif (function_exists('apache_request_headers')) {
+            $requestHeaders = apache_request_headers();
+            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
+            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+            //print_r($requestHeaders);
+            if (isset($requestHeaders['Authorization'])) {
+                $headers = trim($requestHeaders['Authorization']);
+            }
+        }
+        return $headers;
+    }
+
+    /**
+     * get access token from header
+     * */
+    function getBearerToken()
+    {
+        $headers = $this->getAuthorizationHeader();
+        // HEADER: Get the access token from the header
+        if (!empty($headers)) {
+            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+                return $matches[1];
+            }
+        }
+        return null;
+    }
 }

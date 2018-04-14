@@ -63,8 +63,15 @@ class Auth implements Pdc, CustomRender
             $render->SetMaster($response->htmlMaster);
         }
 
-        if ($this->switch === 'true') {
-            if (!Cookies::Is()) {
+        if ($this->permission === 'true') {
+            $hasPermission = false;
+            if ($this->switch === 'cookies') {
+                $hasPermission = Cookies::Is();
+            }
+            if ($this->switch === 'session') {
+                $hasPermission = Session::Is();
+            }
+            if (!$hasPermission) {
                 $data = array(
                     'exception' => 'Authentication Required'
                 );
@@ -80,7 +87,15 @@ class Auth implements Pdc, CustomRender
             if ($this->permission === '+') {
                 return true;
             }
-            if (Session::IsHasPermission($this->permission)) {
+
+            $isHasPermission = false;
+            if ($this->switch === 'cookies') {
+                $isHasPermission = Cookies::IsHasPermission($this->permission);
+            }
+            if ($this->switch === 'session') {
+                $isHasPermission = Session::IsHasPermission($this->permission);
+            }
+            if ($isHasPermission) {
                 return true;
             }
             $data = array(
