@@ -56,6 +56,7 @@ class Auth implements Pdc, CustomRender
     /**
      * @param Response &$response
      * @return mixed
+     * @throws \pte\exception\PteException
      */
     public function SetStrategy(Response &$response)
     {
@@ -87,20 +88,12 @@ class Auth implements Pdc, CustomRender
             }
             exit();
         }
-        if ($this->permission === '+') {
+        if ($this->permission === 'true') {
             return true;
         }
 
-        $isHasPermission = false;
-        if ($this->switch === 'cookies') {
-            $isHasPermission = Cookies::IsHasPermission($this->permission);
-        }
-        if ($this->switch === 'session') {
-            $isHasPermission = Session::IsHasPermission($this->permission);
-        }
-        if ($isHasPermission) {
-            return true;
-        }
+        //todo: working with permissions
+
         $data = array(
             'exception' => 'Permission Required'
         );
