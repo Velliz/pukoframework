@@ -11,6 +11,7 @@
 
 namespace pukoframework\auth;
 
+use Exception;
 use pukoframework\config\Config;
 
 /**
@@ -53,6 +54,11 @@ class Cookies
         return self::$cookiesObject = new Cookies($authentication);
     }
 
+    /**
+     * @param null $token
+     * @return null|string
+     * @throws \Exception
+     */
     public static function GenerateSecureToken($token = null)
     {
         if ($token === null) {
@@ -114,61 +120,42 @@ class Cookies
         return false;
     }
 
-    public static function IsHasPermission($code)
-    {
-        $secure = Config::Data('encryption');
-        $key = $secure['key'];
-        $method = $secure['method'];
-        $identifier = $secure['identifier'];
-
-        $string = $_COOKIE['x_' . $secure['cookies']];
-
-        $key = hash('sha256', $key);
-        $iv = substr(hash('sha256', $identifier), 0, 16);
-        $permission_array = json_decode(openssl_decrypt(base64_decode($string), $method, $key, 0, $iv), true);
-
-        if (count($permission_array) === 0) {
-            return false;
-        }
-
-        if (!array_diff($permission_array, explode(' ', $code))) {
-            return true;
-        }
-        return false;
-    }
-
     public static function Clear()
     {
-        setcookie(self::$cookies, '', (time() -  Auth::EXPIRED_1_MONTH), '/');
+        setcookie(self::$cookies, '', (time() - Auth::EXPIRED_1_MONTH), '/');
         $_COOKIE[self::$cookies] = null;
-        setcookie('x_' . self::$cookies, '', (time() - Auth::EXPIRED_1_MONTH), '/');
-        $_COOKIE['x_' . self::$cookies] = null;
     }
 
     #region authentication
+
+    /**
+     * @param $username
+     * @param $password
+     * @param int $expired
+     * @return bool
+     * @throws Exception
+     */
     public function Login($username, $password, $expired = Auth::EXPIRED_1_HOUR)
     {
-        if ($expired !== null) {
-            $expired = (time() + $expired);
+        $loginObject = $this->authentication->Login($username, $password);
+        if (!$loginObject instanceof PukoAuth) {
+            throw new Exception('Auth must be object of PukoAuth instance');
         }
-        $secure = $this->authentication->Login($username, $password);
-        if ($secure == false || $secure == null) {
+        if ($loginObject->secure === null) {
             return false;
         }
-        $secure = $this->Encrypt($secure);
-        setcookie(self::$cookies, $secure, $expired, "/");
-        $_COOKIE[self::$cookies] = $secure;
-        return true;
-    }
 
-    public function SetPermission($data = array(), $expired = Auth::EXPIRED_1_HOUR)
-    {
         if ($expired !== null) {
             $expired = (time() + $expired);
         }
-        $permission = $this->Encrypt(json_encode($data));
-        setcookie('x_' . self::$cookies, $permission, $expired, "/");
-        $_COOKIE['x_' . self::$cookies] = $permission;
+
+        $data = array(
+            'secure' => $loginObject->secure,
+            'permission' => $loginObject->permission,
+        );
+        $secure = $this->Encrypt(json_encode($data));
+        setcookie(self::$cookies, $secure, $expired, "/");
+        $_COOKIE[self::$cookies] = $secure;
         return true;
     }
 
@@ -187,7 +174,9 @@ class Cookies
         if (!isset($_COOKIE[self::$cookies])) {
             return false;
         }
-        return $this->authentication->GetLoginData($this->Decrypt($_COOKIE[self::$cookies]));
+
+        $data = json_decode($this->Decrypt($_COOKIE[self::$cookies]));
+        return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication
 }

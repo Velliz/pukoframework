@@ -11,6 +11,7 @@
 
 namespace pukoframework\auth;
 
+use Exception;
 use pukoframework\config\Config;
 
 /**
@@ -57,6 +58,11 @@ class Session
         return self::$sessionObject = new Session($authentication);
     }
 
+    /**
+     * @param null $token
+     * @return null|string
+     * @throws \Exception
+     */
     public static function GenerateSecureToken($token = null)
     {
         if ($token === null) {
@@ -112,52 +118,37 @@ class Session
         return false;
     }
 
-    public static function IsHasPermission($code)
-    {
-        $secure = Config::Data('encryption');
-        $key = $secure['key'];
-        $method = $secure['method'];
-        $identifier = $secure['identifier'];
-
-        $string = $_SESSION['x_' . $secure['session']];
-
-        $key = hash('sha256', $key);
-        $iv = substr(hash('sha256', $identifier), 0, 16);
-        $permission_array = json_decode(openssl_decrypt(base64_decode($string), $method, $key, 0, $iv), true);
-
-        if (count($permission_array) === 0) {
-            return false;
-        }
-
-        if (!array_diff($permission_array, explode(' ', $code))) {
-            return true;
-        }
-        return false;
-    }
-
     public static function Clear()
     {
         $_SESSION[self::$session] = null;
-        $_SESSION['x_' . self::$session] = null;
         session_destroy();
     }
 
     #region authentication
+
+    /**
+     * @param $username
+     * @param $password
+     * @return bool
+     * @throws Exception
+     */
     public function Login($username, $password)
     {
-        $secure = $this->authentication->Login($username, $password);
-        if ($secure == false || $secure == null) {
+        $loginObject = $this->authentication->Login($username, $password);
+        if (!$loginObject instanceof PukoAuth) {
+            throw new Exception('Auth must be object of PukoAuth instance');
+        }
+        if ($loginObject->secure === null) {
             return false;
         }
-        $secure = $this->Encrypt($secure);
-        $_SESSION[self::$session] = $secure;
-        return true;
-    }
 
-    public function SetPermission($data = array())
-    {
-        $permission = $this->Encrypt(json_encode($data));
-        $_SESSION['x_' . self::$session] = $permission;
+        $data = array(
+            'secure' => $loginObject->secure,
+            'permission' => $loginObject->permission,
+        );
+
+        $secure = $this->Encrypt(json_encode($data));
+        $_SESSION[self::$session] = $secure;
         return true;
     }
 
@@ -176,7 +167,9 @@ class Session
         if (!isset($_SESSION[self::$session])) {
             return false;
         }
-        return $this->authentication->GetLoginData($this->Decrypt($_SESSION[self::$session]));
+
+        $data = json_decode($this->Decrypt($_SESSION[self::$session]));
+        return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication
 }

@@ -27,6 +27,6 @@ interface Auth
 
     public function Logout();
 
-    public function GetLoginData($id);
+    public function GetLoginData($data, $permission);
 
 }

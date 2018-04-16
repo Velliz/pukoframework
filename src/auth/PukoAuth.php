@@ -11,33 +11,28 @@
 
 namespace pukoframework\auth;
 
-use Couchbase\Authenticator;
-
-class PukoAuth implements Auth
+class PukoAuth
 {
+    /**
+     * @var array|null
+     */
+    var $secure;
 
     /**
-     * @var authenticator
+     * @var array|null
      */
-    static $authenticator;
+    var $permission;
 
-    public static function Instance()
+    /**
+     * PukoAuth constructor.
+     * @param $secure
+     * @param $permission
+     */
+    public function __construct($secure, $permission)
     {
-        if (!self::$authenticator instanceof PukoAuth) {
-            self::$authenticator = new PukoAuth();
-        }
-        return self::$authenticator;
+        $this->secure = $secure;
+        $this->permission = $permission;
     }
 
-    public function Login($username, $password)
-    {
-    }
 
-    public function Logout()
-    {
-    }
-
-    public function GetLoginData($id)
-    {
-    }
 }

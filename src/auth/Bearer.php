@@ -78,15 +78,27 @@ class Bearer
     }
 
     #region authentication
+
+    /**
+     * @param $username
+     * @param $password
+     * @return bool|string
+     * @throws Exception
+     */
     public function Login($username, $password)
     {
-        $secure = $this->authentication->Login($username, $password);
-        if ($secure == false || $secure == null) {
+        $loginObject = $this->authentication->Login($username, $password);
+        if (!$loginObject instanceof PukoAuth) {
+            throw new Exception('Auth must be object of PukoAuth instance');
+        }
+        if ($loginObject->secure === null) {
             return false;
         }
+
         $date = new DateTime();
         $data = array(
-            'secure' => $secure,
+            'secure' => $loginObject->secure,
+            'permission' => $loginObject->permission,
             'generated' => $date->format('Y-m-d H:i:s'),
             'expired' => $date->modify('+7 day')->format('Y-m-d H:i:s')
         );
@@ -99,6 +111,10 @@ class Bearer
         return true;
     }
 
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public function GetLoginData()
     {
         $data = json_decode($this->Decrypt($this->getBearerToken()), true);
@@ -111,14 +127,14 @@ class Bearer
             throw new Exception('token bearer expired');
         }
 
-        return $this->authentication->GetLoginData($data['secure']);
+        return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication
 
     /**
      * Get hearder Authorization
      */
-    private function getAuthorizationHeader()
+    private static function getAuthorizationHeader()
     {
         $headers = null;
         if (isset($_SERVER['Authorization'])) {
@@ -142,9 +158,9 @@ class Bearer
     /**
      * get access token from header
      */
-    private function getBearerToken()
+    private static function getBearerToken()
     {
-        $headers = $this->getAuthorizationHeader();
+        $headers = Bearer::getAuthorizationHeader();
         if (!empty($headers)) {
             if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
                 return $matches[1];
