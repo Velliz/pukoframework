@@ -23,6 +23,8 @@ interface Auth
     const EXPIRED_1_WEEK = 604800;
     const EXPIRED_1_MONTH = 2592000;
 
+    public static function Instance();
+
     public function Login($username, $password);
 
     public function Logout();
