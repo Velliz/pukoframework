@@ -45,6 +45,7 @@ class Request extends Routes
 
     /**
      * Request constructor.
+     * @throws \Exception
      */
     public function __construct()
     {
@@ -65,7 +66,7 @@ class Request extends Routes
     public static function Get($key, $default)
     {
         if (!isset($_GET[$key])) {
-            return filter_var($default, FILTER_SANITIZE_STRING);
+            return $default;
         }
 
         return filter_var($_GET[$key], FILTER_SANITIZE_STRING);
@@ -79,16 +80,12 @@ class Request extends Routes
     public static function Post($key, $default)
     {
         if (!isset($_POST[$key])) {
-            if (!is_array($_POST[$key])) {
-                return filter_var($default, FILTER_SANITIZE_STRING);
-            } else {
-                return $default;
-            }
+            return $default;
         }
-        if (!is_array($_POST[$key])) {
-            return filter_var($_POST[$key], FILTER_SANITIZE_STRING);
-        } else {
+        if (is_array($_POST[$key])) {
             return $_POST[$key];
+        } else {
+            return filter_var($_POST[$key], FILTER_SANITIZE_STRING);
         }
     }
 
@@ -126,7 +123,7 @@ class Request extends Routes
     public static function Vars($key, $default)
     {
         if (!isset($key)) {
-            return filter_var($default, FILTER_SANITIZE_STRING);
+            return $default;
         }
 
         return filter_var($key, FILTER_SANITIZE_STRING);
@@ -194,6 +191,7 @@ class Request extends Routes
      *
      * Request::IsPost()
      * validating post input and provide guards from CSRF attacks
+     * @throws \Exception
      */
     public static function IsPost()
     {
