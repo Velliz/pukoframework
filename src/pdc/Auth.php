@@ -22,24 +22,12 @@ use pukoframework\Response;
  * Class Auth
  * @package pukoframework\pdc
  */
-class Auth implements Pdc, CustomRender
+class Auth implements Pdc
 {
 
     var $key;
     var $switch;
-    var $permission;
-
-    /**
-     * DocsAuth constructor.
-     */
-    public function __construct()
-    {
-        header('Expires: Mon, 1 Jul 1998 01:00:00 GMT');
-        header('Cache-Control: no-store, no-cache, must-revalidate');
-        header('Cache-Control: post-check=0, pre-check=0', false);
-        header('Pragma: no-cache');
-        header('Last-Modified: ' . gmdate('D, j M Y H:i:s') . ' GMT');
-    }
+    var $auth;
 
     /**
      * @param $clause
@@ -50,7 +38,7 @@ class Auth implements Pdc, CustomRender
     {
         $this->key = $clause;
         $this->switch = $command;
-        $this->permission = $value;
+        $this->auth = $value;
     }
 
     /**
@@ -65,6 +53,9 @@ class Auth implements Pdc, CustomRender
             $render->SetMaster($response->htmlMaster);
         }
 
+        //#Auth bearer
+        //#Auth session
+        //#Auth cookies
         $hasPermission = false;
         if ($this->switch === 'cookies') {
             $hasPermission = Cookies::Is();
@@ -88,39 +79,9 @@ class Auth implements Pdc, CustomRender
             }
             exit();
         }
-        if ($this->permission === 'true') {
-            return true;
-        }
 
-        //todo: working with permissions
-
-        $data = array(
-            'exception' => 'Permission Required'
-        );
-        $render->SetValue($data);
-        if ($response->useHtmlLayout) {
-            $render->SetHtml(sprintf('%s/assets/system/permission.html', ROOT));
-            echo $render->Output($this, Pte::VIEW_HTML);
-        } else {
-            echo $render->Output($this, Pte::VIEW_JSON);
-        }
-        exit();
-    }
-
-    /**
-     * @param $fnName
-     * @param $paramArray
-     */
-    public function RegisterFunction($fnName, $paramArray)
-    {
-        // TODO: Implement Register() method.
-    }
-
-    /**
-     * @return string
-     */
-    public function Parse()
-    {
-        return null;
+        header('Cache-Control: must-revalidate');
+        header('Cache-Control: no-cache');
+        return true;
     }
 }
