@@ -80,6 +80,7 @@ class Auth implements Pdc
             exit();
         }
 
+        http_response_code(404);
         header('Cache-Control: must-revalidate');
         header('Cache-Control: no-cache');
         return true;
