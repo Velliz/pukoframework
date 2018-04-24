@@ -89,7 +89,7 @@ class Bearer
     {
         $loginObject = $this->authentication->Login($username, $password);
         if (!$loginObject instanceof PukoAuth) {
-            throw new Exception('Auth must be object of PukoAuth instance');
+            return false;
         }
         if ($loginObject->secure === null) {
             return false;
