@@ -73,8 +73,6 @@ class ThrowView extends Exception implements PukoException, CustomRender
             $emg['Stacktrace'][$key] = $val;
         }
 
-        http_response_code(400);
-
         $this->render->SetHtml($this->system_html . '/exception.html');
         $this->render->SetValue($emg);
         echo $this->render->Output($this);
@@ -102,8 +100,6 @@ class ThrowView extends Exception implements PukoException, CustomRender
             unset($val['args']);
             $emg['Stacktrace'][$key] = $val;
         }
-
-        http_response_code(400);
 
         $this->render->SetHtml($this->system_html . '/error.html');
         $this->render->SetValue($emg);
