@@ -11,6 +11,7 @@
 
 namespace pukoframework\pdc;
 
+use pte\CustomRender;
 use pte\Pte;
 use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
@@ -22,7 +23,7 @@ use pukoframework\Response;
  * Class Permission
  * @package pukoframework\pdc
  */
-class Permission implements Pdc
+class Permission implements Pdc, CustomRender
 {
 
     var $key;
@@ -36,6 +37,8 @@ class Permission implements Pdc
      * @var \pukoframework\auth\Auth
      */
     var $classes;
+
+    var $dataKey;
     var $permission;
 
     /**
@@ -51,25 +54,27 @@ class Permission implements Pdc
     public function SetCommand($clause, $command, $value)
     {
         $this->key = $clause;
+
         $com = explode('@', $command);
         $this->provider = $com[0];
         $this->classes = $com[1];
-        $this->permission = explode(',', $value);
+
+        $val = explode('@', $value);
+        $this->dataKey = $val[0];
+        $this->permission = explode('.', $val[1]);
     }
 
     /**
      * @param Response &$response
      * @return mixed
+     * @throws \pte\exception\PteException
      */
     public function SetStrategy(Response &$response)
     {
-        //#Permission Bearer@UserAuth SADMIN,USER,TEST
+        //#Permission \pukoframework\auth\Bearer@\plugins\auth\UserBearer permissions@USER.ADMIN
         $this->AuthClass = $this->provider::Get($this->classes::Instance())->GetLoginData();
-        if (!$this->AuthClass instanceof PukoAuth) {
-            $this->PermissionDenied($response);
-        }
         foreach ($this->permission as $val) {
-            if (!in_array($val, $this->AuthClass->permission)) {
+            if (!in_array($val, $this->AuthClass[$this->dataKey])) {
                 $this->PermissionDenied($response);
             }
         }
@@ -79,6 +84,10 @@ class Permission implements Pdc
         return true;
     }
 
+    /**
+     * @param Response $response
+     * @throws \pte\exception\PteException
+     */
     private function PermissionDenied(Response &$response)
     {
         $render = new Pte(false);
@@ -99,4 +108,20 @@ class Permission implements Pdc
         exit();
     }
 
+    /**
+     * @param $fnName
+     * @param $paramArray
+     */
+    public function RegisterFunction($fnName, $paramArray)
+    {
+        // TODO: Implement RegisterFunction() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function Parse()
+    {
+        return '';
+    }
 }
