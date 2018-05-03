@@ -98,6 +98,11 @@ class Permission implements Pdc, CustomRender
         $data = array(
             'exception' => 'Permission Required'
         );
+
+        http_response_code(404);
+        header('Cache-Control: must-revalidate');
+        header('Cache-Control: no-cache');
+
         $render->SetValue($data);
         if ($response->useHtmlLayout) {
             $render->SetHtml(sprintf('%s/assets/system/permission.html', ROOT));

@@ -22,7 +22,7 @@ use pukoframework\Response;
  * Class Auth
  * @package pukoframework\pdc
  */
-class Auth implements Pdc
+class Auth implements Pdc, CustomRender
 {
 
     var $key;
@@ -70,6 +70,11 @@ class Auth implements Pdc
             $data = array(
                 'exception' => 'Authentication Required'
             );
+
+            http_response_code(404);
+            header('Cache-Control: must-revalidate');
+            header('Cache-Control: no-cache');
+
             $render->SetValue($data);
             if ($response->useHtmlLayout) {
                 $render->SetHtml(sprintf('%s/assets/system/auth.html', ROOT));
@@ -79,10 +84,23 @@ class Auth implements Pdc
             }
             exit();
         }
-
-        http_response_code(404);
-        header('Cache-Control: must-revalidate');
-        header('Cache-Control: no-cache');
         return true;
+    }
+
+    /**
+     * @param $fnName
+     * @param $paramArray
+     */
+    public function RegisterFunction($fnName, $paramArray)
+    {
+        // TODO: Implement RegisterFunction() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function Parse()
+    {
+        return '';
     }
 }

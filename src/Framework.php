@@ -61,6 +61,7 @@ class Framework
 
     /**
      * Framework constructor.
+     * @throws \Exception
      */
     public function __construct()
     {
@@ -88,6 +89,9 @@ class Framework
 
     /**
      * @param string $AppDir
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws \pte\exception\PteException
      */
     public function Start($AppDir = '')
     {
