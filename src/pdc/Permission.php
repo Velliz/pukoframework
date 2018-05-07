@@ -96,7 +96,10 @@ class Permission implements Pdc, CustomRender
         }
 
         $data = array(
-            'exception' => 'Permission Required'
+            'status' => 'error',
+            'exception' => array(
+                'Message' => 'Permission Required'
+            )
         );
 
         http_response_code(404);
