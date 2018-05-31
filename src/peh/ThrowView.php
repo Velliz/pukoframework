@@ -37,6 +37,9 @@ class ThrowView extends Exception implements PukoException, CustomRender
      */
     public $message;
 
+    var $fn;
+    var $param;
+
     /**
      * PukoException constructor.
      *
@@ -113,7 +116,8 @@ class ThrowView extends Exception implements PukoException, CustomRender
      */
     public function RegisterFunction($fnName, $paramArray)
     {
-        // TODO: Implement Register() method.
+        $this->fn = $fnName;
+        $this->param = $paramArray;
     }
 
     /**
@@ -121,6 +125,9 @@ class ThrowView extends Exception implements PukoException, CustomRender
      */
     public function Parse()
     {
-        return null;
+        if ($this->fn === 'url') {
+            return BASE_URL . $this->param;
+        }
+        return '';
     }
 }
