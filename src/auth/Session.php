@@ -17,7 +17,6 @@ use pukoframework\config\Config;
 /**
  * Class Session
  * @package pukoframework\auth
- *
  */
 class Session
 {
@@ -25,8 +24,8 @@ class Session
     private $key;
     private $identifier;
     private $authentication;
+    private $session;
 
-    private static $session;
     public static $sessionObject;
 
     private function __construct(Auth $authentication)
@@ -34,22 +33,17 @@ class Session
         if (is_object(self::$sessionObject)) {
             return;
         }
-
         $secure = Config::Data('encryption');
-
         $this->key = $secure['key'];
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
+        $this->session = $secure['session'];
 
         $this->authentication = $authentication;
     }
 
     public static function Get(Auth $authentication)
     {
-        $secure = Config::Data('encryption');
-        session_name($secure['session']);
-        session_start();
-
         if (is_object(self::$sessionObject)) {
             return self::$sessionObject;
         }
@@ -118,7 +112,8 @@ class Session
 
     public static function Clear()
     {
-        $_SESSION[self::$session] = null;
+        $secure = Config::Data('encryption');
+        $_SESSION[$secure['session']] = null;
         session_destroy();
     }
 
@@ -146,7 +141,7 @@ class Session
         );
 
         $secure = $this->Encrypt(json_encode($data));
-        $_SESSION[self::$session] = $secure;
+        $_SESSION[$this->session] = $secure;
         return true;
     }
 
@@ -162,11 +157,11 @@ class Session
 
     public function GetLoginData()
     {
-        if (!isset($_SESSION[self::$session])) {
+        if (!isset($_SESSION[$this->session])) {
             return false;
         }
 
-        $data = json_decode($this->Decrypt($_SESSION[self::$session]), true);
+        $data = json_decode($this->Decrypt($_SESSION[$this->session]), true);
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication

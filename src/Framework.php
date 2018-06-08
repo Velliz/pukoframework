@@ -65,6 +65,7 @@ class Framework
      */
     public function __construct()
     {
+        session_start();
         if (PHP_VERSION_ID < 506000) {
             include 'Compatibility.php';
         }
