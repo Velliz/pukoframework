@@ -31,7 +31,6 @@ class Session
 
     private function __construct(Auth $authentication)
     {
-
         if (is_object(self::$sessionObject)) {
             return;
         }
@@ -42,16 +41,15 @@ class Session
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
 
-        self::$session = $secure['session'];
-
-        session_name(self::$session);
-        session_start();
-
         $this->authentication = $authentication;
     }
 
     public static function Get(Auth $authentication)
     {
+        $secure = Config::Data('encryption');
+        session_name($secure['session']);
+        session_start();
+
         if (is_object(self::$sessionObject)) {
             return self::$sessionObject;
         }
