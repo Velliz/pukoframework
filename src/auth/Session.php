@@ -166,7 +166,7 @@ class Session
             return false;
         }
 
-        $data = json_decode($this->Decrypt($_SESSION[self::$session]));
+        $data = json_decode($this->Decrypt($_SESSION[self::$session]), true);
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication

@@ -175,7 +175,7 @@ class Cookies
             return false;
         }
 
-        $data = json_decode($this->Decrypt($_COOKIE[self::$cookies]));
+        $data = json_decode($this->Decrypt($_COOKIE[self::$cookies]), true);
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication
