@@ -42,6 +42,11 @@ class Model
     private $_specs = array();
 
     /**
+     * @var bool
+     */
+    public $_binary = false;
+
+    /**
      * Model constructor.
      * @param null $id
      *
@@ -94,6 +99,9 @@ class Model
         return $this;
     }
 
+    /**
+     * @throws Exception
+     */
     public function save()
     {
         $insert = array();
@@ -104,10 +112,13 @@ class Model
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table)->Save($insert);
+        $lastid = DBI::Prepare($this->_table)->Save($insert, $this->_binary);
         $this->__construct($lastid);
     }
 
+    /**
+     * @throws Exception
+     */
     public function modify()
     {
         $insert = array();
@@ -118,10 +129,13 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table)->Update(array($this->_primary => $this->{$this->_primary}), $insert);
+        DBI::Prepare($this->_table)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $this->_binary);
         $this->__construct($this->{$this->_primary});
     }
 
+    /**
+     * @throws Exception
+     */
     public function remove()
     {
         DBI::Prepare($this->_table)->Delete(array($this->_primary => $this->{$this->_primary}));
