@@ -99,7 +99,7 @@ class Permission implements Pdc, CustomRender
         $data = array(
             'status' => 'error',
             'exception' => array(
-                'Message' => sprintf('Permission $s required to complete the operation', $permission)
+                'Message' => sprintf('Permission %s required to complete the operation', $permission)
             )
         );
 
