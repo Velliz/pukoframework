@@ -75,7 +75,7 @@ class Permission implements Pdc, CustomRender
         $this->AuthClass = $this->provider::Get($this->classes::Instance())->GetLoginData();
         foreach ($this->permission as $val) {
             if (!in_array($val, $this->AuthClass[$this->dataKey])) {
-                $this->PermissionDenied($response);
+                $this->PermissionDenied($response, $val);
             }
         }
 
@@ -86,9 +86,10 @@ class Permission implements Pdc, CustomRender
 
     /**
      * @param Response $response
+     * @param string $permission
      * @throws \pte\exception\PteException
      */
-    private function PermissionDenied(Response &$response)
+    private function PermissionDenied(Response &$response, $permission = '')
     {
         $render = new Pte(false);
         if ($response->useMasterLayout) {
@@ -98,7 +99,7 @@ class Permission implements Pdc, CustomRender
         $data = array(
             'status' => 'error',
             'exception' => array(
-                'Message' => 'Permission Required'
+                'Message' => sprintf('Permission $s required to complete the operation', $permission)
             )
         );
 
