@@ -1,4 +1,4 @@
-<img align="left" src="https://raw.githubusercontent.com/Velliz/puko/master/assets/icon/material/puko-material-50.png">
+<img align="left" src="https://4.bp.blogspot.com/-5-ZTEcgqYU4/Wy_GAT3k3qI/AAAAAAAAFhw/X0n1kq0QrckmTf009xWUU_kseNZJWQScgCLcBGAs/s1600/puko-material-50.png">
 
 # Puko Framework [Core]
 
@@ -13,7 +13,7 @@ Puko Framework is MVC PHP Framework for quick PHP Application Development.
 
 ## Requirement
 
-* Puko Require **PHP 5.5** or greater
+* Puko Require **PHP 7.0** or greater
 * Composer
 
 ## Feature

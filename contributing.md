@@ -53,7 +53,7 @@ If you want to contribute to provide sample app. Get the projects from this [lin
 
 ## Framework logo
 
-<img src="https://github.com/Velliz/pukodocs/blob/gh-pages/icon/material/puko-material-200.png">
+<img src="https://1.bp.blogspot.com/-z4TyrVfdGJo/Wy_FjBG1DWI/AAAAAAAAFho/WwobP8KGYmY7k4S4F6eHVYa9M8KYpPZjACLcBGAs/s1600/puko-material-500.png">
 
 If you want to make the logo better you can contribute to by post [issues](https://github.com/Velliz/pukoframework/issues) 
 about the logo.

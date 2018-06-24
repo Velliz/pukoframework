@@ -1,4 +1,4 @@
-<img align="left" src="https://github.com/Velliz/pukodocs/blob/gh-pages/icon/material/puko-material-50.png">
+<img align="left" src="https://4.bp.blogspot.com/-5-ZTEcgqYU4/Wy_GAT3k3qI/AAAAAAAAFhw/X0n1kq0QrckmTf009xWUU_kseNZJWQScgCLcBGAs/s1600/puko-material-50.png">
 
 ## TODO Puko Framework
 
@@ -23,4 +23,3 @@ Some of draft and great idea to work, for a better puko framework.
 ### Modules
 * Adding feature import export Excel, Word, PDF.
 * Adding Mail utility.
-* Adding authentication modules.
