@@ -178,6 +178,7 @@ class Framework
                     $this->request->controller_name,
                     $this->request->fn_name
                 );
+                $htmlPath = str_replace('\\','/', $htmlPath);
                 $this->render->SetHtml(sprintf('%s/assets/html/%s', ROOT, $htmlPath));
             }
             $output = $this->render->Output($this->object, Pte::VIEW_HTML);
