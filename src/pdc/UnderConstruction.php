@@ -45,17 +45,14 @@ class UnderConstruction implements Pdc
     {
         if ($this->value === 'true') {
 
-            $render = new Pte(false);
-            if ($response->useMasterLayout) {
-                $render->SetMaster($response->htmlMaster);
-            }
+            $render = new Pte(false, false);
 
             $render->SetValue(array());
             if ($response->useHtmlLayout) {
                 $render->SetHtml(sprintf('%s/assets/system/construction.html', ROOT));
-                echo $render->Output($this, Pte::VIEW_HTML);
+                echo $render->Output(null, Pte::VIEW_HTML);
             } else {
-                echo $render->Output($this, Pte::VIEW_JSON);
+                echo $render->Output(null, Pte::VIEW_JSON);
             }
             exit();
         }
