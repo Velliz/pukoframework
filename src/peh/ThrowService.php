@@ -41,7 +41,6 @@ class ThrowService extends Exception implements PukoException
         $emg['LineNumber'] = $error->getLine();
         $emg['Stacktrace'] = $error->getTrace();
 
-        http_response_code(401);
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
@@ -70,7 +69,6 @@ class ThrowService extends Exception implements PukoException
         $emg['LineNumber'] = $line;
         $emg['Stacktrace'] = $this->getTrace();
 
-        http_response_code(401);
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 

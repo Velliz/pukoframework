@@ -71,7 +71,6 @@ class Permission implements Pdc, CustomRender
      */
     public function SetStrategy(Response &$response)
     {
-        //#Permission \pukoframework\auth\Bearer@\plugins\auth\UserBearer permissions@USER.ADMIN
         $this->AuthClass = $this->provider::Get($this->classes::Instance())->GetLoginData();
         foreach ($this->permission as $val) {
             if (!in_array($val, $this->AuthClass[$this->dataKey])) {
@@ -103,7 +102,7 @@ class Permission implements Pdc, CustomRender
             )
         );
 
-        http_response_code(404);
+        http_response_code(401);
         header('Cache-Control: must-revalidate');
         header('Cache-Control: no-cache');
 

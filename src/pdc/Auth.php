@@ -53,9 +53,6 @@ class Auth implements Pdc, CustomRender
             $render->SetMaster($response->htmlMaster);
         }
 
-        //#Auth bearer
-        //#Auth session
-        //#Auth cookies
         $hasPermission = false;
         if ($this->switch === 'cookies') {
             $hasPermission = Cookies::Is();
@@ -71,7 +68,7 @@ class Auth implements Pdc, CustomRender
                 'exception' => 'Authentication Required'
             );
 
-            http_response_code(404);
+            http_response_code(403);
             header('Cache-Control: must-revalidate');
             header('Cache-Control: no-cache');
 
