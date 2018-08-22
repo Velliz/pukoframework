@@ -12,13 +12,26 @@
 namespace pukoframework\peh;
 
 use Exception;
+use pukoframework\log\LoggerAwareInterface;
+use pukoframework\log\LoggerInterface;
+use pukoframework\log\LogLevel;
 
 /**
  * Class ThrowService
  * @package pukoframework\peh
  */
-class ThrowService extends Exception implements PukoException
+class ThrowService extends Exception implements PukoException, LoggerAwareInterface
 {
+
+    /**
+     * @var string
+     */
+    var $message;
+
+    /**
+     * @var LoggerInterface
+     */
+    var $logger;
 
     /**
      * PukoException constructor.
@@ -26,6 +39,7 @@ class ThrowService extends Exception implements PukoException
      */
     public function __construct($message)
     {
+        $this->message = $message;
         parent::__construct($message, PukoException::service);
     }
 
@@ -35,7 +49,7 @@ class ThrowService extends Exception implements PukoException
     public function ExceptionHandler($error)
     {
         $emg['ErrorCount'] = $error;
-        $emg['ErrorCode'] = $error->getCode();
+        $emg['ErrorCode'] = PukoException::value;
         $emg['Message'] = $error->getMessage();
         $emg['File'] = $error->getFile();
         $emg['LineNumber'] = $error->getLine();
@@ -50,8 +64,9 @@ class ThrowService extends Exception implements PukoException
             'exception' => $emg
         );
 
-        echo json_encode($data);
-        die();
+        $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
+
+        die(json_encode($data));
     }
 
     /**
@@ -78,7 +93,17 @@ class ThrowService extends Exception implements PukoException
             'exception' => $emg
         );
 
-        echo json_encode($data);
-        die();
+        $this->logger->log(LogLevel::ERROR, $message, $emg);
+
+        die(json_encode($data));
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return mixed
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 }

@@ -11,12 +11,35 @@
 
 namespace pukoframework\middleware;
 
+use pukoframework\log\LoggerInterface;
+use pukoframework\log\LogLevel;
+
 /**
  * Class Controller
  * @package pukoframework\pte
  */
-class Controller
+abstract class Controller implements LoggerInterface
 {
+
+    /**
+     * @var array
+     */
+    public $const = array();
+
+    /**
+     * @var array
+     */
+    public $logger = array();
+
+    /**
+     * @return array
+     */
+    abstract public function BeforeInitialize();
+
+    /**
+     * @return mixed
+     */
+    abstract public function AfterInitialize();
 
     /**
      * @param $url
@@ -52,4 +75,85 @@ class Controller
         return date('c');
     }
 
+    /**
+     * @param $key
+     * @return mixed|null
+     */
+    public function getAppConstant($key)
+    {
+        if (isset($this->const[$key])) {
+            return $this->const[$key];
+        }
+        return null;
+    }
+
+    public function emergency($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function alert($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function critical($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function error($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function warning($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function notice($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function info($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function debug($message, array $context = array())
+    {
+        file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    public function log($level, $message, array $context = array())
+    {
+        switch ($level) {
+            case LogLevel::ERROR:
+                $this->error($message, $context);
+                break;
+            case LogLevel::ALERT:
+                $this->alert($message, $context);
+                break;
+            case LogLevel::NOTICE:
+                $this->notice($message, $context);
+                break;
+            case LogLevel::INFO:
+                $this->info($message, $context);
+                break;
+            case LogLevel::WARNING:
+                $this->warning($message, $context);
+                break;
+            case LogLevel::CRITICAL:
+                $this->critical($message, $context);
+                break;
+            case LogLevel::DEBUG:
+                $this->debug($message, $context);
+                break;
+            case LogLevel::EMERGENCY:
+                $this->emergency($message, $context);
+                break;
+        }
+    }
 }

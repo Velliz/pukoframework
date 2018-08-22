@@ -60,7 +60,7 @@ class ValueException extends Exception
      * @param $arrayData
      * @param string $message
      *
-     * @throws ValueException
+     * @throws Exception
      */
     public function Throws($arrayData, $message = '')
     {

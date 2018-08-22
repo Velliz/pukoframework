@@ -10,7 +10,7 @@ use pukoframework\Response;
  * Class View
  * @package pukoframework\middleware
  */
-abstract class View extends Controller implements CustomRender
+class View extends Controller implements CustomRender
 {
 
     var $fn;
@@ -19,18 +19,29 @@ abstract class View extends Controller implements CustomRender
     var $tempJs = '';
     var $tempCss = '';
 
+    /**
+     * View constructor.
+     */
     public function __construct()
     {
         $exception_handler = new ThrowView('View Error', new Response());
+        $exception_handler->setLogger($this);
+
         set_exception_handler(array($exception_handler, 'ExceptionHandler'));
         set_error_handler(array($exception_handler, 'ErrorHandler'));
     }
 
+    /**
+     * @return array
+     */
     public function BeforeInitialize()
     {
         return array();
     }
 
+    /**
+     * @return array
+     */
     public function AfterInitialize()
     {
         return array();
@@ -55,6 +66,10 @@ abstract class View extends Controller implements CustomRender
         if ($this->fn === 'url') {
             return BASE_URL . $this->param;
         }
+        if ($this->fn === 'const') {
+            return $this->const[$this->param];
+        }
         return '';
     }
+
 }

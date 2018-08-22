@@ -11,12 +11,16 @@
 
 namespace pukoframework;
 
+use Exception;
 use pte\Pte;
+use pukoframework\config\Config;
 use pukoframework\auth\Cookies;
 use pukoframework\auth\Session;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
 use pukoframework\middleware\View;
+use pukoframework\peh\ThrowService;
+use pukoframework\peh\ThrowView;
 use ReflectionClass;
 
 /**
@@ -25,6 +29,12 @@ use ReflectionClass;
  */
 class Framework
 {
+
+    /**
+     * @var array
+     */
+    private $app = array();
+
     /**
      * @var Request
      */
@@ -46,12 +56,23 @@ class Framework
     private $docs_engine;
 
     /**
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     private $pdc;
+
+    /**
+     * @var array
+     */
     private $fn_pdc;
+
+    /**
+     * @var array
+     */
     private $class_pdc;
 
+    /**
+     * @var array
+     */
     private $fn_return = array();
 
     /**
@@ -60,21 +81,28 @@ class Framework
     private $object = null;
 
     /**
+     * @throws Exception
      * Framework constructor.
-     * @throws \Exception
+     * The construct function called for init Request and Response objects.
+     * Token also generated when don't exists before.
      */
     public function __construct()
     {
         session_start();
-        if (PHP_VERSION_ID < 506000) {
-            include 'Compatibility.php';
-        }
+
+        $e = new ThrowService('Framework Error');
+        $e->setLogger(new Service());
+
+        set_exception_handler(array($e, 'ExceptionHandler'));
+        set_error_handler(array($e, 'ErrorHandler'));
 
         $this->request = new Request();
         $this->response = new Response();
 
         $this->docs_engine = new DocsEngine();
         $this->docs_engine->SetResponseObjects($this->response);
+
+        $this->app = Config::Data('app');
 
         $token = Request::Cookies('token', null);
         if ($token === null) {
@@ -99,7 +127,13 @@ class Framework
         $controller = $AppDir . '\\controller\\' . $this->request->controller_name;
 
         $this->object = new $controller();
+
+        $this->object->const = $this->app['const'];
+        $this->object->logger = $this->app['logs'];
         $this->pdc = new ReflectionClass($this->object);
+
+        $view = new ReflectionClass(View::class);
+        $service = new ReflectionClass(Service::class);
 
         $this->class_pdc = $this->pdc->getDocComment();
         $this->docs_engine->PDCParser($this->class_pdc, $this->fn_return);
@@ -139,7 +173,13 @@ class Framework
                     'Puko Fatal Error (FW001) Function %s must set public.',
                     $this->request->fn_name
                 );
-                die($error);
+                if ($this->pdc->isSubclassOf($view)) {
+                    new ThrowView($error, $this->response);
+                }
+                if ($this->pdc->isSubclassOf($service)) {
+                    new ThrowService($error);
+                }
+                throw new Exception($error);
             }
         } else {
             $error = sprintf(
@@ -147,16 +187,19 @@ class Framework
                 $this->request->fn_name,
                 $this->request->controller_name
             );
-            die($error);
+            if ($this->pdc->isSubclassOf($view)) {
+                new ThrowView($error, $this->response);
+            }
+            if ($this->pdc->isSubclassOf($service)) {
+                new ThrowService($error);
+            }
+            throw new Exception($error);
         }
 
         $setup = $this->object->AfterInitialize();
         if (is_array($setup)) {
             $this->fn_return = array_merge($this->fn_return, $setup);
         }
-
-        $view = new ReflectionClass(View::class);
-        $service = new ReflectionClass(Service::class);
 
         $this->render = new Pte(
             $this->response->useCacheLayout,
@@ -178,7 +221,7 @@ class Framework
                     $this->request->controller_name,
                     $this->request->fn_name
                 );
-                $htmlPath = str_replace('\\','/', $htmlPath);
+                $htmlPath = str_replace('\\', '/', $htmlPath);
                 $this->render->SetHtml(sprintf('%s/assets/html/%s', ROOT, $htmlPath));
             }
             $output = $this->render->Output($this->object, Pte::VIEW_HTML);

@@ -14,13 +14,16 @@ namespace pukoframework\peh;
 use Exception;
 use pte\CustomRender;
 use pte\Pte;
+use pukoframework\log\LoggerAwareInterface;
+use pukoframework\log\LoggerInterface;
+use pukoframework\log\LogLevel;
 use pukoframework\Response;
 
 /**
  * Class ThrowView
  * @package pukoframework\peh
  */
-class ThrowView extends Exception implements PukoException, CustomRender
+class ThrowView extends Exception implements PukoException, CustomRender, LoggerAwareInterface
 {
     /**
      * @var Pte
@@ -39,6 +42,11 @@ class ThrowView extends Exception implements PukoException, CustomRender
 
     var $fn;
     var $param;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * PukoException constructor.
@@ -65,7 +73,7 @@ class ThrowView extends Exception implements PukoException, CustomRender
     public function ExceptionHandler($error)
     {
         $emg['ErrorCount'] = $error;
-        $emg['ErrorCode'] = $error->getCode();
+        $emg['ErrorCode'] = PukoException::value;
         $emg['Message'] = $error->getMessage();
         $emg['File'] = $error->getFile();
         $emg['LineNumber'] = $error->getLine();
@@ -76,10 +84,11 @@ class ThrowView extends Exception implements PukoException, CustomRender
             $emg['Stacktrace'][$key] = $val;
         }
 
+        $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
+
         $this->render->SetHtml($this->system_html . '/exception.html');
         $this->render->SetValue($emg);
-        echo $this->render->Output($this);
-        die();
+        die($this->render->Output($this));
     }
 
     /**
@@ -104,10 +113,11 @@ class ThrowView extends Exception implements PukoException, CustomRender
             $emg['Stacktrace'][$key] = $val;
         }
 
+        $this->logger->log(LogLevel::ERROR, $message, $emg);
+
         $this->render->SetHtml($this->system_html . '/error.html');
         $this->render->SetValue($emg);
-        echo $this->render->Output($this);
-        die();
+        die($this->render->Output($this));
     }
 
     /**
@@ -130,4 +140,15 @@ class ThrowView extends Exception implements PukoException, CustomRender
         }
         return '';
     }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return mixed|void
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+
 }
