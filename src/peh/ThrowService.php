@@ -55,6 +55,7 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         $emg['LineNumber'] = $error->getLine();
         $emg['Stacktrace'] = $error->getTrace();
 
+        http_response_code(403);
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
@@ -84,6 +85,7 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         $emg['LineNumber'] = $line;
         $emg['Stacktrace'] = $this->getTrace();
 
+        http_response_code(500);
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
