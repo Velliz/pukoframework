@@ -28,6 +28,11 @@ class Session
 
     public static $sessionObject;
 
+    /**
+     * Session constructor.
+     * @param Auth $authentication
+     * @throws Exception
+     */
     private function __construct(Auth $authentication)
     {
         if (is_object(self::$sessionObject)) {
@@ -42,6 +47,11 @@ class Session
         $this->authentication = $authentication;
     }
 
+    /**
+     * @param Auth $authentication
+     * @return Session
+     * @throws Exception
+     */
     public static function Get(Auth $authentication)
     {
         if (is_object(self::$sessionObject)) {
@@ -101,6 +111,10 @@ class Session
         $_SESSION[$key] = '';
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
     public static function Is()
     {
         $secure = Config::Data('encryption');
@@ -110,6 +124,9 @@ class Session
         return false;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function Clear()
     {
         $secure = Config::Data('encryption');
@@ -145,6 +162,10 @@ class Session
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws Exception
+     */
     public function Logout()
     {
         $secure = $this->authentication->Logout();
