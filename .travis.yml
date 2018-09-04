@@ -6,14 +6,13 @@ os:
 sudo: false
 
 php:
-  - 7.0.30
   - 7.1.19
   - 7.2.8
 
 matrix:
   fast_finish: true
   allow_failures:
-    - php: 7.0.11
+    - php: 7.1.19
 
 install:
   - composer install --no-interaction
@@ -26,7 +25,7 @@ before_script:
     - ls -al
 
 script:
-  - vendor\bin\phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
  - travis_retry php coveralls.phar -v
