@@ -3,3 +3,8 @@ vendor/
 runner/
 composer.lock
 exceptions.log
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
