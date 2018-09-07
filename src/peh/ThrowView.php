@@ -78,7 +78,7 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
         $emg['Message'] = $error->getMessage();
         $emg['File'] = $error->getFile();
         $emg['LineNumber'] = $error->getLine();
-        $emg['Stacktrace'] = $error->getTrace();
+        //$emg['Stacktrace'] = $error->getTrace();
 
         foreach ($emg['Stacktrace'] as $key => $val) {
             unset($val['args']);
@@ -108,7 +108,7 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
         $emg['Message'] = $message;
         $emg['File'] = $file;
         $emg['LineNumber'] = $line;
-        $emg['Stacktrace'] = $this->getTrace();
+        //$emg['Stacktrace'] = $this->getTrace();
 
         foreach ($emg['Stacktrace'] as $key => $val) {
             unset($val['args']);
