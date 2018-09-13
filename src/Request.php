@@ -153,6 +153,12 @@ class Request extends Routes
         return $_FILES[$key];
     }
 
+    public static function JsonBody()
+    {
+        $inputJSON = file_get_contents('php://input');
+        return json_decode($inputJSON, true);
+    }
+
     /**
      * @return bool
      * start the php output buffer
