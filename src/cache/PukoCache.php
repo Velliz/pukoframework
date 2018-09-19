@@ -229,7 +229,7 @@ class PukoCache implements CacheItemPoolInterface
      */
     public function save(CacheItemInterface $item)
     {
-        $this->cache->set($item->getKey(), $item->get(), $this->expired);
+        return $this->cache->set($item->getKey(), $item->get(), $this->expired);
     }
 
     /**
@@ -243,7 +243,10 @@ class PukoCache implements CacheItemPoolInterface
      */
     public function saveDeferred(CacheItemInterface $item)
     {
-        // TODO: Implement saveDeferred() method.
+        if (!$this->cache->isPersistent()) {
+            return false;
+        }
+        return $this->cache->set($item->getKey(), $item->get(), $this->expired);
     }
 
     /**
@@ -254,6 +257,6 @@ class PukoCache implements CacheItemPoolInterface
      */
     public function commit()
     {
-        // TODO: Implement commit() method.
+        return $this->cache->bgsave();
     }
 }
