@@ -40,6 +40,9 @@ class DBI
     private $host;
     private $port;
 
+    /**
+     * @var bool
+     */
     private $cache = false;
 
     private $queryPattern = '#@([0-9]+)#';
@@ -246,7 +249,7 @@ class DBI
                         $statement->execute();
                     }
                     $expiration = new DateTime();
-                    $expiration->modify(sprintf('+$s second', $cacheConfig['expired']));
+                    $expiration->modify(sprintf('+%s second', $cacheConfig['expired']));
                     $item = $cache->getItem(serialize($this->query))->set($statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration);
                     $cache->save($item);
                     return $cache->getItem(serialize($this->query))->get();
