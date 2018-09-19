@@ -11,9 +11,12 @@
 
 namespace pukoframework\pda;
 
+use DateTime;
 use Exception;
+use Memcached;
 use PDO;
 use PDOException;
+use pukoframework\cache\PukoCache;
 use pukoframework\config\Config;
 
 /**
@@ -37,6 +40,8 @@ class DBI
     private $host;
     private $port;
 
+    private $cache = false;
+
     private $queryPattern = '#@([0-9]+)#';
 
     /**
@@ -50,6 +55,7 @@ class DBI
         $this->dbName = $connection['dbName'];
         $this->username = $connection['user'];
         $this->password = $connection['pass'];
+        $this->cache = $connection['cache'];
     }
 
     /**
@@ -78,6 +84,7 @@ class DBI
     /**
      * @param $query string
      * @return DBI
+     * @throws Exception
      */
     public static function Prepare($query)
     {
@@ -206,26 +213,65 @@ class DBI
 
     /**
      * @return array
+     * @throws \pukoframework\cache\CacheException
+     * @throws \pukoframework\peh\PukoException
      * @throws Exception
      */
     public function GetData()
     {
-        $parameters = func_get_args();
-        $argCount = count($parameters);
-        $this->queryParams = $parameters;
-        if ($argCount > 0) {
-            $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
-        }
-        try {
-            $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0) {
-                $statement->execute($parameters);
+        if ($this->cache) {
+            $cacheConfig = Config::Data('app')['cache'];
+
+            $memcached = new Memcached($cacheConfig['identifier']);
+            $memcached->addServer($cacheConfig['host'], $cacheConfig['port']);
+
+            $cache = PukoCache::make(PukoCache::MEMCACHED, $memcached);
+
+            $item = $cache->getItem(serialize($this->query));
+
+            if ($item->isHit()) {
+                return $item->get();
             } else {
-                $statement->execute();
+                $parameters = func_get_args();
+                $argCount = count($parameters);
+                $this->queryParams = $parameters;
+                if ($argCount > 0) {
+                    $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+                }
+                try {
+                    $statement = self::$dbi->prepare($this->query);
+                    if ($argCount > 0) {
+                        $statement->execute($parameters);
+                    } else {
+                        $statement->execute();
+                    }
+                    $expiration = new DateTime();
+                    $expiration->modify(sprintf('+$s second', $cacheConfig['expired']));
+                    $item = $cache->getItem(serialize($this->query))->set($statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration);
+                    $cache->save($item);
+                    return $cache->getItem(serialize($this->query))->get();
+                } catch (PDOException $ex) {
+                    throw new Exception('Database error: ' . $ex->getMessage());
+                }
             }
-            return $statement->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $ex) {
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } else {
+            $parameters = func_get_args();
+            $argCount = count($parameters);
+            $this->queryParams = $parameters;
+            if ($argCount > 0) {
+                $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+            }
+            try {
+                $statement = self::$dbi->prepare($this->query);
+                if ($argCount > 0) {
+                    $statement->execute($parameters);
+                } else {
+                    $statement->execute();
+                }
+                return $statement->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $ex) {
+                throw new Exception('Database error: ' . $ex->getMessage());
+            }
         }
     }
 
@@ -280,6 +326,12 @@ class DBI
         }
     }
 
+    /**
+     * @param $name
+     * @param $arrData
+     * @return bool
+     * @throws Exception
+     */
     public function Call($name, $arrData)
     {
         $argCount = count($arrData);
