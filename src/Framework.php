@@ -202,7 +202,7 @@ class Framework
         }
 
         $this->render = new Pte(
-            $this->response->useCacheLayout,
+            $this->response->cacheDriver,
             $this->response->useMasterLayout,
             $this->response->useHtmlLayout
         );

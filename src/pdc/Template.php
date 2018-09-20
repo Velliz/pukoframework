@@ -11,17 +11,28 @@
 
 namespace pukoframework\pdc;
 
+use Memcached;
+use pte\PteCache;
+use pukoframework\cache\MemcachedDriver;
+use pukoframework\cache\PukoCache;
+use pukoframework\config\Config;
 use pukoframework\Response;
 
 /**
  * Class Template
  * @package pukoframework\pdc
  */
-class Template implements Pdc
+class Template implements Pdc, PteCache
 {
+
     var $key;
     var $value;
     var $switch;
+
+    /**
+     * @var MemcachedDriver
+     */
+    var $cache;
 
     /**
      * @param $clause
@@ -38,6 +49,8 @@ class Template implements Pdc
     /**
      * @param Response &$response
      * @return mixed
+     * @throws \Exception
+     * @throws \pukoframework\cache\CacheException
      */
     public function SetStrategy(Response &$response)
     {
@@ -54,11 +67,44 @@ class Template implements Pdc
                 break;
             case 'cache':
                 if (strcasecmp(str_replace(' ', '', $this->switch), 'true') === 0) {
-                    $response->useCacheLayout = true;
+
+                    $cacheConfig = Config::Data('app')['cache'];
+
+                    $memcached = new Memcached($cacheConfig['identifier']);
+                    $memcached->addServer($cacheConfig['host'], $cacheConfig['port']);
+                    $this->cache = PukoCache::make(PukoCache::MEMCACHED, $memcached);
+
+                    $response->cacheDriver = $this;
                 }
                 break;
         }
 
         return true;
+    }
+
+    /**
+     * @param $templateKeys
+     * @return array|false
+     */
+    public function GetTemplate($templateKeys)
+    {
+        $templateKeys = hash('ripemd160', $templateKeys);
+        $item = $this->cache->getItem($templateKeys);
+        if ($item->isHit()) {
+            return $item->get();
+        }
+        return false;
+    }
+
+    /**
+     * @param $templateKeys
+     * @param $templateData
+     * @return array
+     */
+    public function SetTemplate($templateKeys, $templateData)
+    {
+        $templateKeys = hash('ripemd160', $templateKeys);
+        $item = $this->cache->getItem($templateKeys)->set($templateData);
+        return $item->get();
     }
 }

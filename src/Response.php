@@ -11,6 +11,8 @@
 
 namespace pukoframework;
 
+use pte\PteCache;
+
 /**
  * Class Response
  * @package pukoframework
@@ -38,9 +40,9 @@ class Response
     public $useHtmlLayout = true;
 
     /**
-     * @var bool
+     * @var PteCache
      */
-    public $useCacheLayout = false;
+    public $cacheDriver = false;
 
     /**
      * @var bool
