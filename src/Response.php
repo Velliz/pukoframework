@@ -42,7 +42,7 @@ class Response
     /**
      * @var PteCache
      */
-    public $cacheDriver = false;
+    public $cacheDriver = null;
 
     /**
      * @var bool
