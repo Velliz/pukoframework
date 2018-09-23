@@ -77,6 +77,7 @@ class Routes
      * @param $source
      * @param $request_url
      * @param $request_accept
+     * @return bool
      */
     private function RouteSet($source, $request_url, $request_accept)
     {
@@ -86,14 +87,13 @@ class Routes
 
         $temp = explode('?', $request_url);
         $request_url = explode('/', $temp[0]);
-        $parameter = array();
 
         foreach ($this->page as $key => $val) {
             $url = explode('/', $key);
             if (count($url) === count($request_url)) {
-                $match = array();
+                $match = $parameter = array();
                 foreach ($url as $pointer => $segment) {
-                    if ($segment === '{!}' || $segment === '{?}') {
+                    if ($segment === '{?}') {
                         array_push($parameter, $request_url[$pointer]);
                         $segment = $request_url[$pointer];
                     }
@@ -107,20 +107,18 @@ class Routes
                     if (!in_array($request_accept, $val['accept'])) {
                         //not accept http request codes
                         $this->Mapping($this->error, $parameter);
+                        return false;
                     } else {
                         //matched
                         $this->Mapping($val, $parameter);
+                        return true;
                     }
                     break;
-                } else {
-                    //not find match
-                    $this->Mapping($this->not_found, $parameter);
                 }
-            } else {
-                //not find anything
-                $this->Mapping($this->not_found, $parameter);
             }
         }
+        $this->Mapping($this->not_found, array());
+        return false;
     }
 
     /**
