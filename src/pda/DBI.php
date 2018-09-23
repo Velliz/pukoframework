@@ -230,7 +230,9 @@ class DBI
 
             $cache = PukoCache::make(PukoCache::MEMCACHED, $memcached);
 
-            $item = $cache->getItem(serialize($this->query));
+            $keys = hash('ripemd160', $this->query);
+
+            $item = $cache->getItem($keys);
 
             if ($item->isHit()) {
                 return $item->get();
@@ -250,9 +252,9 @@ class DBI
                     }
                     $expiration = new DateTime();
                     $expiration->modify(sprintf('+%s second', $cacheConfig['expired']));
-                    $item = $cache->getItem(serialize($this->query))->set($statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration);
+                    $item = $cache->getItem($keys)->set($statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration);
                     $cache->save($item);
-                    return $cache->getItem(serialize($this->query))->get();
+                    return $cache->getItem($keys)->get();
                 } catch (PDOException $ex) {
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
