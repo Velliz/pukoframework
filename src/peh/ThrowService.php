@@ -62,7 +62,9 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         $data = array(
             'time' => microtime(true) - START,
             'status' => 'failed',
-            'exception' => $emg['Message']
+            'exception' => array(
+                'Message' => $emg['Message']
+            )
         );
 
         $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
@@ -92,7 +94,9 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         $data = array(
             'time' => microtime(true) - START,
             'status' => 'failed',
-            'exception' => $emg['Message']
+            'exception' => array(
+                'Message' => $emg['Message']
+            )
         );
 
         $this->logger->log(LogLevel::ERROR, $message, $emg);
