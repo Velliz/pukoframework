@@ -6,7 +6,7 @@ namespace pukoframework\log;
  * Interface LoggerInterface
  * @package pukoframework\log
  */
-interface  LoggerInterface
+interface LoggerInterface
 {
 
     /**

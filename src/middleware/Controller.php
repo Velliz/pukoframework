@@ -11,6 +11,7 @@
 
 namespace pukoframework\middleware;
 
+use pukoframework\config\Config;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
 
@@ -89,44 +90,55 @@ abstract class Controller implements LoggerInterface
 
     public function emergency($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
     public function alert($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
     public function critical($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
+    /**
+     * @param string $message
+     * @param array $context
+     * @throws \Exception
+     */
     public function error($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        $this->notifySlack($message, $context);
     }
 
     public function warning($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
     public function notice($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
     public function info($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
     public function debug($message, array $context = array())
     {
-        //file_put_contents('logs.txt', $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+        //write custom handle code
     }
 
+    /**
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @throws \Exception
+     */
     public function log($level, $message, array $context = array())
     {
         switch ($level) {
@@ -155,5 +167,63 @@ abstract class Controller implements LoggerInterface
                 $this->emergency($message, $context);
                 break;
         }
+    }
+
+    /**
+     * @param $message
+     * @param array $context
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function notifySlack($message, array $context = array())
+    {
+        $logConfig = Config::Data('app')['logs'];
+
+        if (!$logConfig['active']) {
+            return true;
+        }
+
+        $ch = curl_init($logConfig['url']);
+
+        if (isset($context['Stacktrace'])) {
+            $context['Stacktrace'] = json_encode($context['Stacktrace'], JSON_PRETTY_PRINT);
+        } else {
+            $context['Stacktrace'] = "Stacktrace not available";
+        }
+
+        $messages = array(
+            'attachments' => array(
+                array(
+                    'title' => 'Error Dumper',
+                    'title_link' => ROOT,
+                    'author_name' => $logConfig['username'],
+                    'text' => 'An error raised from this part of your web app',
+                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                    'color' => '#764FA5',
+                    'fields' => array(
+                        array(
+                            'title' => $context['File'],
+                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                            'short' => false
+                        ),
+                        array(
+                            'title' => 'Error Stack',
+                            'value' => $context['Stacktrace'],
+                            'short' => false
+                        ),
+                    ),
+                )
+            )
+        );
+
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messages));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
     }
 }
