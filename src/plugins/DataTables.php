@@ -153,29 +153,39 @@ class DataTables
 
                 $this->draw = $_POST['draw'];
 
-                $orderByColumnIndex = $_POST['order'][0]['column'];
-                $orderBy = $_POST['columns'][$orderByColumnIndex]['data'];
-                $orderType = $_POST['order'][0]['dir'];
+                $this->orderByColumnIndex = $_POST['order'][0]['column'];
+                $this->orderBy = $_POST['columns'][$this->orderByColumnIndex]['data'];
+                $this->orderType = $_POST['order'][0]['dir'];
 
-                $start = $_POST['start'];
-                $length = $_POST['length'];
-
-                $where = array();
+                $this->start = $_POST['start'];
+                $this->length = $_POST['length'];
 
                 $recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
 
                 if (!empty($_POST['search']['value'])) {
                     for ($i = 0; $i < count($_POST['columns']); $i++) {
                         $this->column = $this->dtColumns[$_POST['columns'][$i]['data']];
-                        $where[] = "$this->column like '%" . $_POST['search']['value'] . "%'";
+                        $this->where[] = "$this->column like '%" . $_POST['search']['value'] . "%'";
                     }
-                    $where = 'WHERE ' . implode(' OR ', $where);
-                    $sql = sprintf('%s %s', $this->sQuery, $where);
+                    $this->where = 'WHERE ' . implode(' OR ', $this->where);
+                    $sql = sprintf('%s %s', $this->sQuery, $this->where);
                     $this->recordsFiltered = count(DBI::Prepare($sql)->GetData());
-                    $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                    $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ',
+                        $this->sQuery,
+                        $this->where,
+                        $this->dtColumns[$this->orderBy],
+                        $this->orderType,
+                        $this->start,
+                        $this->length);
                     $data = DBI::Prepare($sql)->GetData();
                 } else {
-                    $sql = sprintf('%s ORDER BY %s %s limit %d,%d ', $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                    $sql = sprintf('%s ORDER BY %s %s limit %d,%d ',
+                        $this->sQuery,
+                        $this->dtColumns[$this->orderBy],
+                        $this->orderType,
+                        $this->start,
+                        $this->length
+                    );
                     $data = DBI::Prepare($sql)->GetData();
                     $this->recordsFiltered = $recordsTotal;
                 }
@@ -190,31 +200,42 @@ class DataTables
                 }
                 $this->draw = $param['draw'];
 
-                $orderByColumnIndex = $param['order'][0]['column'];
-                $orderBy = $param['columns'][$orderByColumnIndex]['data'];
-                $orderType = $param['order'][0]['dir'];
+                $this->orderByColumnIndex = $param['order'][0]['column'];
+                $this->orderBy = $param['columns'][$this->orderByColumnIndex]['data'];
+                $this->orderType = $param['order'][0]['dir'];
 
-                $start = $param['start'];
-                $length = $param['length'];
+                $this->start = $param['start'];
+                $this->length = $param['length'];
 
-                $where = array();
-
-                $recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+                $this->recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
 
                 if (!empty($param['search']['value'])) {
                     for ($i = 0; $i < count($param['columns']); $i++) {
                         $this->column = $this->dtColumns[$param['columns'][$i]['data']];
-                        $where[] = "$this->column like '%" . $param['search']['value'] . "%'";
+                        $this->where[] = "$this->column like '%" . $param['search']['value'] . "%'";
                     }
-                    $where = 'WHERE ' . implode(' OR ', $where);
-                    $sql = sprintf('%s %s', $this->sQuery, $where);
+                    $this->where = 'WHERE ' . implode(' OR ', $this->where);
+                    $sql = sprintf('%s %s', $this->sQuery, $this->where);
                     $this->recordsFiltered = count(DBI::Prepare($sql)->GetData());
-                    $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ', $this->sQuery, $where, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                    $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ',
+                        $this->sQuery,
+                        $this->where,
+                        $this->dtColumns[$this->orderBy],
+                        $this->orderType,
+                        $this->start,
+                        $this->length
+                    );
                     $data = DBI::Prepare($sql)->GetData();
                 } else {
-                    $sql = sprintf('%s ORDER BY %s %s limit %d,%d ', $this->sQuery, $this->dtColumns[$orderBy], $orderType, $start, $length);
+                    $sql = sprintf('%s ORDER BY %s %s limit %d,%d ',
+                        $this->sQuery,
+                        $this->dtColumns[$this->orderBy],
+                        $this->orderType,
+                        $this->start,
+                        $this->length
+                    );
                     $data = DBI::Prepare($sql)->GetData();
-                    $this->recordsFiltered = $recordsTotal;
+                    $this->recordsFiltered = $this->recordsTotal;
                 }
 
                 break;
