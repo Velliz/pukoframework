@@ -44,6 +44,7 @@ class Auth implements Pdc, CustomRender
     /**
      * @param Response &$response
      * @return mixed
+     * @throws \Exception
      * @throws \pte\exception\PteException
      */
     public function SetStrategy(Response &$response)
@@ -62,6 +63,9 @@ class Auth implements Pdc, CustomRender
         }
         if ($this->switch === 'bearer') {
             $hasPermission = Bearer::Is();
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            $hasPermission = true;
         }
         if (!$hasPermission) {
             $data = array(

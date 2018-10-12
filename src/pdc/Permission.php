@@ -71,6 +71,9 @@ class Permission implements Pdc, CustomRender
      */
     public function SetStrategy(Response &$response)
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            return true;
+        }
         $this->AuthClass = $this->provider::Get($this->classes::Instance())->GetLoginData();
         foreach ($this->permission as $val) {
             if (!in_array($val, $this->AuthClass[$this->dataKey])) {
