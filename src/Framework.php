@@ -14,8 +14,6 @@ namespace pukoframework;
 use Exception;
 use pte\Pte;
 use pukoframework\config\Config;
-use pukoframework\auth\Cookies;
-use pukoframework\auth\Session;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
 use pukoframework\middleware\View;
@@ -88,8 +86,6 @@ class Framework
      */
     public function __construct()
     {
-        session_start();
-
         $e = new ThrowService('Framework Error');
         $e->setLogger(new Service());
 
@@ -103,17 +99,6 @@ class Framework
         $this->docs_engine->SetResponseObjects($this->response);
 
         $this->app = Config::Data('app');
-
-        $token = Request::Cookies('token', null);
-        if ($token === null) {
-            $token = Cookies::GenerateSecureToken();
-        }
-        $tokenSession = Request::Session('token', null);
-        if ($tokenSession === null) {
-            $token = Session::GenerateSecureToken($token);
-        }
-
-        $this->fn_return['token'] = $token;
     }
 
     /**

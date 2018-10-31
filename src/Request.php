@@ -11,8 +11,6 @@
 
 namespace pukoframework;
 
-use pukoframework\auth\Cookies;
-
 /**
  * Class Request
  * @package pukoframework
@@ -50,10 +48,10 @@ class Request extends Routes
     public function __construct()
     {
         $this->request_accept = $_SERVER['REQUEST_METHOD'];
-        $this->client = $_SERVER['HTTP_USER_AGENT'];
+        $this->client = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $this->lang = isset($_SERVER['X_LANGUAGE']) ? $_SERVER['X_LANGUAGE'] : 'id';
 
         $this->request_url = Request::Get('request', '');
-        $this->lang = Request::Cookies('lang', 'id');
 
         $this->Translate($this->request_url, $this->request_accept);
     }
@@ -191,35 +189,5 @@ class Request extends Routes
 
         return $data;
     }
-
-    /**
-     * @return bool
-     *
-     * Request::IsPost()
-     * validating post input and provide guards from CSRF attacks
-     * @throws \Exception
-     */
-    public static function IsPost()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            return false;
-        }
-
-        $submit = Request::Post('_submit', null);
-        if ($submit === null) {
-            return false;
-        }
-
-        $session_token = Request::Post('token', null);
-        $cookies_token = Request::Cookies('token', null);
-        if (!hash_equals($session_token, $cookies_token)) {
-            return false;
-        }
-
-        //re-create secure token
-        Cookies::GenerateSecureToken();
-        return true;
-    }
-
 
 }
