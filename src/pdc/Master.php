@@ -11,6 +11,7 @@
 
 namespace pukoframework\pdc;
 
+use pukoframework\Framework;
 use pukoframework\Response;
 
 /**
@@ -40,8 +41,8 @@ class Master implements Pdc
      */
     public function SetStrategy(Response &$response)
     {
-        if (file_exists(ROOT . '/assets/master/' . $this->value)) {
-            $response->htmlMaster = ROOT . '/assets/master/' . $this->value;
+        if (file_exists(Framework::$factory->getRoot() . '/assets/master/' . $this->value)) {
+            $response->htmlMaster = Framework::$factory->getRoot() . '/assets/master/' . $this->value;
             return true;
         } else {
             return false;

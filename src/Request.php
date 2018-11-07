@@ -151,8 +151,11 @@ class Request extends Routes
         return $_FILES[$key];
     }
 
-    public static function JsonBody()
+    public static function JsonBody($default = array())
     {
+        if (sizeof($default) > 0) {
+            return $default;
+        }
         $inputJSON = file_get_contents('php://input');
         return json_decode($inputJSON, true);
     }

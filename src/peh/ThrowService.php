@@ -60,7 +60,6 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         header('Content-Type: application/json');
 
         $data = array(
-            'time' => microtime(true) - START,
             'status' => 'failed',
             'exception' => array(
                 'Message' => $emg['Message']
@@ -92,7 +91,6 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         header('Content-Type: application/json');
 
         $data = array(
-            'time' => microtime(true) - START,
             'status' => 'failed',
             'exception' => array(
                 'Message' => $emg['Message']
@@ -111,5 +109,6 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        return $this->logger;
     }
 }

@@ -16,6 +16,7 @@ use pte\Pte;
 use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
 use pukoframework\auth\Session;
+use pukoframework\Framework;
 use pukoframework\Response;
 
 /**
@@ -78,7 +79,7 @@ class Auth implements Pdc, CustomRender
 
             $render->SetValue($data);
             if ($response->useHtmlLayout) {
-                $render->SetHtml(sprintf('%s/assets/system/auth.html', ROOT));
+                $render->SetHtml(sprintf('%s/assets/system/auth.html', Framework::$factory->getRoot()));
                 echo $render->Output($this, Pte::VIEW_HTML);
             } else {
                 echo $render->Output($this, Pte::VIEW_JSON);

@@ -14,6 +14,7 @@ namespace pukoframework\peh;
 use Exception;
 use pte\CustomRender;
 use pte\Pte;
+use pukoframework\Framework;
 use pukoframework\log\LoggerAwareInterface;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
@@ -58,7 +59,7 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
     {
         parent::__construct($message, PukoException::view);
 
-        $this->system_html = ROOT . '/assets/system/';
+        $this->system_html = Framework::$factory->getRoot() . '/assets/system/';
         $this->message = $message;
 
         $response->useMasterLayout = false;
@@ -73,7 +74,6 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
     public function ExceptionHandler($error)
     {
         $emg['ErrorCount'] = $error;
-        $emg['Time'] = microtime(true) - START;
         $emg['ErrorCode'] = PukoException::value;
         $emg['Message'] = $error->getMessage();
         $emg['File'] = $error->getFile();
@@ -103,7 +103,6 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
     public function ErrorHandler($error, $message, $file, $line)
     {
         $emg['ErrorCount'] = $error;
-        $emg['Time'] = microtime(true) - START;
         $emg['ErrorCode'] = $this->getCode();
         $emg['Message'] = $message;
         $emg['File'] = $file;
@@ -138,18 +137,19 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
     public function Parse()
     {
         if ($this->fn === 'url') {
-            return BASE_URL . $this->param;
+            return Framework::$factory->getBase() . $this->param;
         }
         return '';
     }
 
     /**
      * @param LoggerInterface $logger
-     * @return mixed|void
+     * @return mixed
      */
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        return $this->logger;
     }
 
 

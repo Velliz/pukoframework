@@ -17,6 +17,7 @@ use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
 use pukoframework\auth\PukoAuth;
 use pukoframework\auth\Session;
+use pukoframework\Framework;
 use pukoframework\Response;
 
 /**
@@ -111,7 +112,7 @@ class Permission implements Pdc, CustomRender
 
         $render->SetValue($data);
         if ($response->useHtmlLayout) {
-            $render->SetHtml(sprintf('%s/assets/system/permission.html', ROOT));
+            $render->SetHtml(sprintf('%s/assets/system/permission.html', Framework::$factory->getRoot()));
             echo $render->Output($this, Pte::VIEW_HTML);
         } else {
             echo $render->Output($this, Pte::VIEW_JSON);

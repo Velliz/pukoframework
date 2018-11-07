@@ -12,6 +12,7 @@
 namespace pukoframework\middleware;
 
 use pukoframework\config\Config;
+use pukoframework\Framework;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
 
@@ -195,7 +196,7 @@ abstract class Controller implements LoggerInterface
             'attachments' => array(
                 array(
                     'title' => 'Error Dumper',
-                    'title_link' => ROOT,
+                    'title_link' => Framework::$factory->getRoot(),
                     'author_name' => $logConfig['username'],
                     'text' => 'An error raised from this part of your web app',
                     'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),

@@ -194,4 +194,12 @@ class Model
         return $data;
     }
 
+    /**
+     * @param bool $binary
+     */
+    public function setBinary(bool $binary)
+    {
+        $this->_binary = $binary;
+    }
+
 }

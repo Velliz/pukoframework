@@ -241,7 +241,11 @@ class DBI
                 $argCount = count($parameters);
                 $this->queryParams = $parameters;
                 if ($argCount > 0) {
-                    $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+                    $this->query = preg_replace_callback(
+                        $this->queryPattern,
+                        array($this, 'queryPrepareSelect'),
+                        $this->query
+                    );
                 }
                 try {
                     $statement = self::$dbi->prepare($this->query);
@@ -252,7 +256,9 @@ class DBI
                     }
                     $expiration = new DateTime();
                     $expiration->modify(sprintf('+%s second', $cacheConfig['expired']));
-                    $item = $cache->getItem($keys)->set($statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration);
+                    $item = $cache->getItem($keys)->set(
+                        $statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration->getTimestamp()
+                    );
                     $cache->save($item);
                     return $cache->getItem($keys)->get();
                 } catch (PDOException $ex) {
@@ -264,7 +270,11 @@ class DBI
             $argCount = count($parameters);
             $this->queryParams = $parameters;
             if ($argCount > 0) {
-                $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+                $this->query = preg_replace_callback(
+                    $this->queryPattern,
+                    array($this, 'queryPrepareSelect'),
+                    $this->query
+                );
             }
             try {
                 $statement = self::$dbi->prepare($this->query);

@@ -3,6 +3,7 @@
 namespace pukoframework\middleware;
 
 use pte\CustomRender;
+use pukoframework\Framework;
 use pukoframework\peh\ThrowView;
 use pukoframework\Response;
 
@@ -64,7 +65,7 @@ class View extends Controller implements CustomRender
     public function Parse()
     {
         if ($this->fn === 'url') {
-            return BASE_URL . $this->param;
+            return Framework::$factory->getBase() . $this->param;
         }
         if ($this->fn === 'const') {
             return $this->const[$this->param];

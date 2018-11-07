@@ -1,8 +1,16 @@
 <?php
+/**
+ * pukoframework.
+ * MVC PHP Framework for quick and fast PHP Application Development.
+ * Copyright (c) 2016, Didit Velliz
+ *
+ * @author Didit Velliz
+ * @link https://github.com/velliz/pukoframework
+ * @since Version 1.1.3
+ */
 
 namespace pukoframework\config;
-
-use Exception;
+use pukoframework\Framework;
 
 /**
  * Class Config
@@ -20,14 +28,14 @@ class Config
 
     /**
      * @param $name
+     * @param array $default
      * @return mixed
-     * @throws Exception
      */
-    public static function Data($name)
+    public static function Data($name, $default = array())
     {
-        $file_config = sprintf("%s/config/%s.php", ROOT, $name);
+        $file_config = sprintf("%s/config/%s.php", Framework::$factory->getRoot(), $name);
         if (!file_exists($file_config)) {
-            throw new Exception(sprintf("Puko Fatal Error (AUTH001) Config file '%s' not found", $name));
+            return $default;
         }
         return self::Get(include "$file_config");
     }

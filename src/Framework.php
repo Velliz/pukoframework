@@ -14,6 +14,7 @@ namespace pukoframework;
 use Exception;
 use pte\Pte;
 use pukoframework\config\Config;
+use pukoframework\config\Factory;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
 use pukoframework\middleware\View;
@@ -79,13 +80,23 @@ class Framework
     private $object = null;
 
     /**
-     * @throws Exception
-     * Framework constructor.
+     * @var Factory
+     */
+    public static $factory;
+
+    /**
+     * @param Factory $factory
+     * @throws Exception Framework constructor.
      * The construct function called for init Request and Response objects.
      * Token also generated when don't exists before.
      */
-    public function __construct()
+    public function __construct(Factory $factory)
     {
+        if (!$factory instanceof Factory) {
+            throw new Exception('Puko Fatal Error (CF001) Faqctory must set.');
+        }
+        self::$factory = $factory;
+
         $e = new ThrowService('Framework Error');
         $e->setLogger(new Service());
 
@@ -103,7 +114,7 @@ class Framework
 
     /**
      * @param string $AppDir
-     * @throws \Exception
+     * @throws Exception
      * @throws \ReflectionException
      * @throws \pte\exception\PteException
      */
@@ -207,7 +218,7 @@ class Framework
                     $this->request->fn_name
                 );
                 $htmlPath = str_replace('\\', '/', $htmlPath);
-                $this->render->SetHtml(sprintf('%s/assets/html/%s', ROOT, $htmlPath));
+                $this->render->SetHtml(sprintf('%s/assets/html/%s', Framework::$factory->getRoot(), $htmlPath));
             }
             $output = $this->render->Output($this->object, Pte::VIEW_HTML);
         }

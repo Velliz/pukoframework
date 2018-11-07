@@ -12,6 +12,7 @@
 namespace pukoframework\pdc;
 
 use pte\Pte;
+use pukoframework\Framework;
 use pukoframework\Response;
 
 /**
@@ -49,7 +50,7 @@ class UnderConstruction implements Pdc
 
             $render->SetValue(array());
             if ($response->useHtmlLayout) {
-                $render->SetHtml(sprintf('%s/assets/system/construction.html', ROOT));
+                $render->SetHtml(sprintf('%s/assets/system/construction.html', Framework::$factory->getRoot()));
                 echo $render->Output(null, Pte::VIEW_HTML);
             } else {
                 echo $render->Output(null, Pte::VIEW_JSON);
