@@ -14,7 +14,7 @@ class routerTest extends TestCase
         $user = Request::Get('user', 0);
         $this->assertEquals('puko', $user);
 
-        $fw = Request::Get('framework', 0);
+        $fw = Request::Post('framework', 0);
         $this->assertEquals(0, $fw);
     }
 
