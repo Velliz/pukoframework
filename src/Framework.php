@@ -197,6 +197,10 @@ class Framework
             $this->fn_return = array_merge($this->fn_return, $setup);
         }
 
+        if ($this->response->disableOutput) {
+            exit;
+        }
+
         $this->render = new Pte(
             $this->response->cacheDriver,
             $this->response->useMasterLayout,

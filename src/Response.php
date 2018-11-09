@@ -47,21 +47,11 @@ class Response
     /**
      * @var bool
      */
-    public $clearValues = true;
-
-    /**
-     * @var bool
-     */
-    public $clearBlocks = false;
-
-    /**
-     * @var bool
-     */
-    public $clearComments = true;
-
-    /**
-     * @var bool
-     */
     public $displayException = true;
+
+    /**
+     * @var bool
+     */
+    public $disableOutput = false;
 
 }

@@ -43,26 +43,14 @@ class ClearOutput implements Pdc
     {
         if ($this->value === 'true') {
             switch ($this->command) {
-                case 'value':
-                    $response->clearValues = true;
-                    break;
-                case 'block':
-                    $response->clearBlocks = true;
-                    break;
-                case 'comment':
-                    $response->clearComments = true;
+                case 'binary':
+                    $response->disableOutput = true;
                     break;
             }
         } elseif ($this->value === 'false') {
             switch ($this->command) {
-                case 'value':
-                    $response->clearValues = false;
-                    break;
-                case 'block':
-                    $response->clearBlocks = false;
-                    break;
-                case 'comment':
-                    $response->clearComments = false;
+                case 'binary':
+                    $response->disableOutput = false;
                     break;
             }
         }
