@@ -1,38 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.3/phpunit.xsd"
-        backupGlobals="true"
-        backupStaticAttributes="false"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
         bootstrap="./vendor/autoload.php"
+        backupGlobals="true"
         cacheTokens="false"
-        colors="false"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        forceCoversAnnotation="false"
-        processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        stopOnRisky="false"
-        timeoutForSmallTests="1"
-        timeoutForMediumTests="10"
-        timeoutForLargeTests="60"
-        verbose="false">
+        colors="true"
+        verbose="true">
     <php>
         <includePath>.</includePath>
-        <ini name="foo" value="bar"/>
-        <const name="foo" value="bar"/>
-        <var name="foo" value="bar"/>
-        <env name="foo" value="bar"/>
-        <post name="foo" value="bar"/>
-        <get name="foo" value="bar"/>
-        <cookie name="foo" value="bar"/>
-        <server name="foo" value="bar"/>
-        <files name="foo" value="bar"/>
-        <request name="foo" value="bar"/>
+        <server name="HTTP_HOST" value="http://localhost/"/>
+        <server name="REQUEST_METHOD" value="GET"/>
     </php>
     <testsuites>
         <testsuite name="Testing Example">

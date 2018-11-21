@@ -5,7 +5,7 @@ namespace tests;
 use PHPUnit\Framework\TestCase;
 use pukoframework\Request;
 
-class routerTest extends TestCase
+class RouterTest extends TestCase
 {
 
     public function testGet()
