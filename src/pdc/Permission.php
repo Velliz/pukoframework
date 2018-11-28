@@ -67,8 +67,10 @@ class Permission implements Pdc, CustomRender
 
     /**
      * @param Response &$response
-     * @return mixed
      * @throws \pte\exception\PteException
+     * @throws \Exception
+     *
+     * @return mixed
      */
     public function SetStrategy(Response &$response)
     {

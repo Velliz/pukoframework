@@ -11,12 +11,10 @@
 
 namespace pukoframework\pda;
 
-use DateTime;
 use Exception;
 use Memcached;
 use PDO;
 use PDOException;
-use pukoframework\cache\PukoCache;
 use pukoframework\config\Config;
 
 /**
@@ -216,26 +214,20 @@ class DBI
 
     /**
      * @return array
-     * @throws \pukoframework\cache\CacheException
-     * @throws \pukoframework\peh\PukoException
      * @throws Exception
      */
     public function GetData()
     {
         if ($this->cache) {
             $cacheConfig = Config::Data('app')['cache'];
-
-            $memcached = new Memcached($cacheConfig['identifier']);
+            $memcached = new Memcached();
             $memcached->addServer($cacheConfig['host'], $cacheConfig['port']);
 
-            $cache = PukoCache::make(PukoCache::MEMCACHED, $memcached);
-
             $keys = hash('ripemd160', $this->query);
+            $item = $memcached->get($keys);
 
-            $item = $cache->getItem($keys);
-
-            if ($item->isHit()) {
-                return $item->get();
+            if ($item) {
+                return $item;
             } else {
                 $parameters = func_get_args();
                 $argCount = count($parameters);
@@ -254,13 +246,10 @@ class DBI
                     } else {
                         $statement->execute();
                     }
-                    $expiration = new DateTime();
-                    $expiration->modify(sprintf('+%s second', $cacheConfig['expired']));
-                    $item = $cache->getItem($keys)->set(
-                        $statement->fetchAll(PDO::FETCH_ASSOC))->expiresAfter($expiration->getTimestamp()
-                    );
-                    $cache->save($item);
-                    return $cache->getItem($keys)->get();
+                    //doing memcached storage
+                    $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC));
+                    return $memcached->get($keys);
+
                 } catch (PDOException $ex) {
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
