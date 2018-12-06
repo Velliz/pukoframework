@@ -92,7 +92,6 @@ class DataTables
      * @return array DataTables get ajax requests*
      * DataTables get ajax requests
      * @throws \Exception
-     * @throws \pukoframework\cache\CacheException
      * @throws \pukoframework\peh\PukoException
      */
     public function GetDataTables(callable $callback = null)
@@ -100,7 +99,6 @@ class DataTables
         $data = array();
         switch ($this->httpVerb) {
             case DataTables::GET:
-
                 if (empty($_GET)) {
                     return $this->response;
                 }
@@ -160,7 +158,7 @@ class DataTables
                 $this->start = $_POST['start'];
                 $this->length = $_POST['length'];
 
-                $recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+                $this->recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
 
                 if (!empty($_POST['search']['value'])) {
                     for ($i = 0; $i < count($_POST['columns']); $i++) {
@@ -187,7 +185,7 @@ class DataTables
                         $this->length
                     );
                     $data = DBI::Prepare($sql)->GetData();
-                    $this->recordsFiltered = $recordsTotal;
+                    $this->recordsFiltered = $this->recordsTotal;
                 }
 
                 break;
