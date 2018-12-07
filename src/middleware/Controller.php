@@ -205,7 +205,7 @@ abstract class Controller implements LoggerInterface
                             )
                         )
                     );
-                    return CurlRequest::To($configuration['url'])->Method('GET')
+                    return CurlRequest::To($configuration['url'])->Method('POST')
                         ->Receive($messages, CurlRequest::JSON);
                     break;
                 case 'hook':
@@ -232,7 +232,7 @@ abstract class Controller implements LoggerInterface
                             )
                         )
                     );
-                    return CurlRequest::To($configuration['url'])->Method('GET')
+                    return CurlRequest::To($configuration['url'])->Method('POST')
                         ->Receive($messages, CurlRequest::JSON);
                     break;
                 default:
