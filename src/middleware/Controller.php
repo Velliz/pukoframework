@@ -188,10 +188,9 @@ abstract class Controller implements LoggerInterface
                     $messages = array(
                         'attachments' => array(
                             array(
-                                'title' => 'Error Dumper',
+                                'title' => $configuration['username'],
                                 'title_link' => Framework::$factory->getRoot(),
-                                'author_name' => $configuration['username'],
-                                'text' => 'An error raised from this part of your web app',
+                                'text' => 'An error raised from this part:',
                                 'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
                                 'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
                                 'color' => '#764FA5',
@@ -215,10 +214,9 @@ abstract class Controller implements LoggerInterface
                     $messages = array(
                         'attachments' => array(
                             array(
-                                'title' => 'Error Dumper',
+                                'title' => $configuration['username'],
                                 'title_link' => Framework::$factory->getRoot(),
-                                'author_name' => $configuration['username'],
-                                'text' => 'An error raised from this part of your web app',
+                                'text' => 'An error raised from this part:',
                                 'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
                                 'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
                                 'color' => '#764FA5',
