@@ -7,6 +7,7 @@ use pukoframework\Request;
 
 /**
  * Class DataTables.
+ * @package pukoframework\plugins
  *
  * @copyright DV 2016
  * @author Didit Velliz diditvelliz@gmail.com

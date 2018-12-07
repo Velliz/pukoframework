@@ -15,6 +15,7 @@ use pukoframework\config\Config;
 use pukoframework\Framework;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
+use pukoframework\plugins\CurlRequest;
 
 /**
  * Class Controller
@@ -81,7 +82,7 @@ abstract class Controller implements LoggerInterface
      * @param $key
      * @return mixed|null
      */
-    public function getAppConstant($key)
+    public function GetAppConstant($key)
     {
         if (isset($this->const[$key])) {
             return $this->const[$key];
@@ -111,7 +112,7 @@ abstract class Controller implements LoggerInterface
      */
     public function error($message, array $context = array())
     {
-        $this->notifySlack($message, $context);
+        $this->notifyError($message, $context);
     }
 
     public function warning($message, array $context = array())
@@ -176,55 +177,71 @@ abstract class Controller implements LoggerInterface
      * @return mixed
      * @throws \Exception
      */
-    protected function notifySlack($message, array $context = array())
+    private function notifyError($message, array $context = array())
     {
-        $logConfig = Config::Data('app')['logs'];
+        foreach (Config::Data('app')['logs'] as $name => $configuration) {
+            switch ($name) {
+                case 'slack':
+                    if (!$configuration['active']) {
+                        return true;
+                    }
+                    $messages = array(
+                        'attachments' => array(
+                            array(
+                                'title' => 'Error Dumper',
+                                'title_link' => Framework::$factory->getRoot(),
+                                'author_name' => $configuration['username'],
+                                'text' => 'An error raised from this part of your web app',
+                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'color' => '#764FA5',
+                                'fields' => array(
+                                    array(
+                                        'title' => $context['File'],
+                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                        'short' => false
+                                    )
+                                ),
+                            )
+                        )
+                    );
+                    return CurlRequest::To($configuration['url'])->Method('GET')
+                        ->Receive($messages, CurlRequest::JSON);
+                    break;
+                case 'hook':
+                    if (!$configuration['active']) {
+                        return true;
+                    }
+                    $messages = array(
+                        'attachments' => array(
+                            array(
+                                'title' => 'Error Dumper',
+                                'title_link' => Framework::$factory->getRoot(),
+                                'author_name' => $configuration['username'],
+                                'text' => 'An error raised from this part of your web app',
+                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'color' => '#764FA5',
+                                'fields' => array(
+                                    array(
+                                        'title' => $context['File'],
+                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                        'short' => false
+                                    )
+                                ),
+                            )
+                        )
+                    );
+                    return CurlRequest::To($configuration['url'])->Method('GET')
+                        ->Receive($messages, CurlRequest::JSON);
+                    break;
+                default:
+                    return true;
+                    break;
 
-        if (!$logConfig['active']) {
-            return true;
+            }
         }
-
-        $ch = curl_init($logConfig['url']);
-
-        if (isset($context['Stacktrace'])) {
-            $context['Stacktrace'] = json_encode($context['Stacktrace'], JSON_PRETTY_PRINT);
-        } else {
-            $context['Stacktrace'] = "Stacktrace not available";
-        }
-
-        $messages = array(
-            'attachments' => array(
-                array(
-                    'title' => 'Error Dumper',
-                    'title_link' => Framework::$factory->getRoot(),
-                    'author_name' => $logConfig['username'],
-                    'text' => 'An error raised from this part of your web app',
-                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                    'color' => '#764FA5',
-                    'fields' => array(
-                        array(
-                            'title' => $context['File'],
-                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                            'short' => false
-                        ),
-                        array(
-                            'title' => 'Error Stack',
-                            'value' => $context['Stacktrace'],
-                            'short' => false
-                        ),
-                    ),
-                )
-            )
-        );
-
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messages));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($ch);
-        curl_close($ch);
-
-        return $result;
+        return true;
     }
+
 }
