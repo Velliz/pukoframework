@@ -88,8 +88,9 @@ class DBI implements LoggerInterface
         try {
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            throw new Exception("Connection failed: " . $e->getMessage());
+        } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
+            throw new Exception("Connection failed: " . $ex->getMessage());
         }
     }
 
@@ -151,6 +152,7 @@ class DBI implements LoggerInterface
                 return false;
             }
         } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -171,6 +173,7 @@ class DBI implements LoggerInterface
             $statement = self::$dbi->prepare($del_text);
             return $statement->execute($arrWhere);
         } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -219,6 +222,7 @@ class DBI implements LoggerInterface
             }
             return $statement->execute();
         } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -262,6 +266,7 @@ class DBI implements LoggerInterface
                     return $memcached->get($keys);
 
                 } catch (PDOException $ex) {
+                    $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
             }
@@ -285,6 +290,7 @@ class DBI implements LoggerInterface
                 }
                 return $statement->fetchAll(PDO::FETCH_ASSOC);
             } catch (PDOException $ex) {
+                $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
                 throw new Exception('Database error: ' . $ex->getMessage());
             }
         }
@@ -313,6 +319,7 @@ class DBI implements LoggerInterface
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
         } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -337,6 +344,7 @@ class DBI implements LoggerInterface
                 return $statement->execute();
             }
         } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -364,6 +372,7 @@ class DBI implements LoggerInterface
                 return $statement->execute();
             }
         } catch (PDOException $ex) {
+            $this->log(LogLevel::ERROR, 'Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
