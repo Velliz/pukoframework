@@ -479,7 +479,7 @@ class DBI implements LoggerInterface
                     $stack = '';
                     foreach ($context['Stacktrace'] as $k => $v) {
                         if ($k === 1) {
-                            $stack .= print_r($v);
+                            $stack .= json_encode($v, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
                         }
                     }
                     $messages = array(
