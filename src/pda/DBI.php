@@ -16,12 +16,17 @@ use Memcached;
 use PDO;
 use PDOException;
 use pukoframework\config\Config;
+use pukoframework\Framework;
+use pukoframework\log\LoggerInterface;
+use pukoframework\log\LogLevel;
+use pukoframework\peh\ThrowService;
+use pukoframework\plugins\CurlRequest;
 
 /**
  * Class DBI
  * @package pukoframework\pda
  */
-class DBI
+class DBI implements LoggerInterface
 {
 
     private static $dbi;
@@ -66,6 +71,12 @@ class DBI
      */
     protected function __construct($query)
     {
+        $exception_handler = new ThrowService('Database Service Error');
+        $exception_handler->setLogger($this);
+
+        set_exception_handler(array($exception_handler, 'ExceptionHandler'));
+        set_error_handler(array($exception_handler, 'ErrorHandler'));
+
         $this->query = $query;
         if (is_object(self::$dbi)) {
             return;
@@ -365,4 +376,155 @@ class DBI
         return '?';
     }
 
+    public function emergency($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    public function alert($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    public function critical($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    /**
+     * @param string $message
+     * @param array $context
+     * @throws \Exception
+     */
+    public function error($message, array $context = array())
+    {
+        $this->notifyError($message, $context);
+    }
+
+    public function warning($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    public function notice($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    public function info($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    public function debug($message, array $context = array())
+    {
+        //write custom handle code
+    }
+
+    /**
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @throws \Exception
+     */
+    public function log($level, $message, array $context = array())
+    {
+        switch ($level) {
+            case LogLevel::ERROR:
+                $this->error($message, $context);
+                break;
+            case LogLevel::ALERT:
+                $this->alert($message, $context);
+                break;
+            case LogLevel::NOTICE:
+                $this->notice($message, $context);
+                break;
+            case LogLevel::INFO:
+                $this->info($message, $context);
+                break;
+            case LogLevel::WARNING:
+                $this->warning($message, $context);
+                break;
+            case LogLevel::CRITICAL:
+                $this->critical($message, $context);
+                break;
+            case LogLevel::DEBUG:
+                $this->debug($message, $context);
+                break;
+            case LogLevel::EMERGENCY:
+                $this->emergency($message, $context);
+                break;
+        }
+    }
+
+    /**
+     * @param $message
+     * @param array $context
+     * @return mixed
+     * @throws \Exception
+     */
+    private function notifyError($message, array $context = array())
+    {
+        foreach (Config::Data('app')['logs'] as $name => $configuration) {
+            switch ($name) {
+                case 'slack':
+                    if (!$configuration['active']) {
+                        return true;
+                    }
+                    $messages = array(
+                        'attachments' => array(
+                            array(
+                                'title' => $configuration['username'],
+                                'title_link' => Framework::$factory->getRoot(),
+                                'text' => 'An error raised from this part:',
+                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'color' => '#764FA5',
+                                'fields' => array(
+                                    array(
+                                        'title' => $context['File'],
+                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                        'short' => false
+                                    )
+                                ),
+                            )
+                        )
+                    );
+                    return CurlRequest::To($configuration['url'])->Method('POST')
+                        ->Receive($messages, CurlRequest::JSON);
+                    break;
+                case 'hook':
+                    if (!$configuration['active']) {
+                        return true;
+                    }
+                    $messages = array(
+                        'attachments' => array(
+                            array(
+                                'title' => $configuration['username'],
+                                'title_link' => Framework::$factory->getRoot(),
+                                'text' => 'An error raised from this part:',
+                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                'color' => '#764FA5',
+                                'fields' => array(
+                                    array(
+                                        'title' => $context['File'],
+                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                        'short' => false
+                                    )
+                                ),
+                            )
+                        )
+                    );
+                    return CurlRequest::To($configuration['url'])->Method('POST')
+                        ->Receive($messages, CurlRequest::JSON);
+                    break;
+                default:
+                    return true;
+                    break;
+
+            }
+        }
+        return true;
+    }
 }
