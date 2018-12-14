@@ -480,6 +480,12 @@ class DBI implements LoggerInterface
                     if (!$configuration['active']) {
                         return true;
                     }
+                    $stack = '';
+                    foreach ($context['Stacktrace'] as $k => $v) {
+                        if ($k === 1) {
+                            $stack .= print_r($v, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                        }
+                    }
                     $messages = array(
                         'attachments' => array(
                             array(
@@ -494,7 +500,12 @@ class DBI implements LoggerInterface
                                         'title' => $context['File'],
                                         'value' => sprintf('Line number: %s', $context['LineNumber']),
                                         'short' => false
-                                    )
+                                    ),
+                                    array(
+                                        'title' => 'Error Stack',
+                                        'value' => $stack,
+                                        'short' => false
+                                    ),
                                 ),
                             )
                         )
