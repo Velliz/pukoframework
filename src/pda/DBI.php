@@ -17,16 +17,13 @@ use PDO;
 use PDOException;
 use pukoframework\config\Config;
 use pukoframework\Framework;
-use pukoframework\log\LoggerInterface;
-use pukoframework\log\LogLevel;
-use pukoframework\peh\ThrowService;
 use pukoframework\plugins\CurlRequest;
 
 /**
  * Class DBI
  * @package pukoframework\pda
  */
-class DBI implements LoggerInterface
+class DBI
 {
 
     private static $dbi;
@@ -71,12 +68,6 @@ class DBI implements LoggerInterface
      */
     protected function __construct($query)
     {
-        $exception_handler = new ThrowService('Database Service Error');
-        $exception_handler->setLogger($this);
-
-        set_exception_handler(array($exception_handler, 'ExceptionHandler'));
-        set_error_handler(array($exception_handler, 'ErrorHandler'));
-
         $this->query = $query;
         if (is_object(self::$dbi)) {
             return;
@@ -89,6 +80,7 @@ class DBI implements LoggerInterface
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
+            $this->notify('Connection failed: ' . $ex->getMessage());
             throw new Exception("Connection failed: " . $ex->getMessage());
         }
     }
@@ -151,6 +143,7 @@ class DBI implements LoggerInterface
                 return false;
             }
         } catch (PDOException $ex) {
+            $this->notify('Database error: ' . $ex->getMessage());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -171,6 +164,7 @@ class DBI implements LoggerInterface
             $statement = self::$dbi->prepare($del_text);
             return $statement->execute($arrWhere);
         } catch (PDOException $ex) {
+            $this->notify('Database error: ' . $ex->getMessage());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -219,6 +213,7 @@ class DBI implements LoggerInterface
             }
             return $statement->execute();
         } catch (PDOException $ex) {
+            $this->notify('Database error: ' . $ex->getMessage());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -262,6 +257,7 @@ class DBI implements LoggerInterface
                     return $memcached->get($keys);
 
                 } catch (PDOException $ex) {
+                    $this->notify('Database error: ' . $ex->getMessage());
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
             }
@@ -285,6 +281,7 @@ class DBI implements LoggerInterface
                 }
                 return $statement->fetchAll(PDO::FETCH_ASSOC);
             } catch (PDOException $ex) {
+                $this->notify('Database error: ' . $ex->getMessage());
                 throw new Exception('Database error: ' . $ex->getMessage());
             }
         }
@@ -313,6 +310,7 @@ class DBI implements LoggerInterface
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
         } catch (PDOException $ex) {
+            $this->notify('Database error: ' . $ex->getMessage());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -337,6 +335,7 @@ class DBI implements LoggerInterface
                 return $statement->execute();
             }
         } catch (PDOException $ex) {
+            $this->notify('Database error: ' . $ex->getMessage());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -364,6 +363,7 @@ class DBI implements LoggerInterface
                 return $statement->execute();
             }
         } catch (PDOException $ex) {
+            $this->notify('Database error: ' . $ex->getMessage());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -376,153 +376,55 @@ class DBI implements LoggerInterface
         return '?';
     }
 
-    public function emergency($message, array $context = array())
-    {
-        //write custom handle code
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     * @throws Exception
-     */
-    public function alert($message, array $context = array())
-    {
-        $this->notifyError($message, $context);
-    }
-
-    public function critical($message, array $context = array())
-    {
-        //write custom handle code
-    }
-
-    /**
-     * @param string $message
-     * @param array $context
-     * @throws \Exception
-     */
-    public function error($message, array $context = array())
-    {
-        $this->notifyError($message, $context);
-    }
-
-    public function warning($message, array $context = array())
-    {
-        //write custom handle code
-    }
-
-    public function notice($message, array $context = array())
-    {
-        //write custom handle code
-    }
-
-    public function info($message, array $context = array())
-    {
-        //write custom handle code
-    }
-
-    public function debug($message, array $context = array())
-    {
-        //write custom handle code
-    }
-
-    /**
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
-     * @throws \Exception
-     */
-    public function log($level, $message, array $context = array())
-    {
-        switch ($level) {
-            case LogLevel::ERROR:
-                $this->error($message, $context);
-                break;
-            case LogLevel::ALERT:
-                $this->alert($message, $context);
-                break;
-            case LogLevel::NOTICE:
-                $this->notice($message, $context);
-                break;
-            case LogLevel::INFO:
-                $this->info($message, $context);
-                break;
-            case LogLevel::WARNING:
-                $this->warning($message, $context);
-                break;
-            case LogLevel::CRITICAL:
-                $this->critical($message, $context);
-                break;
-            case LogLevel::DEBUG:
-                $this->debug($message, $context);
-                break;
-            case LogLevel::EMERGENCY:
-                $this->emergency($message, $context);
-                break;
-        }
-    }
-
     /**
      * @param $message
-     * @param array $context
      * @return mixed
      * @throws \Exception
      */
-    private function notifyError($message, array $context = array())
+    private function notify($message)
     {
         foreach (Config::Data('app')['logs'] as $name => $configuration) {
             switch ($name) {
                 case 'slack':
-                    if ($configuration['active']) {
-                        $messages = array(
-                            'attachments' => array(
-                                array(
-                                    'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        )
-                                    ),
-                                )
-                            )
-                        );
-                        CurlRequest::To($configuration['url'])->Method('POST')
-                            ->Receive($messages, CurlRequest::JSON);
+                    if (!$configuration['active']) {
+                        return true;
                     }
+                    $messages = array(
+                        'attachments' => array(
+                            array(
+                                'title' => $configuration['username'],
+                                'title_link' => Framework::$factory->getRoot(),
+                                'text' => 'An error raised from this part:',
+                                'fallback' => $message,
+                                'pretext' => $message,
+                                'color' => '#764FA5',
+                            )
+                        )
+                    );
+                    return CurlRequest::To($configuration['url'])->Method('POST')
+                        ->Receive($messages, CurlRequest::JSON);
                     break;
                 case 'hook':
-                    if ($configuration['active']) {
-                        $messages = array(
-                            'attachments' => array(
-                                array(
-                                    'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        )
-                                    ),
-                                )
-                            )
-                        );
-                        CurlRequest::To($configuration['url'])->Method('POST')
-                            ->Receive($messages, CurlRequest::JSON);
+                    if (!$configuration['active']) {
+                        return true;
                     }
+                    $messages = array(
+                        'attachments' => array(
+                            array(
+                                'title' => $configuration['username'],
+                                'title_link' => Framework::$factory->getRoot(),
+                                'text' => 'An error raised from this part:',
+                                'fallback' => $message,
+                                'pretext' => $message,
+                                'color' => '#764FA5',
+                            )
+                        )
+                    );
+                    return CurlRequest::To($configuration['url'])->Method('POST')
+                        ->Receive($messages, CurlRequest::JSON);
                     break;
                 default:
+                    return true;
                     break;
 
             }
