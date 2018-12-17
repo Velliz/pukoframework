@@ -182,59 +182,56 @@ abstract class Controller implements LoggerInterface
         foreach (Config::Data('app')['logs'] as $name => $configuration) {
             switch ($name) {
                 case 'slack':
-                    if (!$configuration['active']) {
-                        return true;
-                    }
-                    $messages = array(
-                        'attachments' => array(
-                            array(
-                                'title' => $configuration['username'],
-                                'title_link' => Framework::$factory->getRoot(),
-                                'text' => 'An error raised from this part:',
-                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'color' => '#764FA5',
-                                'fields' => array(
-                                    array(
-                                        'title' => $context['File'],
-                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                        'short' => false
-                                    )
-                                ),
+                    if ($configuration['active']) {
+                        $messages = array(
+                            'attachments' => array(
+                                array(
+                                    'title' => $configuration['username'],
+                                    'title_link' => Framework::$factory->getRoot(),
+                                    'text' => 'An error raised from this part:',
+                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'color' => '#764FA5',
+                                    'fields' => array(
+                                        array(
+                                            'title' => $context['File'],
+                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                            'short' => false
+                                        )
+                                    ),
+                                )
                             )
-                        )
-                    );
-                    return CurlRequest::To($configuration['url'])->Method('POST')
-                        ->Receive($messages, CurlRequest::JSON);
+                        );
+                        CurlRequest::To($configuration['url'])->Method('POST')
+                            ->Receive($messages, CurlRequest::JSON);
+                    }
                     break;
                 case 'hook':
-                    if (!$configuration['active']) {
-                        return true;
-                    }
-                    $messages = array(
-                        'attachments' => array(
-                            array(
-                                'title' => $configuration['username'],
-                                'title_link' => Framework::$factory->getRoot(),
-                                'text' => 'An error raised from this part:',
-                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'color' => '#764FA5',
-                                'fields' => array(
-                                    array(
-                                        'title' => $context['File'],
-                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                        'short' => false
-                                    )
-                                ),
+                    if ($configuration['active']) {
+                        $messages = array(
+                            'attachments' => array(
+                                array(
+                                    'title' => $configuration['username'],
+                                    'title_link' => Framework::$factory->getRoot(),
+                                    'text' => 'An error raised from this part:',
+                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'color' => '#764FA5',
+                                    'fields' => array(
+                                        array(
+                                            'title' => $context['File'],
+                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                            'short' => false
+                                        )
+                                    ),
+                                )
                             )
-                        )
-                    );
-                    return CurlRequest::To($configuration['url'])->Method('POST')
-                        ->Receive($messages, CurlRequest::JSON);
+                        );
+                        CurlRequest::To($configuration['url'])->Method('POST')
+                            ->Receive($messages, CurlRequest::JSON);
+                    }
                     break;
                 default:
-                    return true;
                     break;
 
             }

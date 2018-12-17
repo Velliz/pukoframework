@@ -473,70 +473,56 @@ class DBI implements LoggerInterface
         foreach (Config::Data('app')['logs'] as $name => $configuration) {
             switch ($name) {
                 case 'slack':
-                    if (!$configuration['active']) {
-                        return true;
-                    }
-                    $stack = '';
-                    foreach ($context['Stacktrace'] as $k => $v) {
-                        if ($k === 1) {
-                            $stack .= json_encode($v, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-                        }
-                    }
-                    $messages = array(
-                        'attachments' => array(
-                            array(
-                                'title' => $configuration['username'],
-                                'title_link' => Framework::$factory->getRoot(),
-                                'text' => 'An error raised from this part:',
-                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'color' => '#764FA5',
-                                'fields' => array(
-                                    array(
-                                        'title' => $context['File'],
-                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                        'short' => false
+                    if ($configuration['active']) {
+                        $messages = array(
+                            'attachments' => array(
+                                array(
+                                    'title' => $configuration['username'],
+                                    'title_link' => Framework::$factory->getRoot(),
+                                    'text' => 'An error raised from this part:',
+                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'color' => '#764FA5',
+                                    'fields' => array(
+                                        array(
+                                            'title' => $context['File'],
+                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                            'short' => false
+                                        )
                                     ),
-                                    array(
-                                        'title' => 'Error Stack',
-                                        'value' => $stack,
-                                        'short' => false
-                                    ),
-                                ),
+                                )
                             )
-                        )
-                    );
-                    return CurlRequest::To($configuration['url'])->Method('POST')
-                        ->Receive($messages, CurlRequest::JSON);
+                        );
+                        CurlRequest::To($configuration['url'])->Method('POST')
+                            ->Receive($messages, CurlRequest::JSON);
+                    }
                     break;
                 case 'hook':
-                    if (!$configuration['active']) {
-                        return true;
-                    }
-                    $messages = array(
-                        'attachments' => array(
-                            array(
-                                'title' => $configuration['username'],
-                                'title_link' => Framework::$factory->getRoot(),
-                                'text' => 'An error raised from this part:',
-                                'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                'color' => '#764FA5',
-                                'fields' => array(
-                                    array(
-                                        'title' => $context['File'],
-                                        'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                        'short' => false
-                                    )
-                                ),
+                    if ($configuration['active']) {
+                        $messages = array(
+                            'attachments' => array(
+                                array(
+                                    'title' => $configuration['username'],
+                                    'title_link' => Framework::$factory->getRoot(),
+                                    'text' => 'An error raised from this part:',
+                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'color' => '#764FA5',
+                                    'fields' => array(
+                                        array(
+                                            'title' => $context['File'],
+                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                            'short' => false
+                                        )
+                                    ),
+                                )
                             )
-                        )
-                    );
-                    return CurlRequest::To($configuration['url'])->Method('POST')
-                        ->Receive($messages, CurlRequest::JSON);
+                        );
+                        CurlRequest::To($configuration['url'])->Method('POST')
+                            ->Receive($messages, CurlRequest::JSON);
+                    }
                     break;
                 default:
-                    return true;
                     break;
 
             }
