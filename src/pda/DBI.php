@@ -392,18 +392,9 @@ class DBI
                             'attachments' => array(
                                 array(
                                     'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'fallback' => $message,
+                                    'pretext' => $message,
                                     'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        )
-                                    ),
                                 )
                             )
                         );
@@ -417,18 +408,9 @@ class DBI
                             'attachments' => array(
                                 array(
                                     'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'fallback' => $message,
+                                    'pretext' => $message,
                                     'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        )
-                                    ),
                                 )
                             )
                         );
