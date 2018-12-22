@@ -382,7 +382,7 @@ class DBI
      * @return mixed
      * @throws \Exception
      */
-    private function notifyError($message, array $context = array())
+    private function notify($message, array $context = array())
     {
         foreach (Config::Data('app')['logs'] as $name => $configuration) {
             switch ($name) {
