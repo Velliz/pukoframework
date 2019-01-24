@@ -80,7 +80,7 @@ class DBI
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
-            $this->notify('Connection failed: ' . $ex->getMessage());
+            $this->notify('Connection failed: ' . $ex->getMessage(), $ex);
             throw new Exception("Connection failed: " . $ex->getMessage());
         }
     }
@@ -143,7 +143,7 @@ class DBI
                 return false;
             }
         } catch (PDOException $ex) {
-            $this->notify('Database error: ' . $ex->getMessage());
+            $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -164,7 +164,7 @@ class DBI
             $statement = self::$dbi->prepare($del_text);
             return $statement->execute($arrWhere);
         } catch (PDOException $ex) {
-            $this->notify('Database error: ' . $ex->getMessage());
+            $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -213,7 +213,7 @@ class DBI
             }
             return $statement->execute();
         } catch (PDOException $ex) {
-            $this->notify('Database error: ' . $ex->getMessage());
+            $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -257,7 +257,7 @@ class DBI
                     return $memcached->get($keys);
 
                 } catch (PDOException $ex) {
-                    $this->notify('Database error: ' . $ex->getMessage());
+                    $this->notify('Database error: ' . $ex->getMessage(), $ex);
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
             }
@@ -281,7 +281,7 @@ class DBI
                 }
                 return $statement->fetchAll(PDO::FETCH_ASSOC);
             } catch (PDOException $ex) {
-                $this->notify('Database error: ' . $ex->getMessage());
+                $this->notify('Database error: ' . $ex->getMessage(), $ex);
                 throw new Exception('Database error: ' . $ex->getMessage());
             }
         }
@@ -310,7 +310,7 @@ class DBI
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
         } catch (PDOException $ex) {
-            $this->notify('Database error: ' . $ex->getMessage());
+            $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -335,7 +335,7 @@ class DBI
                 return $statement->execute();
             }
         } catch (PDOException $ex) {
-            $this->notify('Database error: ' . $ex->getMessage());
+            $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -363,7 +363,7 @@ class DBI
                 return $statement->execute();
             }
         } catch (PDOException $ex) {
-            $this->notify('Database error: ' . $ex->getMessage());
+            $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -395,6 +395,13 @@ class DBI
                                     'fallback' => $message,
                                     'pretext' => $message,
                                     'color' => '#764FA5',
+                                    'fields' => array(
+                                        array(
+                                            'title' => 'Error stack',
+                                            'value' => $context,
+                                            'short' => false
+                                        ),
+                                    ),
                                 )
                             )
                         );
@@ -411,6 +418,13 @@ class DBI
                                     'fallback' => $message,
                                     'pretext' => $message,
                                     'color' => '#764FA5',
+                                    'fields' => array(
+                                        array(
+                                            'title' => 'Error stack',
+                                            'value' => $context,
+                                            'short' => false
+                                        ),
+                                    ),
                                 )
                             )
                         );
