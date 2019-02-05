@@ -19,8 +19,20 @@ use pukoframework\Response;
  */
 class ClearOutput implements Pdc
 {
+
+    /**
+     * @var string
+     */
     var $key;
+
+    /**
+     * @var string
+     */
     var $command;
+
+    /**
+     * @var string
+     */
     var $value;
 
     /**

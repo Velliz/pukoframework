@@ -21,30 +21,54 @@ namespace pukoframework\plugins;
 class CurlRequest
 {
 
+    /**
+     * @var string
+     */
     protected $service;
 
+    /**
+     * @var string
+     */
     protected $method;
 
     const DEF = 'default';
     const JSON = 'json';
     const UNDEFINED = '';
 
+    /**
+     * CurlRequest constructor.
+     * @param $service
+     */
     protected function __construct($service)
     {
         $this->service = $service;
     }
 
+    /**
+     * @param $service
+     * @return CurlRequest
+     */
     public static function To($service)
     {
         return new CurlRequest($service);
     }
 
+    /**
+     * @param $method
+     * @return $this
+     */
     public function Method($method)
     {
         $this->method = $method;
         return $this;
     }
 
+    /**
+     * @param array $param
+     * @param string $type
+     * @param array $header
+     * @return mixed
+     */
     public function Receive($param = array(), $type = CurlRequest::DEF, $header = array())
     {
         $curl = curl_init();

@@ -93,7 +93,6 @@ class DataTables
      * @return array DataTables get ajax requests*
      * DataTables get ajax requests
      * @throws \Exception
-     * @throws \pukoframework\peh\PukoException
      */
     public function GetDataTables(callable $callback = null)
     {

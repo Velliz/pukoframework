@@ -47,8 +47,8 @@ class Request extends Routes
      */
     public function __construct()
     {
-        $this->request_accept = $_SERVER['REQUEST_METHOD'];
-        $this->client = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $this->request_accept = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+        $this->client = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
 
         $this->request_url = Request::Get('request', '');
         $this->lang = Request::Cookies('lang', 'id');
@@ -59,23 +59,25 @@ class Request extends Routes
     /**
      * @param $key
      * @param $default
+     * @param bool $filter
      * @return mixed
      */
-    public static function Get($key, $default)
+    public static function Get($key, $default, $filter = true)
     {
         if (!isset($_GET[$key])) {
             return $default;
         }
 
-        return filter_var($_GET[$key], FILTER_SANITIZE_STRING);
+        return ($filter) ? filter_var($_GET[$key], FILTER_SANITIZE_STRING) : $_GET[$key];
     }
 
     /**
      * @param $key
      * @param $default
+     * @param bool $filter
      * @return mixed
      */
-    public static function Post($key, $default)
+    public static function Post($key, $default, $filter = true)
     {
         if (!isset($_POST[$key])) {
             return $default;
@@ -83,7 +85,7 @@ class Request extends Routes
         if (is_array($_POST[$key])) {
             return $_POST[$key];
         } else {
-            return filter_var($_POST[$key], FILTER_SANITIZE_STRING);
+            return ($filter) ? filter_var($_POST[$key], FILTER_SANITIZE_STRING) : $_POST[$key];
         }
     }
 
@@ -116,15 +118,16 @@ class Request extends Routes
     /**
      * @param $key
      * @param $default
+     * @param bool $filter
      * @return mixed
      */
-    public static function Vars($key, $default)
+    public static function Vars($key, $default, $filter = true)
     {
         if (!isset($key)) {
             return $default;
         }
 
-        return filter_var($key, FILTER_SANITIZE_STRING);
+        return ($filter) ? filter_var($key, FILTER_SANITIZE_STRING) : $key;
     }
 
     /**

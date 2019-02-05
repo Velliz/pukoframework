@@ -15,9 +15,11 @@ use Exception;
 use pte\Pte;
 use pukoframework\config\Config;
 use pukoframework\config\Factory;
+use pukoframework\middleware\Console;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
 use pukoframework\middleware\View;
+use pukoframework\peh\ThrowConsole;
 use pukoframework\peh\ThrowService;
 use pukoframework\peh\ThrowView;
 use ReflectionClass;
@@ -93,15 +95,9 @@ class Framework
     public function __construct(Factory $factory)
     {
         if (!$factory instanceof Factory) {
-            throw new Exception('Puko Fatal Error (CF001) Faqctory must set.');
+            throw new Exception('Puko Fatal Error (CF001): Factory must set.');
         }
         self::$factory = $factory;
-
-        $e = new ThrowService('Framework Error');
-        $e->setLogger(new Service());
-
-        set_exception_handler(array($e, 'ExceptionHandler'));
-        set_error_handler(array($e, 'ErrorHandler'));
 
         $this->request = new Request();
         $this->response = new Response();
@@ -130,6 +126,7 @@ class Framework
 
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
+        $console = new ReflectionClass(Console::class);
 
         $this->class_pdc = $this->pdc->getDocComment();
         $this->docs_engine->PDCParser($this->class_pdc, $this->fn_return);
@@ -175,6 +172,9 @@ class Framework
                 if ($this->pdc->isSubclassOf($service)) {
                     new ThrowService($error);
                 }
+                if ($this->pdc->isSubclassOf($controller)) {
+                    new ThrowConsole($error);
+                }
                 throw new Exception($error);
             }
         } else {
@@ -188,6 +188,9 @@ class Framework
             }
             if ($this->pdc->isSubclassOf($service)) {
                 new ThrowService($error);
+            }
+            if ($this->pdc->isSubclassOf($console)) {
+                new ThrowConsole($error);
             }
             throw new Exception($error);
         }
@@ -228,6 +231,9 @@ class Framework
         }
         if ($this->pdc->isSubclassOf($service)) {
             $output = $this->render->Output($this->object, Pte::VIEW_JSON);
+        }
+        if ($this->pdc->isSubclassOf($console)) {
+            exit(0);
         }
 
         echo $output;

@@ -13,7 +13,7 @@ Puko Framework is MVC PHP Framework for quick PHP Application Development.
 
 ## Requirement
 
-* Puko Require **PHP 7.0** or greater
+* Puko Require >= **PHP 7.0** or greater
 * Composer
 
 ## Feature
@@ -45,4 +45,4 @@ Fell free to post an issue and pull request to make puko framework better.
 
 Crafted with <3 from Bandung, Indonesia.
 
-Copyright 2016 - 2017 by Didit Velliz
+Copyright 2016 - 2019 by Didit Velliz

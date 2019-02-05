@@ -41,7 +41,14 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
      */
     public $message;
 
+    /**
+     * @var string
+     */
     var $fn;
+
+    /**
+     * @var string
+     */
     var $param;
 
     /**

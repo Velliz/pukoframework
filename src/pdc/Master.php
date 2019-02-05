@@ -20,8 +20,15 @@ use pukoframework\Response;
  */
 class Master implements Pdc
 {
+
+    /**
+     * @var string
+     */
     var $key;
 
+    /**
+     * @var string
+     */
     var $value;
 
     /**

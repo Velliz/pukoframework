@@ -11,7 +11,6 @@
 
 namespace pukoframework\pdc;
 
-use pte\CustomRender;
 use pte\Pte;
 use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
@@ -24,7 +23,7 @@ use pukoframework\Response;
  * Class Permission
  * @package pukoframework\pdc
  */
-class Permission implements Pdc, CustomRender
+class Permission implements Pdc
 {
 
     var $key;
@@ -120,22 +119,5 @@ class Permission implements Pdc, CustomRender
             echo $render->Output($this, Pte::VIEW_JSON);
         }
         exit();
-    }
-
-    /**
-     * @param $fnName
-     * @param $paramArray
-     */
-    public function RegisterFunction($fnName, $paramArray)
-    {
-        // TODO: Implement RegisterFunction() method.
-    }
-
-    /**
-     * @return string
-     */
-    public function Parse()
-    {
-        return '';
     }
 }

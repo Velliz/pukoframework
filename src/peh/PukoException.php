@@ -34,6 +34,11 @@ interface PukoException
     const value = 1013;
 
     /**
+     * error code for console
+     */
+    const console = 1014;
+
+    /**
      * @param $error
      */
     public function ExceptionHandler($error);
