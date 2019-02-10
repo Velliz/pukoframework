@@ -197,7 +197,12 @@ abstract class Controller implements LoggerInterface
                                             'title' => $context['File'],
                                             'value' => sprintf('Line number: %s', $context['LineNumber']),
                                             'short' => false
-                                        )
+                                        ),
+                                        array(
+                                            'title' => 'Stacktrace',
+                                            'value' => $context['Stacktrace'],
+                                            'short' => false
+                                        ),
                                     ),
                                 )
                             )
@@ -222,7 +227,12 @@ abstract class Controller implements LoggerInterface
                                             'title' => $context['File'],
                                             'value' => sprintf('Line number: %s', $context['LineNumber']),
                                             'short' => false
-                                        )
+                                        ),
+                                        array(
+                                            'title' => 'Stacktrace',
+                                            'value' => $context['Stacktrace'],
+                                            'short' => false
+                                        ),
                                     ),
                                 )
                             )
