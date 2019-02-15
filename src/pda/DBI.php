@@ -17,6 +17,8 @@ use PDO;
 use PDOException;
 use pukoframework\config\Config;
 use pukoframework\Framework;
+use pukoframework\middleware\Service;
+use pukoframework\peh\ThrowService;
 use pukoframework\plugins\CurlRequest;
 
 /**
@@ -68,6 +70,12 @@ class DBI
      */
     protected function __construct($query)
     {
+        $e = new ThrowService('Framework Error');
+        $e->setLogger(new Service());
+
+        set_exception_handler(array($e, 'ExceptionHandler'));
+        set_error_handler(array($e, 'ErrorHandler'));
+
         $this->query = $query;
         if (is_object(self::$dbi)) {
             return;
