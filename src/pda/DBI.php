@@ -14,7 +14,6 @@ namespace pukoframework\pda;
 use Exception;
 use Memcached;
 use PDO;
-use PDOException;
 use pukoframework\config\Config;
 use pukoframework\Framework;
 use pukoframework\middleware\Service;
@@ -87,7 +86,7 @@ class DBI
         try {
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Connection failed: ' . $ex->getMessage(), $ex);
             throw new Exception("Connection failed: " . $ex->getMessage());
         }
@@ -150,7 +149,7 @@ class DBI
             } else {
                 return false;
             }
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -171,7 +170,7 @@ class DBI
         try {
             $statement = self::$dbi->prepare($del_text);
             return $statement->execute($arrWhere);
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -220,7 +219,7 @@ class DBI
                 }
             }
             return $statement->execute();
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -264,7 +263,7 @@ class DBI
                     $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC));
                     return $memcached->get($keys);
 
-                } catch (PDOException $ex) {
+                } catch (Exception $ex) {
                     $this->notify('Database error: ' . $ex->getMessage(), $ex);
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
@@ -288,7 +287,7 @@ class DBI
                     $statement->execute();
                 }
                 return $statement->fetchAll(PDO::FETCH_ASSOC);
-            } catch (PDOException $ex) {
+            } catch (Exception $ex) {
                 $this->notify('Database error: ' . $ex->getMessage(), $ex);
                 throw new Exception('Database error: ' . $ex->getMessage());
             }
@@ -317,7 +316,7 @@ class DBI
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -342,7 +341,7 @@ class DBI
             } else {
                 return $statement->execute();
             }
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -370,7 +369,7 @@ class DBI
             } else {
                 return $statement->execute();
             }
-        } catch (PDOException $ex) {
+        } catch (Exception $ex) {
             $this->notify('Database error: ' . $ex->getMessage(), $ex);
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -400,13 +399,20 @@ class DBI
                             'attachments' => array(
                                 array(
                                     'title' => $configuration['username'],
-                                    'fallback' => $message,
-                                    'pretext' => $message,
+                                    'title_link' => Framework::$factory->getRoot(),
+                                    'text' => 'An error raised from this part:',
+                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
                                     'color' => '#764FA5',
                                     'fields' => array(
                                         array(
-                                            'title' => 'Error stack',
-                                            'value' => $context,
+                                            'title' => $context['File'],
+                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                            'short' => false
+                                        ),
+                                        array(
+                                            'title' => 'Stacktrace',
+                                            'value' => $context['Stacktrace'],
                                             'short' => false
                                         ),
                                     ),
@@ -423,13 +429,20 @@ class DBI
                             'attachments' => array(
                                 array(
                                     'title' => $configuration['username'],
-                                    'fallback' => $message,
-                                    'pretext' => $message,
+                                    'title_link' => Framework::$factory->getRoot(),
+                                    'text' => 'An error raised from this part:',
+                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
+                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
                                     'color' => '#764FA5',
                                     'fields' => array(
                                         array(
-                                            'title' => 'Error stack',
-                                            'value' => $context,
+                                            'title' => $context['File'],
+                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
+                                            'short' => false
+                                        ),
+                                        array(
+                                            'title' => 'Stacktrace',
+                                            'value' => $context['Stacktrace'],
                                             'short' => false
                                         ),
                                     ),
