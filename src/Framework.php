@@ -172,7 +172,7 @@ class Framework
                 if ($this->pdc->isSubclassOf($service)) {
                     new ThrowService($error);
                 }
-                if ($this->pdc->isSubclassOf($controller)) {
+                if ($this->pdc->isSubclassOf($console)) {
                     new ThrowConsole($error);
                 }
                 throw new Exception($error);
