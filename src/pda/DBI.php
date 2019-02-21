@@ -137,11 +137,15 @@ class DBI
                 }
             }
             if ($statement->execute()) {
-                return self::$dbi->lastInsertId();
+                $lastid = self::$dbi->lastInsertId();
+                self::$dbi = null;
+                return $lastid;
             } else {
+                self::$dbi = null;
                 return false;
             }
         } catch (PDOException $ex) {
+            self::$dbi = null;
             return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
@@ -160,8 +164,11 @@ class DBI
         $del_text = substr($del_text, 0, -4);
         try {
             $statement = self::$dbi->prepare($del_text);
-            return $statement->execute($arrWhere);
+            $result = $statement->execute($arrWhere);
+            self::$dbi = null;
+            return $result;
         } catch (PDOException $ex) {
+            self::$dbi = null;
             return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
@@ -208,8 +215,11 @@ class DBI
                     $statement->bindValue(':' . $key, $val);
                 }
             }
-            return $statement->execute();
+            $result = $statement->execute();
+            self::$dbi = null;
+            return $result;
         } catch (PDOException $ex) {
+            self::$dbi = null;
             return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
@@ -253,6 +263,7 @@ class DBI
                     return $memcached->get($keys);
 
                 } catch (PDOException $ex) {
+                    self::$dbi = null;
                     $this->notify('Database error: ' . $ex->getMessage(), $ex);
                 }
             }
@@ -274,8 +285,11 @@ class DBI
                 } else {
                     $statement->execute();
                 }
-                return $statement->fetchAll(PDO::FETCH_ASSOC);
+                $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+                self::$dbi = null;
+                return $result;
             } catch (PDOException $ex) {
+                self::$dbi = null;
                 $this->notify('Database error: ' . $ex->getMessage(), $ex);
             }
         }
@@ -303,8 +317,10 @@ class DBI
             }
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             isset($result[0]) ? $result = $result[0] : $result = null;
+            self::$dbi = null;
             return $result;
         } catch (PDOException $ex) {
+            self::$dbi = null;
             return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
@@ -324,11 +340,16 @@ class DBI
         try {
             $statement = self::$dbi->prepare($this->query);
             if ($argCount > 0) {
-                return $statement->execute($parameters);
+                $result = $statement->execute($parameters);
+                self::$dbi = null;
+                return $result;
             } else {
-                return $statement->execute();
+                $result = $statement->execute();
+                self::$dbi = null;
+                return $result;
             }
         } catch (PDOException $ex) {
+            self::$dbi = null;
             return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
@@ -351,11 +372,16 @@ class DBI
         try {
             $statement = self::$dbi->prepare($call_text);
             if ($argCount > 0) {
-                return $statement->execute($arrData);
+                $result = $statement->execute($arrData);
+                self::$dbi = null;
+                return $result;
             } else {
-                return $statement->execute();
+                $result = $statement->execute();
+                self::$dbi = null;
+                return $result;
             }
         } catch (PDOException $ex) {
+            self::$dbi = null;
             return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
