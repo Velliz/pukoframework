@@ -11,14 +11,11 @@
 
 namespace pukoframework\pda;
 
-use Exception;
+use PDOException;
 use Memcached;
 use PDO;
 use pukoframework\config\Config;
-use pukoframework\Framework;
-use pukoframework\middleware\Service;
-use pukoframework\peh\ThrowService;
-use pukoframework\plugins\CurlRequest;
+use pukoframework\log\LogTransforms;
 
 /**
  * Class DBI
@@ -26,6 +23,8 @@ use pukoframework\plugins\CurlRequest;
  */
 class DBI
 {
+
+    use LogTransforms;
 
     private static $dbi;
 
@@ -65,16 +64,10 @@ class DBI
     /**
      * DBI constructor.
      * @param $query
-     * @throws Exception
+     * @throws \Exception
      */
     protected function __construct($query)
     {
-        $e = new ThrowService('Framework Error');
-        $e->setLogger(new Service());
-
-        set_exception_handler(array($e, 'ExceptionHandler'));
-        set_error_handler(array($e, 'ErrorHandler'));
-
         $this->query = $query;
         if (is_object(self::$dbi)) {
             return;
@@ -86,16 +79,15 @@ class DBI
         try {
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (Exception $ex) {
+        } catch (PDOException $ex) {
             $this->notify('Connection failed: ' . $ex->getMessage(), $ex);
-            throw new Exception("Connection failed: " . $ex->getMessage());
         }
     }
 
     /**
      * @param $query string
      * @return DBI
-     * @throws Exception
+     * @throws \Exception
      */
     public static function Prepare($query)
     {
@@ -106,7 +98,7 @@ class DBI
      * @param $array
      * @param bool $hasBinary
      * @return bool|string
-     * @throws Exception
+     * @throws \Exception
      */
     public function Save($array, $hasBinary = false)
     {
@@ -149,16 +141,15 @@ class DBI
             } else {
                 return false;
             }
-        } catch (Exception $ex) {
-            $this->notify('Database error: ' . $ex->getMessage(), $ex);
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } catch (PDOException $ex) {
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
 
     /**
      * @param $arrWhere
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function Delete($arrWhere)
     {
@@ -170,9 +161,8 @@ class DBI
         try {
             $statement = self::$dbi->prepare($del_text);
             return $statement->execute($arrWhere);
-        } catch (Exception $ex) {
-            $this->notify('Database error: ' . $ex->getMessage(), $ex);
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } catch (PDOException $ex) {
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
 
@@ -181,7 +171,7 @@ class DBI
      * @param $array
      * @param bool $hasBinary
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function Update($id, $array, $hasBinary = false)
     {
@@ -219,15 +209,14 @@ class DBI
                 }
             }
             return $statement->execute();
-        } catch (Exception $ex) {
-            $this->notify('Database error: ' . $ex->getMessage(), $ex);
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } catch (PDOException $ex) {
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function GetData()
     {
@@ -263,9 +252,8 @@ class DBI
                     $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC));
                     return $memcached->get($keys);
 
-                } catch (Exception $ex) {
+                } catch (PDOException $ex) {
                     $this->notify('Database error: ' . $ex->getMessage(), $ex);
-                    throw new Exception('Database error: ' . $ex->getMessage());
                 }
             }
         } else {
@@ -287,16 +275,16 @@ class DBI
                     $statement->execute();
                 }
                 return $statement->fetchAll(PDO::FETCH_ASSOC);
-            } catch (Exception $ex) {
+            } catch (PDOException $ex) {
                 $this->notify('Database error: ' . $ex->getMessage(), $ex);
-                throw new Exception('Database error: ' . $ex->getMessage());
             }
         }
+        return null;
     }
 
     /**
      * @return mixed|null
-     * @throws Exception
+     * @throws \Exception
      */
     public function FirstRow()
     {
@@ -316,15 +304,14 @@ class DBI
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             isset($result[0]) ? $result = $result[0] : $result = null;
             return $result;
-        } catch (Exception $ex) {
-            $this->notify('Database error: ' . $ex->getMessage(), $ex);
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } catch (PDOException $ex) {
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
 
     /**
      * @return mixed|null
-     * @throws Exception
+     * @throws \Exception
      */
     public function Run()
     {
@@ -341,9 +328,8 @@ class DBI
             } else {
                 return $statement->execute();
             }
-        } catch (Exception $ex) {
-            $this->notify('Database error: ' . $ex->getMessage(), $ex);
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } catch (PDOException $ex) {
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
 
@@ -351,7 +337,7 @@ class DBI
      * @param $name
      * @param $arrData
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function Call($name, $arrData)
     {
@@ -369,9 +355,8 @@ class DBI
             } else {
                 return $statement->execute();
             }
-        } catch (Exception $ex) {
-            $this->notify('Database error: ' . $ex->getMessage(), $ex);
-            throw new Exception('Database error: ' . $ex->getMessage());
+        } catch (PDOException $ex) {
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
         }
     }
 
@@ -383,81 +368,4 @@ class DBI
         return '?';
     }
 
-    /**
-     * @param $message
-     * @param array $context
-     * @return mixed
-     * @throws \Exception
-     */
-    private function notify($message, array $context = array())
-    {
-        foreach (Config::Data('app')['logs'] as $name => $configuration) {
-            switch ($name) {
-                case 'slack':
-                    if ($configuration['active']) {
-                        $messages = array(
-                            'attachments' => array(
-                                array(
-                                    'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        ),
-                                        array(
-                                            'title' => 'Stacktrace',
-                                            'value' => $context['Stacktrace'],
-                                            'short' => false
-                                        ),
-                                    ),
-                                )
-                            )
-                        );
-                        CurlRequest::To($configuration['url'])->Method('POST')
-                            ->Receive($messages, CurlRequest::JSON);
-                    }
-                    break;
-                case 'hook':
-                    if ($configuration['active']) {
-                        $messages = array(
-                            'attachments' => array(
-                                array(
-                                    'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        ),
-                                        array(
-                                            'title' => 'Stacktrace',
-                                            'value' => $context['Stacktrace'],
-                                            'short' => false
-                                        ),
-                                    ),
-                                )
-                            )
-                        );
-                        CurlRequest::To($configuration['url'])->Method('POST')
-                            ->Receive($messages, CurlRequest::JSON);
-                    }
-                    break;
-                default:
-                    break;
-
-            }
-        }
-        return true;
-    }
 }

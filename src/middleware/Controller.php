@@ -11,11 +11,9 @@
 
 namespace pukoframework\middleware;
 
-use pukoframework\config\Config;
-use pukoframework\Framework;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
-use pukoframework\plugins\CurlRequest;
+use pukoframework\log\LogTransforms;
 
 /**
  * Class Controller
@@ -23,6 +21,8 @@ use pukoframework\plugins\CurlRequest;
  */
 abstract class Controller implements LoggerInterface
 {
+
+    use LogTransforms;
 
     /**
      * @var array
@@ -112,7 +112,7 @@ abstract class Controller implements LoggerInterface
      */
     public function error($message, array $context = array())
     {
-        $this->notifyError($message, $context);
+        $this->notify($message, $context);
     }
 
     public function warning($message, array $context = array())
@@ -169,84 +169,6 @@ abstract class Controller implements LoggerInterface
                 $this->emergency($message, $context);
                 break;
         }
-    }
-
-    /**
-     * @param $message
-     * @param array $context
-     * @return mixed
-     * @throws \Exception
-     */
-    private function notifyError($message, array $context = array())
-    {
-        foreach (Config::Data('app')['logs'] as $name => $configuration) {
-            switch ($name) {
-                case 'slack':
-                    if ($configuration['active']) {
-                        $messages = array(
-                            'attachments' => array(
-                                array(
-                                    'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        ),
-                                        array(
-                                            'title' => 'Stacktrace',
-                                            'value' => $context['Stacktrace'],
-                                            'short' => false
-                                        ),
-                                    ),
-                                )
-                            )
-                        );
-                        CurlRequest::To($configuration['url'])->Method('POST')
-                            ->Receive($messages, CurlRequest::JSON);
-                    }
-                    break;
-                case 'hook':
-                    if ($configuration['active']) {
-                        $messages = array(
-                            'attachments' => array(
-                                array(
-                                    'title' => $configuration['username'],
-                                    'title_link' => Framework::$factory->getRoot(),
-                                    'text' => 'An error raised from this part:',
-                                    'fallback' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'pretext' => sprintf('(%s) %s', $context['ErrorCode'], $message),
-                                    'color' => '#764FA5',
-                                    'fields' => array(
-                                        array(
-                                            'title' => $context['File'],
-                                            'value' => sprintf('Line number: %s', $context['LineNumber']),
-                                            'short' => false
-                                        ),
-                                        array(
-                                            'title' => 'Stacktrace',
-                                            'value' => $context['Stacktrace'],
-                                            'short' => false
-                                        ),
-                                    ),
-                                )
-                            )
-                        );
-                        CurlRequest::To($configuration['url'])->Method('POST')
-                            ->Receive($messages, CurlRequest::JSON);
-                    }
-                    break;
-                default:
-                    break;
-
-            }
-        }
-        return true;
     }
 
 }
