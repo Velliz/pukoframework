@@ -80,7 +80,7 @@ class DBI
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
-            $this->notify('Connection failed: ' . $ex->getMessage(), $ex);
+            $this->notify('Connection failed: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 
@@ -146,7 +146,7 @@ class DBI
             }
         } catch (PDOException $ex) {
             self::$dbi = null;
-            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 
@@ -169,7 +169,7 @@ class DBI
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 
@@ -220,12 +220,12 @@ class DBI
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 
     /**
-     * @return array
+     * @return array|bool
      * @throws \Exception
      */
     public function GetData()
@@ -264,7 +264,7 @@ class DBI
 
                 } catch (PDOException $ex) {
                     self::$dbi = null;
-                    $this->notify('Database error: ' . $ex->getMessage(), $ex);
+                    return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
                 }
             }
         } else {
@@ -290,7 +290,7 @@ class DBI
                 return $result;
             } catch (PDOException $ex) {
                 self::$dbi = null;
-                $this->notify('Database error: ' . $ex->getMessage(), $ex);
+                return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
             }
         }
         return null;
@@ -321,7 +321,7 @@ class DBI
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 
@@ -350,7 +350,7 @@ class DBI
             }
         } catch (PDOException $ex) {
             self::$dbi = null;
-            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 
@@ -382,7 +382,7 @@ class DBI
             }
         } catch (PDOException $ex) {
             self::$dbi = null;
-            return $this->notify('Database error: ' . $ex->getMessage(), $ex);
+            return $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
         }
     }
 

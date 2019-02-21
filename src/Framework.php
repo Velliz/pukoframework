@@ -94,6 +94,13 @@ class Framework
      */
     public function __construct(Factory $factory)
     {
+        //temporary set a starter error handler [a json formatted error]
+        $e = new ThrowService('Framework Error');
+        $e->setLogger(new Service());
+
+        set_exception_handler(array($e, 'ExceptionHandler'));
+        set_error_handler(array($e, 'ErrorHandler'));
+
         if (!$factory instanceof Factory) {
             throw new Exception('Puko Fatal Error (CF001): Factory must set.');
         }
