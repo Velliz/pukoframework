@@ -28,7 +28,6 @@ trait LogTransforms
      * @param array $context
      * stacktree of exception
      *
-     * @return bool
      * @throws \Exception
      */
     function notify($message, array $context = array())
@@ -49,7 +48,6 @@ trait LogTransforms
                 CurlRequest::To($configuration['url'])->Method('POST')->Receive($messages, CurlRequest::JSON);
             }
         }
-        return true;
     }
 
     /**
