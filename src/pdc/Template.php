@@ -93,7 +93,7 @@ class Template implements Pdc, PteCache
     public function SetTemplate($templateKeys, $templateData)
     {
         $templateKeys = hash('ripemd160', $templateKeys);
-        $this->cache->set($templateKeys, $templateData);
+        $this->cache->set($templateKeys, $templateData, 120);
         return $this->cache->get($templateKeys);
     }
 }

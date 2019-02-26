@@ -264,7 +264,9 @@ class DBI
                         $statement->execute();
                     }
                     //doing memcached storage
-                    $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC));
+                    $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC),
+                        isset($cacheConfig['expireTime']) ? $cacheConfig['expireTime'] : 10
+                    );
                     return $memcached->get($keys);
 
                 } catch (PDOException $ex) {
