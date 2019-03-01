@@ -84,7 +84,7 @@ class DataTables
 
     public function SetQuery($query)
     {
-        $sql = sprintf('SELECT ' . '*' . ' FROM (%s) onions ', $query);
+        $sql = sprintf('SELECT ' . '*' . ' FROM (%s) dtables ', $query);
         $this->sQuery = str_replace(';', '', $sql);
     }
 

@@ -265,7 +265,7 @@ class DBI
                     }
                     //doing memcached storage
                     $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC),
-                        isset($cacheConfig['expireTime']) ? $cacheConfig['expireTime'] : 10
+                        isset($cacheConfig['expire']) ? $cacheConfig['expire'] : 10
                     );
                     return $memcached->get($keys);
 
