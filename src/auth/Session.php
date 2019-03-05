@@ -25,6 +25,8 @@ class Session
     private $identifier;
     private $authentication;
     private $session;
+    private $expiredText;
+    private $errorText;
 
     public static $sessionObject;
 
@@ -43,6 +45,8 @@ class Session
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
         $this->session = $secure['session'];
+        $this->expiredText = $secure['expiredText'];
+        $this->errorText = $secure['errorText'];
 
         $this->authentication = $authentication;
     }
@@ -176,10 +180,14 @@ class Session
         return true;
     }
 
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public function GetLoginData()
     {
         if (!isset($_SESSION[$this->session])) {
-            return false;
+            throw new Exception($this->errorText);
         }
 
         $data = json_decode($this->Decrypt($_SESSION[$this->session]), true);

@@ -60,7 +60,7 @@ class ThrowConsole extends Exception implements PukoException, LoggerAwareInterf
         header('Content-Type: application/json');
 
         $data = array(
-            'status' => 'failed',
+            'status' => 'error',
             'exception' => array(
                 'Message' => $emg['Message']
             )

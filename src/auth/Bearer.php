@@ -27,6 +27,8 @@ class Bearer
     private $key;
     private $identifier;
     private $authentication;
+    private $expiredText;
+    private $errorText;
 
     public static $bearerObject;
 
@@ -41,6 +43,8 @@ class Bearer
         $this->key = $secure['key'];
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
+        $this->expiredText = $secure['expiredText'];
+        $this->errorText = $secure['errorText'];
 
         $this->authentication = $authentication;
     }
@@ -120,12 +124,12 @@ class Bearer
     {
         $data = json_decode($this->Decrypt(Request::getBearerToken()), true);
         if ($data === null) {
-            throw new Exception('token bearer miss match');
+            throw new Exception($this->errorText);
         }
 
         $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
         if ($date < new DateTime()) {
-            throw new Exception('token bearer expired');
+            throw new Exception($this->expiredText);
         }
 
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);

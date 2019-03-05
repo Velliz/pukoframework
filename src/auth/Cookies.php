@@ -25,6 +25,8 @@ class Cookies
     private $key;
     private $identifier;
     private $authentication;
+    private $expiredText;
+    private $errorText;
 
     private static $cookies;
     public static $cookiesObject;
@@ -40,6 +42,8 @@ class Cookies
         $this->key = $secure['key'];
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
+        $this->expiredText = $secure['expiredText'];
+        $this->errorText = $secure['errorText'];
 
         self::$cookies = $secure['cookies'];
 
@@ -169,10 +173,14 @@ class Cookies
         return true;
     }
 
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public function GetLoginData()
     {
         if (!isset($_COOKIE[self::$cookies])) {
-            return false;
+            throw new Exception($this->errorText);
         }
 
         $data = json_decode($this->Decrypt($_COOKIE[self::$cookies]), true);

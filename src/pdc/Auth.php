@@ -70,7 +70,10 @@ class Auth implements Pdc, CustomRender
         }
         if (!$hasPermission) {
             $data = array(
-                'exception' => 'Authentication Required'
+                'status' => 'error',
+                'exception' => array(
+                    'Message' => 'Authentication Required'
+                )
             );
 
             http_response_code(403);
