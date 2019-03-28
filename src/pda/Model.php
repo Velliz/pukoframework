@@ -78,6 +78,7 @@ class Model
         }
 
         if ($id !== null) {
+            //todo: change this to support another databases
             $sql = sprintf("SELECT * FROM %s WHERE (%s = @1) LIMIT 1", $this->_table, $this->_primary);
             $result = DBI::Prepare($sql)->FirstRow($id);
 

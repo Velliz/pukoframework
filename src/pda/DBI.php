@@ -75,6 +75,7 @@ class DBI
         }
 
         $this->DBISet(Config::Data('database'));
+        //todo: change this to support another databases
         $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
 
         try {
