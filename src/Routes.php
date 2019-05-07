@@ -23,9 +23,9 @@ class Routes
 
     /**
      * @var array
-     * store page routing rules
+     * store router routing rules
      */
-    var $page;
+    var $router;
 
     /**
      * @var array
@@ -81,14 +81,14 @@ class Routes
      */
     private function RouteSet($source, $request_url, $request_accept)
     {
-        $this->page = $source['page'];
+        $this->router = $source['router'];
         $this->error = $source['error'];
         $this->not_found = $source['not_found'];
 
         $temp = explode('?', $request_url);
         $request_url = explode('/', $temp[0]);
 
-        foreach ($this->page as $key => $val) {
+        foreach ($this->router as $key => $val) {
             $url = explode('/', $key);
             if (count($url) === count($request_url)) {
                 $match = $parameter = array();

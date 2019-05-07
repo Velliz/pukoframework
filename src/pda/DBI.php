@@ -50,33 +50,38 @@ class DBI
 
     /**
      * @param $connection array
+     * @param $database
      */
-    protected function DBISet($connection)
+    protected function DBISet($connection, $database)
     {
-        $this->dbType = $connection['dbType'];
-        $this->host = $connection['host'];
-        $this->port = $connection['port'];
-        $this->dbName = $connection['dbName'];
-        $this->username = $connection['user'];
-        $this->password = $connection['pass'];
-        $this->cache = $connection['cache'];
+        $this->dbType = $connection[$database]['dbType'];
+        $this->host = $connection[$database]['host'];
+        $this->port = $connection[$database]['port'];
+        $this->dbName = $connection[$database]['dbName'];
+        $this->username = $connection[$database]['user'];
+        $this->password = $connection[$database]['pass'];
+        $this->cache = $connection[$database]['cache'];
     }
 
     /**
      * DBI constructor.
      * @param $query
-     * @throws \Exception
+     * @param $database
+     * @throws Exception
      */
-    protected function __construct($query)
+    protected function __construct($query, $database)
     {
         $this->query = $query;
         if (is_object(self::$dbi)) {
             return;
         }
 
-        $this->DBISet(Config::Data('database'));
+        $this->DBISet(Config::Data('database'), $database);
         //todo: change this to support another databases
-        $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
+        $pdoConnection = "$this->dbType:host=$this->host;port=$this->port";
+        if ($this->dbName !== '') {
+            $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
+        }
 
         try {
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
@@ -89,12 +94,16 @@ class DBI
 
     /**
      * @param $query string
+     * @param null $database
      * @return DBI
-     * @throws \Exception
+     * @throws Exception
      */
-    public static function Prepare($query)
+    public static function Prepare($query, $database = null)
     {
-        return new DBI($query);
+        if ($database === null) {
+            $database = 'primary';
+        }
+        return new DBI($query, $database);
     }
 
     /**

@@ -8,7 +8,7 @@ use Exception;
  * Class Database
  * @package pukoframework\pda
  */
-class Database
+class Schema
 {
 
     /**
@@ -18,7 +18,7 @@ class Database
      */
     public static function createDB($name)
     {
-        $result = DBI::Prepare("CREATE DATABASE {$name};")->Run();
+        $result = DBI::Prepare("CREATE DATABASE IF NOT EXISTS {$name};")->Run();
         return $result;
     }
 
