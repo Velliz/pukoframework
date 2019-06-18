@@ -84,7 +84,7 @@ class DataTables
         }
     }
 
-    public function SetQuery($query, $database)
+    public function SetQuery($query, $database = 'primary')
     {
         $sql = sprintf('SELECT ' . '*' . ' FROM (%s) dtables ', $query);
         $this->sQuery = str_replace(';', '', $sql);
