@@ -19,6 +19,8 @@ class DataTables
     const POST = 'POST';
     const JSON_POST = 'JSON_POST';
 
+    public $database = 'primary';
+
     /**
      * @var string ase sql query string
      */
@@ -82,10 +84,11 @@ class DataTables
         }
     }
 
-    public function SetQuery($query)
+    public function SetQuery($query, $database)
     {
         $sql = sprintf('SELECT ' . '*' . ' FROM (%s) dtables ', $query);
         $this->sQuery = str_replace(';', '', $sql);
+        $this->database = $database;
     }
 
     /**
@@ -111,7 +114,7 @@ class DataTables
                 $this->start = $_GET['start'];
                 $this->length = $_GET['length'];
 
-                $this->recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+                $this->recordsTotal = count(DBI::Prepare($this->sQuery, $this->database)->GetData());
 
                 if (!empty($_GET['search']['value'])) {
                     for ($i = 0; $i < count($_GET['columns']); $i++) {
@@ -120,7 +123,7 @@ class DataTables
                     }
                     $this->where = 'WHERE ' . implode(' OR ', $this->where);
                     $sql = sprintf('%s %s', $this->sQuery, $this->where);
-                    $this->recordsFiltered = count(DBI::Prepare($sql)->GetData());
+                    $this->recordsFiltered = count(DBI::Prepare($sql, $this->database)->GetData());
                     $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ',
                         $this->sQuery,
                         $this->where,
@@ -129,7 +132,7 @@ class DataTables
                         $this->start,
                         $this->length
                     );
-                    $data = DBI::Prepare($sql)->GetData();
+                    $data = DBI::Prepare($sql, $this->database)->GetData();
                 } else {
                     $sql = sprintf('%s ORDER BY %s %s limit %d,%d ',
                         $this->sQuery,
@@ -138,7 +141,7 @@ class DataTables
                         $this->start,
                         $this->length
                     );
-                    $data = DBI::Prepare($sql)->GetData();
+                    $data = DBI::Prepare($sql, $this->database)->GetData();
                     $this->recordsFiltered = $this->recordsTotal;
                 }
 
@@ -158,7 +161,7 @@ class DataTables
                 $this->start = $_POST['start'];
                 $this->length = $_POST['length'];
 
-                $this->recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+                $this->recordsTotal = count(DBI::Prepare($this->sQuery, $this->database)->GetData());
 
                 if (!empty($_POST['search']['value'])) {
                     for ($i = 0; $i < count($_POST['columns']); $i++) {
@@ -167,7 +170,7 @@ class DataTables
                     }
                     $this->where = 'WHERE ' . implode(' OR ', $this->where);
                     $sql = sprintf('%s %s', $this->sQuery, $this->where);
-                    $this->recordsFiltered = count(DBI::Prepare($sql)->GetData());
+                    $this->recordsFiltered = count(DBI::Prepare($sql, $this->database)->GetData());
                     $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ',
                         $this->sQuery,
                         $this->where,
@@ -175,7 +178,7 @@ class DataTables
                         $this->orderType,
                         $this->start,
                         $this->length);
-                    $data = DBI::Prepare($sql)->GetData();
+                    $data = DBI::Prepare($sql, $this->database)->GetData();
                 } else {
                     $sql = sprintf('%s ORDER BY %s %s limit %d,%d ',
                         $this->sQuery,
@@ -184,7 +187,7 @@ class DataTables
                         $this->start,
                         $this->length
                     );
-                    $data = DBI::Prepare($sql)->GetData();
+                    $data = DBI::Prepare($sql, $this->database)->GetData();
                     $this->recordsFiltered = $this->recordsTotal;
                 }
 
@@ -205,7 +208,7 @@ class DataTables
                 $this->start = $param['start'];
                 $this->length = $param['length'];
 
-                $this->recordsTotal = count(DBI::Prepare($this->sQuery)->GetData());
+                $this->recordsTotal = count(DBI::Prepare($this->sQuery, $this->database)->GetData());
 
                 if (!empty($param['search']['value'])) {
                     for ($i = 0; $i < count($param['columns']); $i++) {
@@ -214,7 +217,7 @@ class DataTables
                     }
                     $this->where = 'WHERE ' . implode(' OR ', $this->where);
                     $sql = sprintf('%s %s', $this->sQuery, $this->where);
-                    $this->recordsFiltered = count(DBI::Prepare($sql)->GetData());
+                    $this->recordsFiltered = count(DBI::Prepare($sql, $this->database)->GetData());
                     $sql = sprintf('%s %s ORDER BY %s %s limit %d,%d ',
                         $this->sQuery,
                         $this->where,
@@ -223,7 +226,7 @@ class DataTables
                         $this->start,
                         $this->length
                     );
-                    $data = DBI::Prepare($sql)->GetData();
+                    $data = DBI::Prepare($sql, $this->database)->GetData();
                 } else {
                     $sql = sprintf('%s ORDER BY %s %s limit %d,%d ',
                         $this->sQuery,
@@ -232,7 +235,7 @@ class DataTables
                         $this->start,
                         $this->length
                     );
-                    $data = DBI::Prepare($sql)->GetData();
+                    $data = DBI::Prepare($sql, $this->database)->GetData();
                     $this->recordsFiltered = $this->recordsTotal;
                 }
 
