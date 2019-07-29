@@ -162,27 +162,21 @@ class DataTables
         $data = DBI::Prepare($this->query, $this->database)->GetData();
         $this->records_filtered = count($data);
 
-        $response = array(
+        $response = [
             'draw' => intval($this->draw),
             'recordsTotal' => $this->records_total,
             'recordsFiltered' => $this->records_filtered,
-            'data' => $data,
-        );
+            'data' => [],
+        ];
 
         if ($callback !== null) {
             $data = $callback($data);
         }
 
-        $counter = 0;
-        foreach ($data as $aRow) {
-            $row = array();
-            $counter++;
-            for ($i = 0; $i < count($this->dt_columns); $i++) {
-                $row[] = $aRow[$this->dt_columns[$i]];
-            }
-            $tData = count($this->dt_columns);
-            for ($j = $tData; $j < $this->total_columns; $j++) {
-                $row[] = '-';
+        foreach ($data as $a_row) {
+            $row = [];
+            for ($i = 0; $i < $this->total_columns; $i++) {
+                $row[] = $a_row[$this->column_names[$i]];
             }
             $response['data'][] = $row;
         }
