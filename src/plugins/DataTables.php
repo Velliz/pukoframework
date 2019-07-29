@@ -38,12 +38,6 @@ class DataTables
      */
     private $column_names = [];
 
-    /**
-     * @var array
-     * total columns for selector, order and sorting.
-     */
-    public $dt_columns = [];
-
     public $http_verb = 'POST';
 
     private $draw = 1;
