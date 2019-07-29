@@ -20,6 +20,9 @@ class DataTables
     const POST = 'POST';
     const JSON_POST = 'JSON_POST';
 
+    /**
+     * @var string database
+     */
     public $database = 'primary';
 
     /**
@@ -132,9 +135,6 @@ class DataTables
             return $this->response;
         }
 
-        $data = DBI::Prepare($this->query, $this->database)->GetData();
-        $this->records_total = count($data);
-
         if ($this->search_terms !== null) {
             for ($i = 0; $i < count($this->column_names); $i++) {
                 $this->search_array[] = "{$this->column_names[$i]} LIKE '%{$this->search_terms}%'";
@@ -154,6 +154,7 @@ class DataTables
         $this->query .= $search_param;
 
         $data = DBI::Prepare($this->query, $this->database)->GetData();
+        $this->records_total = count($data);
         $this->records_filtered = count($data);
 
         $response = [
