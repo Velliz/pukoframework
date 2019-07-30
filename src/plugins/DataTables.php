@@ -118,7 +118,7 @@ class DataTables
     {
         $this->database = $database;
 
-        $this->raw_query = $query;
+        $this->raw_query = str_replace(';', '', $query);
 
         $sql = "SELECT ";
         $sql .= implode(", ", $this->column_names);
