@@ -139,7 +139,7 @@ class DataTables
             return $this->response;
         }
 
-        $count_sql = "SELECT ;";
+        $count_sql = "SELECT ";
         $count_sql .= "COUNT(*) results ";
         $count_sql .= "FROM ({$this->raw_query}) counter ";
         $data = DBI::Prepare($count_sql, $this->database)->FirstRow();
