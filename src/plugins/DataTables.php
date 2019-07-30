@@ -31,6 +31,8 @@ class DataTables
      */
     public $query;
 
+    public $raw_query;
+
     /**
      * @var int
      */
@@ -116,6 +118,8 @@ class DataTables
     {
         $this->database = $database;
 
+        $this->raw_query = $query;
+
         $sql = "SELECT ";
         $sql .= implode(", ", $this->column_names);
         $sql .= " FROM ({$query}) ";
@@ -137,7 +141,7 @@ class DataTables
 
         $count_sql = "SELECT ;";
         $count_sql .= "COUNT(*) results ";
-        $count_sql .= "FROM ({$this->query}) counter ";
+        $count_sql .= "FROM ({$this->raw_query}) counter ";
         $data = DBI::Prepare($count_sql, $this->database)->FirstRow();
         $this->records_total = intval($data['results']);
 
