@@ -144,6 +144,7 @@ class DataTables
         $count_sql .= "FROM ({$this->raw_query}) counter ";
         $data = DBI::Prepare($count_sql, $this->database)->FirstRow();
         $this->records_total = intval($data['results']);
+        $this->records_filtered = intval($data['results']);
 
         if ($this->search_terms !== null) {
             for ($i = 0; $i < count($this->column_names); $i++) {
@@ -164,7 +165,9 @@ class DataTables
         $this->query .= $search_param;
 
         $data = DBI::Prepare($this->query, $this->database)->GetData();
-        $this->records_filtered = count($data);
+        if (count($this->search_array) > 0) {
+            $this->records_filtered = count($data);
+        }
 
         $response = [
             'draw' => intval($this->draw),
