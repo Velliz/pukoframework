@@ -143,8 +143,8 @@ class DataTables
 
         $search_param = "";
         if (count($this->search_array) > 0) {
-            $search_param .= implode(" OR ", $this->search_array);
-            $search_param .= " WHERE {$search_param} ";
+            $likes = implode(" OR ", $this->search_array);
+            $search_param .= " WHERE {$likes} ";
         }
 
         $order = strtoupper($this->order_dir);
