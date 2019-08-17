@@ -162,9 +162,9 @@ class DataTables
         $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
         $search_param .= " LIMIT {$this->start}, {$this->length}";
 
-        $this->query .= $search_param;
+        $this->raw_query .= $search_param;
 
-        $data = DBI::Prepare($this->query, $this->database)->GetData();
+        $data = DBI::Prepare($this->raw_query, $this->database)->GetData();
         if (count($this->search_array) > 0) {
             $this->records_filtered = count($data);
         }
@@ -180,6 +180,7 @@ class DataTables
             $data = $callback($data);
         }
 
+        //make the visible column is only from column specs
         foreach ($data as $a_row) {
             $row = [];
             for ($i = 0; $i < $this->total_columns; $i++) {
