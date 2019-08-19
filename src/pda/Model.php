@@ -47,6 +47,11 @@ class Model
     public $_binary = false;
 
     /**
+     * @var bool
+     */
+    public $_database = null;
+
+    /**
      * Model constructor.
      * @param null $id
      *
@@ -80,7 +85,7 @@ class Model
         if ($id !== null) {
             //todo: change this to support another databases
             $sql = sprintf("SELECT * FROM %s WHERE (%s = @1) LIMIT 1", $this->_table, $this->_primary);
-            $result = DBI::Prepare($sql)->FirstRow($id);
+            $result = DBI::Prepare($sql, $this->_database)->FirstRow($id);
 
             if ($result === null) {
                 throw new Exception(sprintf('Data with key %s not found', $id));
@@ -113,7 +118,7 @@ class Model
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table)->Save($insert, $this->_binary);
+        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_binary);
         $this->__construct($lastid);
     }
 
@@ -130,7 +135,7 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $this->_binary);
+        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $this->_binary);
         $this->__construct($this->{$this->_primary});
     }
 
@@ -139,7 +144,7 @@ class Model
      */
     public function remove()
     {
-        DBI::Prepare($this->_table)->Delete(array($this->_primary => $this->{$this->_primary}));
+        DBI::Prepare($this->_table, $this->_database)->Delete(array($this->_primary => $this->{$this->_primary}));
         $this->__construct();
     }
 
