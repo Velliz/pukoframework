@@ -13,6 +13,7 @@ namespace pukoframework\pda;
 
 use Exception;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class Model
@@ -47,7 +48,7 @@ class Model
     public $_binary = false;
 
     /**
-     * @var bool
+     * @var string
      */
     public $_database = null;
 
@@ -55,10 +56,13 @@ class Model
      * Model constructor.
      * @param null $id
      *
+     * @param null $database
+     * @throws ReflectionException
      * @throws Exception
      */
-    public function __construct($id = null)
+    public function __construct($id = null, $database = null)
     {
+        $this->_database = $database;
 
         $rc = new ReflectionClass($this);
 
@@ -119,7 +123,7 @@ class Model
             }
         }
         $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_binary);
-        $this->__construct($lastid);
+        $this->__construct($lastid, $this->_database);
     }
 
     /**
@@ -136,7 +140,7 @@ class Model
             }
         }
         DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $this->_binary);
-        $this->__construct($this->{$this->_primary});
+        $this->__construct($this->{$this->_primary}, $this->_database);
     }
 
     /**
@@ -145,7 +149,6 @@ class Model
     public function remove()
     {
         DBI::Prepare($this->_table, $this->_database)->Delete(array($this->_primary => $this->{$this->_primary}));
-        $this->__construct();
     }
 
     /**
