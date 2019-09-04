@@ -121,7 +121,7 @@ class DataTables
         $this->raw_query = str_replace(';', '', $query);
 
         $sql = "SELECT ";
-        $sql .= implode(", ", $this->column_names);
+        $sql .= "*";
         $sql .= " FROM ({$query}) ";
         $sql .= "TEMP ";
         $this->query = str_replace(';', '', $sql);
@@ -162,9 +162,9 @@ class DataTables
         $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
         $search_param .= " LIMIT {$this->start}, {$this->length}";
 
-        $this->raw_query .= $search_param;
+        $this->query .= $search_param;
 
-        $data = DBI::Prepare($this->raw_query, $this->database)->GetData();
+        $data = DBI::Prepare($this->query, $this->database)->GetData();
         if (count($this->search_array) > 0) {
             $this->records_filtered = count($data);
         }
