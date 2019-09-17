@@ -21,7 +21,7 @@ use pukoframework\plugins\CurlRequest;
 trait LogTransforms
 {
 
-    private $const = ['file', 'line', 'function', 'class', 'type', 'args'];
+    private $err_const = ['file', 'line', 'function', 'class', 'type', 'args'];
 
     /**
      * @param $message
