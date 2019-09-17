@@ -128,9 +128,11 @@ class Example extends Service {
 * Separating `PCLI` command code *(php puko ...)* in independent projects.
 * Push error to *Slack* channel and another remote logging service. 
 
-### 1.1.6 (TBA)
+### 1.1.6 (8 May 2019)
 * CLI execution mode.
 * Global variables.
 * DBI & Model enhancements.
+
+### 1.1.7 (TBA)
 * Database fail over mechanism.
 * Testing with PHP Unit.

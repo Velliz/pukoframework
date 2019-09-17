@@ -87,7 +87,7 @@ class DBI
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
-            $this->notify('Connection failed: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Connection failed: ' . $ex->getMessage(), $query, $ex->getTrace());
             throw new Exception("Connection failed: " . $ex->getMessage());
         }
     }
@@ -158,7 +158,7 @@ class DBI
             }
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Database error: ' . $ex->getMessage(), $insert_text, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -182,7 +182,7 @@ class DBI
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Database error: ' . $ex->getMessage(), $del_text, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -234,7 +234,7 @@ class DBI
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Database error: ' . $ex->getMessage(), $update_text, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -281,7 +281,7 @@ class DBI
 
                 } catch (PDOException $ex) {
                     self::$dbi = null;
-                    $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+                    $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
                     throw new Exception('Database error: ' . $ex->getMessage());
                 }
             }
@@ -308,7 +308,7 @@ class DBI
                 return $result;
             } catch (PDOException $ex) {
                 self::$dbi = null;
-                $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+                $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
                 throw new Exception('Database error: ' . $ex->getMessage());
             }
         }
@@ -339,7 +339,7 @@ class DBI
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -369,7 +369,7 @@ class DBI
             }
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
@@ -402,7 +402,7 @@ class DBI
             }
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $ex->getTrace());
+            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }

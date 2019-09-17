@@ -20,9 +20,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "velliz/pte": "0.1.5",
-    "ext-pdo": "*",
-    "ext-memcached": "*"
+    "velliz/pte": "0.1.5"
   },
   "require-dev": {
     "phpunit/phpunit": "^6"

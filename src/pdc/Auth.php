@@ -11,7 +11,9 @@
 
 namespace pukoframework\pdc;
 
+use Exception;
 use pte\CustomRender;
+use pte\exception\PteException;
 use pte\Pte;
 use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
@@ -25,6 +27,9 @@ use pukoframework\Response;
  */
 class Auth implements Pdc, CustomRender
 {
+
+    var $fn;
+    var $param;
 
     var $key;
     var $switch;
@@ -45,8 +50,8 @@ class Auth implements Pdc, CustomRender
     /**
      * @param Response &$response
      * @return mixed
-     * @throws \Exception
-     * @throws \pte\exception\PteException
+     * @throws Exception
+     * @throws PteException
      */
     public function SetStrategy(Response &$response)
     {
@@ -98,7 +103,8 @@ class Auth implements Pdc, CustomRender
      */
     public function RegisterFunction($fnName, $paramArray)
     {
-        // TODO: Implement RegisterFunction() method.
+        $this->fn = $fnName;
+        $this->param = $paramArray;
     }
 
     /**
@@ -106,6 +112,9 @@ class Auth implements Pdc, CustomRender
      */
     public function Parse()
     {
+        if ($this->fn === 'auth') {
+            return $this->param;
+        }
         return '';
     }
 }

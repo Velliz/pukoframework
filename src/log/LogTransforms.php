@@ -21,31 +21,35 @@ use pukoframework\plugins\CurlRequest;
 trait LogTransforms
 {
 
+    private $const = ['file', 'line', 'function', 'class', 'type', 'args'];
+
     /**
      * @param $message
      * error message string
      *
+     * @param $desc
      * @param array $context
      * stacktree of exception
      *
-     * @throws \Exception
      */
-    function notify($message, array $context = array())
+    function notify($message, $desc, array $context = [])
     {
         foreach (Config::Data('app')['logs'] as $name => $configuration) {
             if ($configuration['active']) {
                 $messages = array(
-                    'attachments' => array(
-                        array(
+                    'attachments' => [
+                        [
+                            'author_name' => $desc,
                             'title' => $configuration['username'],
                             'title_link' => Framework::$factory->getRoot(),
                             'text' => $message,
                             'fields' => $this->TranslateArray($context),
                             'color' => '#0067AC',
-                        )
-                    )
+                        ]
+                    ]
                 );
-                CurlRequest::To($configuration['url'])->Method('POST')->Receive($messages, CurlRequest::JSON);
+                CurlRequest::To($configuration['url'])->Method('POST')
+                    ->Receive($messages, CurlRequest::JSON);
             }
         }
     }
@@ -53,18 +57,19 @@ trait LogTransforms
     /**
      * @param $arr
      * @param array $fields
+     * @param $index
      * @return array
      */
-    function TranslateArray($arr, &$fields = array())
+    function TranslateArray($arr, &$fields = [], &$index = 0)
     {
         foreach ($arr as $key => $val) {
-            if (is_array($val)) {
+            if (is_array($val) || $index < 3) {
+                $index++;
                 $this->TranslateArray($val, $fields);
             }
             if (strlen($key) > 2) {
                 $fields[] = array(
-                    'title' => $key,
-                    'value' => $val,
+                    'value' => "{$key}: {$val}",
                     'short' => false
                 );
             }

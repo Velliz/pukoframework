@@ -13,7 +13,7 @@ Puko Framework is MVC PHP Framework for quick PHP Application Development.
 
 ## Requirement
 
-* Puko Require >= **PHP 7.0** or greater
+* Puko Require >= **PHP 7.0**
 * Composer
 
 ## Feature
@@ -22,11 +22,11 @@ Puko Framework is MVC PHP Framework for quick PHP Application Development.
 * Build-in Template Engine (PTE)
 * Document Command (PDC)
 * Exception Handling (PEH)
-* Fast Data Access *using PDO* (PDA)
-* Command Line Interface (PCLI) for code scaffolding
+* Object-Model Data Access *PDO Wrapper* (PDA)
+* Command Line Interface (PCLI)
 * Simple routes
 * View and Service build in
-* Fast and Light
+* Code Scafolds
 
 ## Installation
 

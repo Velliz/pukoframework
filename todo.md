@@ -6,7 +6,6 @@ Some of draft and great idea to work, for a better puko framework.
 
 ### Puko Database Access (PDA)
 * Database Fail over mechanism.
-* Database `Schema Migrations` on first run mechanism.
 * Adding support to another Database Connection (Oracle, SQL Server, MongoDB, Cassandra).
 * Adding support for commit and rollback database transaction.
 
@@ -21,5 +20,5 @@ Some of draft and great idea to work, for a better puko framework.
 * DONE
 
 ### Modules
-* Adding feature import export Excel, Word, PDF.
+* Adding feature import export Excel, Word, PDF. "MOVED TO ANYWHERE"
 * Adding Mail utility.
