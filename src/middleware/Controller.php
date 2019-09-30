@@ -112,7 +112,7 @@ abstract class Controller implements LoggerInterface
      */
     public function error($message, array $context = array())
     {
-        $this->notify($message, $context);
+        $this->notify($message, $context['Message'], $context);
     }
 
     public function warning($message, array $context = array())
