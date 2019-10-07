@@ -63,15 +63,16 @@ trait LogTransforms
     function TranslateArray($arr, &$fields = [], &$index = 0)
     {
         foreach ($arr as $key => $val) {
-            if (is_array($val) || $index < 3) {
+            if (is_array($val)) {
                 $index++;
                 $this->TranslateArray($val, $fields);
-            }
-            if (strlen($key) > 2) {
-                $fields[] = array(
-                    'value' => "{$key}: {$val}",
-                    'short' => false
-                );
+            } else {
+                if (strlen($key) > 2) {
+                    $fields[] = array(
+                        'value' => "{$key}: {$val}",
+                        'short' => false
+                    );
+                }
             }
         }
         return $fields;
