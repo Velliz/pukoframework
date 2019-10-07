@@ -28,6 +28,7 @@ class Bearer
     private $identifier;
     private $authentication;
     private $expiredText;
+    private $expired;
     private $errorText;
 
     public static $bearerObject;
@@ -45,6 +46,7 @@ class Bearer
         $this->identifier = $secure['identifier'];
         $this->expiredText = $secure['expiredText'];
         $this->errorText = $secure['errorText'];
+        $this->expired = isset($secure['expired']) ?? 30;
 
         $this->authentication = $authentication;
     }
@@ -105,7 +107,7 @@ class Bearer
             'secure' => $loginObject->secure,
             'permission' => $loginObject->permission,
             'generated' => $date->format('Y-m-d H:i:s'),
-            'expired' => $date->modify('+30 day')->format('Y-m-d H:i:s')
+            'expired' => $date->modify("+{$this->expired} day")->format('Y-m-d H:i:s')
         );
         $secure = $this->Encrypt(json_encode($data));
         return $secure;
