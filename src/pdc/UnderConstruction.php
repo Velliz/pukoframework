@@ -11,6 +11,7 @@
 
 namespace pukoframework\pdc;
 
+use pte\exception\PteException;
 use pte\Pte;
 use pukoframework\Framework;
 use pukoframework\Response;
@@ -40,7 +41,7 @@ class UnderConstruction implements Pdc
     /**
      * @param Response $response
      * @return mixed
-     * @throws \pte\exception\PteException
+     * @throws PteException
      */
     public function SetStrategy(Response &$response)
     {

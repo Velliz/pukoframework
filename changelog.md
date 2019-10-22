@@ -133,6 +133,7 @@ class Example extends Service {
 * Global variables.
 * DBI & Model enhancements.
 
-### 1.1.7 (TBA)
-* Database fail over mechanism.
-* Testing with PHP Unit.
+### 1.1.7 (23 Oct 2019)
+* Database supports multiple schema connection.
+* DBI: drop file string auto file_get_contents and also remove _isbinary keywords.
+* Enhance error info on service based classes.

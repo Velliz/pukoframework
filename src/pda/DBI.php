@@ -112,9 +112,9 @@ class DBI
      * @return bool|string
      * @throws \Exception
      */
-    public function Save($array, $hasBinary = false)
+    public function Save($array)
     {
-        $keys = $values = array();
+        $keys = $values = [];
         $insert_text = "INSERT INTO $this->query";
         foreach ($array as $k => $v) {
             $keys[] = $k;
@@ -137,16 +137,7 @@ class DBI
         try {
             $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
-                if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) {
-                        $blob = file_get_contents($values[$no]);
-                    } else {
-                        $blob = $values[$no];
-                    }
-                    $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
-                } else {
-                    $statement->bindValue(':' . $key, $values[$no]);
-                }
+                $statement->bindValue(':' . $key, $values[$no]);
             }
             if ($statement->execute()) {
                 $lastid = self::$dbi->lastInsertId();
@@ -190,11 +181,10 @@ class DBI
     /**
      * @param $id
      * @param $array
-     * @param bool $hasBinary
      * @return bool
      * @throws \Exception
      */
-    public function Update($id, $array, $hasBinary = false)
+    public function Update($id, $array)
     {
         $update_text = "UPDATE $this->query SET";
         $key_string = "";
@@ -211,23 +201,10 @@ class DBI
         try {
             $statement = self::$dbi->prepare($update_text);
             foreach ($array as $key => $val) {
-                if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) $blob = file_get_contents($val);
-                    else $blob = $val;
-                    $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
-                } else $statement->bindValue(':' . $key, $val);
+                $statement->bindValue(':' . $key, $val);
             }
             foreach ($id as $key => $val) {
-                if (strpos($key, 'file') !== false) {
-                    if (!$hasBinary) {
-                        $blob = file_get_contents($val);
-                    } else {
-                        $blob = $val;
-                    }
-                    $statement->bindValue(':' . $key, $blob, PDO::PARAM_LOB);
-                } else {
-                    $statement->bindValue(':' . $key, $val);
-                }
+                $statement->bindValue(':' . $key, $val);
             }
             $result = $statement->execute();
             self::$dbi = null;

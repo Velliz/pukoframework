@@ -11,6 +11,8 @@
 
 namespace pukoframework\pdc;
 
+use Exception;
+use pte\exception\PteException;
 use pte\Pte;
 use pukoframework\auth\Bearer;
 use pukoframework\auth\Cookies;
@@ -66,10 +68,11 @@ class Permission implements Pdc
 
     /**
      * @param Response &$response
-     * @throws \pte\exception\PteException
-     * @throws \Exception
+     * @throws PteException
+     * @throws Exception
      *
      * @return mixed
+     * @throws PteException
      */
     public function SetStrategy(Response &$response)
     {
@@ -91,7 +94,7 @@ class Permission implements Pdc
     /**
      * @param Response $response
      * @param string $permission
-     * @throws \pte\exception\PteException
+     * @throws PteException
      */
     private function PermissionDenied(Response &$response, $permission = '')
     {

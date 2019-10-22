@@ -62,7 +62,13 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         $data = array(
             'status' => 'error',
             'exception' => array(
-                'Message' => $emg['Message']
+                'count' => $emg['ErrorCount'],
+                'error_code' => $emg['ErrorCode'],
+                'message' => $emg['Message'],
+                'Message' => $emg['Message'],
+                'file' => $emg['File'],
+                'line_number' => $emg['LineNumber'],
+                'stacktrace' => $emg['Stacktrace']
             )
         );
 
@@ -93,7 +99,13 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         $data = array(
             'status' => 'failed',
             'exception' => array(
-                'Message' => $emg['Message']
+                'count' => $emg['ErrorCount'],
+                'error_code' => $emg['ErrorCode'],
+                'message' => $emg['Message'],
+                'Message' => $emg['Message'],
+                'file' => $emg['File'],
+                'line_number' => $emg['LineNumber'],
+                'stacktrace' => $emg['Stacktrace']
             )
         );
 

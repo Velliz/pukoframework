@@ -43,11 +43,6 @@ class Model
     private $_specs = array();
 
     /**
-     * @var bool
-     */
-    public $_binary = false;
-
-    /**
      * @var string
      */
     public $_database = null;
@@ -122,7 +117,7 @@ class Model
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_binary);
+        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert);
         $this->__construct($lastid, $this->_database);
     }
 
@@ -139,7 +134,7 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $this->_binary);
+        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert);
         $this->__construct($this->{$this->_primary}, $this->_database);
     }
 
@@ -201,14 +196,6 @@ class Model
         }
 
         return $data;
-    }
-
-    /**
-     * @param bool $binary
-     */
-    public function setBinary(bool $binary)
-    {
-        $this->_binary = $binary;
     }
 
 }

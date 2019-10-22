@@ -12,6 +12,7 @@
 namespace pukoframework;
 
 use Exception;
+use pte\exception\PteException;
 use pte\Pte;
 use pukoframework\config\Config;
 use pukoframework\config\Factory;
@@ -23,6 +24,7 @@ use pukoframework\peh\ThrowConsole;
 use pukoframework\peh\ThrowService;
 use pukoframework\peh\ThrowView;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class Framework
@@ -118,8 +120,8 @@ class Framework
     /**
      * @param string $AppDir
      * @throws Exception
-     * @throws \ReflectionException
-     * @throws \pte\exception\PteException
+     * @throws ReflectionException
+     * @throws PteException
      */
     public function Start($AppDir = '')
     {
