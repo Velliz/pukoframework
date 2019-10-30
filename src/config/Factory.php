@@ -18,6 +18,8 @@ namespace pukoframework\config;
 class Factory
 {
 
+    private $cli_param = null;
+
     private $base = '';
 
     private $root = '';
@@ -26,6 +28,7 @@ class Factory
 
     public function __construct($config = array())
     {
+        $this->cli_param = $config['cli_param'];
         $this->base = $config['base'];
         $this->root = $config['root'];
         $this->start = $config['start'];
@@ -53,6 +56,14 @@ class Factory
     public function getStart()
     {
         return $this->start;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCliParam()
+    {
+        return $this->cli_param;
     }
 
 

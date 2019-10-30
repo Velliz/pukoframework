@@ -108,7 +108,7 @@ class Framework
         }
         self::$factory = $factory;
 
-        $this->request = new Request();
+        $this->request = new Request($factory->getCliParam());
         $this->response = new Response();
 
         $this->docs_engine = new DocsEngine();

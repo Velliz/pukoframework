@@ -43,14 +43,15 @@ class Request extends Routes
 
     /**
      * Request constructor.
+     * @param null $cli_param
      * @throws \Exception
      */
-    public function __construct()
+    public function __construct($cli_param = null)
     {
         $this->request_accept = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
         $this->client = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
 
-        $this->request_url = Request::Get('request', '');
+        $this->request_url = Request::Get('request', $cli_param === null ? '' : $cli_param);
         $this->lang = Request::Cookies('lang', 'id');
 
         $this->Translate($this->request_url, $this->request_accept);
