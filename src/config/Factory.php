@@ -28,7 +28,7 @@ class Factory
 
     public function __construct($config = array())
     {
-        $this->cli_param = $config['cli_param'];
+        $this->cli_param = isset($config['cli_param']) ? $config['cli_param'] : '';
         $this->base = $config['base'];
         $this->root = $config['root'];
         $this->start = $config['start'];

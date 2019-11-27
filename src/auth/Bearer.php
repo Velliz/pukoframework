@@ -46,7 +46,7 @@ class Bearer
         $this->identifier = $secure['identifier'];
         $this->expiredText = $secure['expiredText'];
         $this->errorText = $secure['errorText'];
-        $this->expired = isset($secure['expired']) ?? 30;
+        $this->expired = isset($secure['expired']) ? $secure['expired'] : 30;
 
         $this->authentication = $authentication;
     }
