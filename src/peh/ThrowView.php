@@ -139,9 +139,12 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
     }
 
     /**
+     * @param null $data
+     * @param string $template
+     * @param bool $templateBinary
      * @return string
      */
-    public function Parse()
+    public function Parse($data = null, $template = '', $templateBinary = false)
     {
         if ($this->fn === 'url') {
             return Framework::$factory->getBase() . $this->param;
