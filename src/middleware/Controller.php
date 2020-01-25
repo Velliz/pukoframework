@@ -11,6 +11,7 @@
 
 namespace pukoframework\middleware;
 
+use Exception;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
 use pukoframework\log\LogTransforms;
@@ -108,7 +109,7 @@ abstract class Controller implements LoggerInterface
     /**
      * @param string $message
      * @param array $context
-     * @throws \Exception
+     * @throws Exception
      */
     public function error($message, array $context = array())
     {
@@ -139,7 +140,7 @@ abstract class Controller implements LoggerInterface
      * @param mixed $level
      * @param string $message
      * @param array $context
-     * @throws \Exception
+     * @throws Exception
      */
     public function log($level, $message, array $context = array())
     {

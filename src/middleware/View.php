@@ -60,9 +60,12 @@ class View extends Controller implements CustomRender
     }
 
     /**
+     * @param null $data
+     * @param string $template
+     * @param bool $templateBinary
      * @return string
      */
-    public function Parse()
+    public function Parse($data = null, $template = '', $templateBinary = false)
     {
         if ($this->fn === 'url') {
             return Framework::$factory->getBase() . $this->param;
