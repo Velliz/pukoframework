@@ -108,9 +108,12 @@ class Auth implements Pdc, CustomRender
     }
 
     /**
+     * @param null $data
+     * @param string $template
+     * @param bool $templateBinary
      * @return string
      */
-    public function Parse()
+    public function Parse($data = null, $template = '', $templateBinary = false)
     {
         if ($this->fn === 'auth') {
             return $this->param;
