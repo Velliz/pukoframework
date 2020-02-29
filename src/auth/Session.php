@@ -25,6 +25,7 @@ class Session
     private $identifier;
     private $authentication;
     private $session;
+    private $expired;
     private $expiredText;
     private $errorText;
 
@@ -46,6 +47,7 @@ class Session
         $this->identifier = $secure['identifier'];
         $this->session = $secure['session'];
         $this->expiredText = $secure['expiredText'];
+        $this->expired = isset($secure['expired']) ? $secure['expired'] : 30;
         $this->errorText = $secure['errorText'];
 
         $this->authentication = $authentication;

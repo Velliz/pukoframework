@@ -44,7 +44,7 @@ class Cookies
         $this->method = $secure['method'];
         $this->identifier = $secure['identifier'];
         $this->expiredText = $secure['expiredText'];
-        $this->expired = isset($secure['expiredText']) ?? 30;
+        $this->expired = isset($secure['expired']) ? $secure['expired'] : 30;
         $this->errorText = $secure['errorText'];
 
         self::$cookies = $secure['cookies'];

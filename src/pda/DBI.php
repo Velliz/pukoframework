@@ -108,9 +108,8 @@ class DBI
 
     /**
      * @param $array
-     * @param bool $hasBinary
      * @return bool|string
-     * @throws \Exception
+     * @throws Exception
      */
     public function Save($array)
     {

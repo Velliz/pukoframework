@@ -20,6 +20,9 @@ use pukoframework\peh\ThrowConsole;
 class Console extends Controller
 {
 
+    /**
+     * Console constructor.
+     */
     public function __construct()
     {
         $exception_handler = new ThrowConsole('Console Error');
