@@ -12,6 +12,7 @@
 namespace pukoframework\peh;
 
 use Exception;
+use pukoframework\Framework;
 use pukoframework\log\LoggerAwareInterface;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
@@ -59,14 +60,17 @@ class ThrowConsole extends Exception implements PukoException, LoggerAwareInterf
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
+        $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
+
+        if (Framework::$factory->getEnvironment() === 'PROD') {
+            unset($emg['File']);
+            unset($emg['LineNumber']);
+            unset($emg['Stacktrace']);
+        }
         $data = array(
             'status' => 'error',
-            'exception' => array(
-                'Message' => $emg['Message']
-            )
+            'exception' => $emg
         );
-
-        $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
 
         print_r($data);
         exit(1);
@@ -91,14 +95,17 @@ class ThrowConsole extends Exception implements PukoException, LoggerAwareInterf
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
-        $data = array(
-            'status' => 'failed',
-            'exception' => array(
-                'Message' => $emg['Message']
-            )
-        );
-
         $this->logger->log(LogLevel::ERROR, $message, $emg);
+
+        if (Framework::$factory->getEnvironment() === 'PROD') {
+            unset($emg['File']);
+            unset($emg['LineNumber']);
+            unset($emg['Stacktrace']);
+        }
+        $data = array(
+            'status' => 'error',
+            'exception' => $emg
+        );
 
         print_r($data);
         exit(1);

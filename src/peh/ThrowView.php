@@ -94,6 +94,12 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
 
         $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
 
+        if (Framework::$factory->getEnvironment() === 'PROD') {
+            unset($emg['File']);
+            unset($emg['LineNumber']);
+            unset($emg['Stacktrace']);
+        }
+
         $this->render->SetHtml($this->system_html . '/exception.html');
         $this->render->SetValue($emg);
         die($this->render->Output($this));
@@ -122,6 +128,12 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
         }
 
         $this->logger->log(LogLevel::ERROR, $message, $emg);
+
+        if (Framework::$factory->getEnvironment() === 'PROD') {
+            unset($emg['File']);
+            unset($emg['LineNumber']);
+            unset($emg['Stacktrace']);
+        }
 
         $this->render->SetHtml($this->system_html . '/error.html');
         $this->render->SetValue($emg);

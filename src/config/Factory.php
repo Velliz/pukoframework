@@ -26,12 +26,15 @@ class Factory
 
     private $start = '';
 
+    private $env = '';
+
     public function __construct($config = array())
     {
         $this->cli_param = isset($config['cli_param']) ? $config['cli_param'] : '';
         $this->base = $config['base'];
         $this->root = $config['root'];
         $this->start = $config['start'];
+        $this->env = $config['environment'];
     }
 
     /**
@@ -64,6 +67,14 @@ class Factory
     public function getCliParam()
     {
         return $this->cli_param;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->env;
     }
 
 

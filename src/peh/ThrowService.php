@@ -12,6 +12,7 @@
 namespace pukoframework\peh;
 
 use Exception;
+use pukoframework\Framework;
 use pukoframework\log\LoggerAwareInterface;
 use pukoframework\log\LoggerInterface;
 use pukoframework\log\LogLevel;
@@ -59,20 +60,25 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
-        $data = array(
-            'status' => 'error',
-            'exception' => array(
-                'count' => $emg['ErrorCount'],
-                'error_code' => $emg['ErrorCode'],
-                'message' => $emg['Message'],
-                'Message' => $emg['Message'],
-                'file' => $emg['File'],
-                'line_number' => $emg['LineNumber'],
-                'stacktrace' => $emg['Stacktrace']
-            )
+        $exception = array(
+            'count' => $emg['ErrorCount'],
+            'error_code' => $emg['ErrorCode'],
+            'message' => $emg['Message'],
+            'Message' => $emg['Message'],
         );
 
         $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
+
+        if (Framework::$factory->getEnvironment() === 'PROD') {
+            unset($exception['File']);
+            unset($exception['LineNumber']);
+            unset($exception['Stacktrace']);
+        }
+
+        $data = array(
+            'status' => 'error',
+            'exception' => $exception
+        );
 
         die(json_encode($data));
     }
@@ -96,20 +102,25 @@ class ThrowService extends Exception implements PukoException, LoggerAwareInterf
         header('Author: Puko Framework');
         header('Content-Type: application/json');
 
-        $data = array(
-            'status' => 'failed',
-            'exception' => array(
-                'count' => $emg['ErrorCount'],
-                'error_code' => $emg['ErrorCode'],
-                'message' => $emg['Message'],
-                'Message' => $emg['Message'],
-                'file' => $emg['File'],
-                'line_number' => $emg['LineNumber'],
-                'stacktrace' => $emg['Stacktrace']
-            )
+        $exception = array(
+            'count' => $emg['ErrorCount'],
+            'error_code' => $emg['ErrorCode'],
+            'message' => $emg['Message'],
+            'Message' => $emg['Message'],
         );
 
         $this->logger->log(LogLevel::ERROR, $message, $emg);
+
+        if (Framework::$factory->getEnvironment() === 'PROD') {
+            unset($exception['File']);
+            unset($exception['LineNumber']);
+            unset($exception['Stacktrace']);
+        }
+
+        $data = array(
+            'status' => 'failed',
+            'exception' => $exception
+        );
 
         die(json_encode($data));
     }
