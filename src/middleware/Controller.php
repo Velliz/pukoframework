@@ -28,12 +28,17 @@ abstract class Controller implements LoggerInterface
     /**
      * @var array
      */
-    public $const = array();
+    public $const = [];
 
     /**
      * @var array
      */
-    public $logger = array();
+    public $logger = [];
+
+    /**
+     * @var array
+     */
+    public $language = [];
 
     /**
      * @return array
@@ -89,6 +94,20 @@ abstract class Controller implements LoggerInterface
             return $this->const[$key];
         }
         return null;
+    }
+
+    /**
+     * @param string $keyword
+     * @param array $variables
+     * @return string
+     */
+    public function say($keyword = '', $variables = [])
+    {
+        if (!isset($this->language[$keyword])) {
+            return $keyword;
+        }
+
+        return vsprintf($this->language[$keyword], $variables);
     }
 
     public function emergency($message, array $context = array())

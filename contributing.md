@@ -32,6 +32,8 @@ You can also check the on going feature from this [link](https://github.com/Vell
 
 ## Code standard
 
+Code should written with camelCase style.
+
 For coding style and rules i use standard from CtyleCI. so it can done automaticly.
 
 ## Contributing mechanism

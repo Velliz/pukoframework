@@ -11,6 +11,8 @@
 
 namespace pukoframework;
 
+use Exception;
+
 /**
  * Class Request
  * @package pukoframework
@@ -44,7 +46,7 @@ class Request extends Routes
     /**
      * Request constructor.
      * @param null $cli_param
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct($cli_param = null)
     {

@@ -8,51 +8,16 @@ use pukoframework\Request;
 /**
  * Class LanguageBinders
  * @package pukoframework\plugins
- *
- * json
- * validation = Error, %s already registered!
- *
- * Example: LanguageBinders::say('validation', ['framework']);
  */
 class LanguageBinders
 {
 
     /**
-     * @var LanguageBinders
-     */
-    private static $lang_obj;
-
-    /**
      * LanguageBinders constructor.
-     * @param string $keyword
-     * @param array $variables
+     * @param $filePath
      */
-    protected function __construct($keyword = '', $variables = [])
+    public function __construct($filePath)
     {
-        if (is_object(self::$lang_obj)) {
-            return;
-        }
-
-
-
-    }
-
-    /**
-     * @param string $keyword
-     * @param array $variables
-     * @return LanguageBinders
-     */
-    public static function say($keyword = '', $variables = [])
-    {
-        return new LanguageBinders($keyword, $variables);
-    }
-
-    public function Parse($data = null, $template = '')
-    {
-        if ($data === null) {
-            return '';
-        }
-
         //get from master
         $lang = Request::Cookies('lang', 'id');
         $master = Framework::$factory->getRoot() . '/assets/master/' . $lang . '.master.json';
@@ -62,10 +27,9 @@ class LanguageBinders
         }
 
         //get from layout
-        $resource = str_replace('.html', '.json', $template);
         $resourceData = null;
-        if (file_exists($resource)) {
-            $resourceData = json_decode(file_get_contents($resource), true);
+        if (file_exists($filePath)) {
+            $resourceData = json_decode(file_get_contents($filePath), true);
         }
 
         //combine them
@@ -77,10 +41,7 @@ class LanguageBinders
             $language = array_merge($language, $resourceData);
         }
 
-        if (!$data) {
-            return isset($language) ? json_encode($language) : '';
-        }
-        return isset($language[$data]) ? $language[$data] : $data;
-
+        return $language;
     }
+
 }

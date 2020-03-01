@@ -21,7 +21,8 @@ use pukoframework\log\LogLevel;
  * Class ThrowConsole
  * @package pukoframework\peh
  */
-class ThrowConsole extends Exception implements PukoException, LoggerAwareInterface
+class ThrowConsole extends Exception
+    implements PukoException, LoggerAwareInterface
 {
 
     /**

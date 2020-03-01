@@ -11,6 +11,7 @@
 
 namespace pukoframework\pdc;
 
+use Exception;
 use Memcached;
 use pte\PteCache;
 use pukoframework\config\Config;
@@ -47,7 +48,7 @@ class Template implements Pdc, PteCache
     /**
      * @param Response &$response
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function SetStrategy(Response &$response)
     {

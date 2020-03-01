@@ -23,6 +23,7 @@ use pukoframework\middleware\View;
 use pukoframework\peh\ThrowConsole;
 use pukoframework\peh\ThrowService;
 use pukoframework\peh\ThrowView;
+use pukoframework\plugins\LanguageBinders;
 use ReflectionClass;
 use ReflectionException;
 
@@ -125,12 +126,22 @@ class Framework
      */
     public function Start($AppDir = '')
     {
-        $controller = $AppDir . '\\controller\\' . $this->request->controller_name;
+        $controller = $AppDir . '\\controller\\' . $this->request->controllerName;
 
         $this->object = new $controller();
 
         $this->object->const = $this->app['const'];
         $this->object->logger = $this->app['logs'];
+
+        $languagePath = sprintf(
+            '%s/%s/%s.json',
+            $this->request->lang,
+            $this->request->controllerName,
+            $this->request->fnName
+        );
+        $languagePath = str_replace('\\', '/', $languagePath);
+        $this->object->language = new LanguageBinders($languagePath);
+
         $this->pdc = new ReflectionClass($this->object);
 
         $view = new ReflectionClass(View::class);
@@ -149,16 +160,16 @@ class Framework
             $this->fn_return = array_merge($this->fn_return, $setup);
         }
 
-        if (method_exists($this->object, $this->request->fn_name)) {
-            $this->fn_pdc = $this->pdc->getMethod($this->request->fn_name)->getDocComment();
+        if (method_exists($this->object, $this->request->fnName)) {
+            $this->fn_pdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
             $this->docs_engine->PDCParser($this->fn_pdc, $this->fn_return);
-            if (is_callable(array($this->object, $this->request->fn_name))) {
+            if (is_callable(array($this->object, $this->request->fnName))) {
                 if (empty($this->request->variable)) {
                     $this->fn_return = array_merge(
                         $this->fn_return,
                         (array)call_user_func(array(
                             $this->object,
-                            $this->request->fn_name
+                            $this->request->fnName
                         ))
                     );
                 } else {
@@ -166,14 +177,14 @@ class Framework
                         $this->fn_return,
                         (array)call_user_func_array(array(
                             $this->object,
-                            $this->request->fn_name
+                            $this->request->fnName
                         ), $this->request->variable
                         ));
                 }
             } else {
                 $error = sprintf(
                     'Puko Fatal Error (FW001) Function %s must set public.',
-                    $this->request->fn_name
+                    $this->request->fnName
                 );
                 if ($this->pdc->isSubclassOf($view)) {
                     new ThrowView($error, $this->response);
@@ -189,8 +200,8 @@ class Framework
         } else {
             $error = sprintf(
                 'Puko Fatal Error (FW002) Function %s not found in class: %s',
-                $this->request->fn_name,
-                $this->request->controller_name
+                $this->request->fnName,
+                $this->request->controllerName
             );
             if ($this->pdc->isSubclassOf($view)) {
                 new ThrowView($error, $this->response);
@@ -230,8 +241,8 @@ class Framework
                 $htmlPath = sprintf(
                     '%s/%s/%s.html',
                     $this->request->lang,
-                    $this->request->controller_name,
-                    $this->request->fn_name
+                    $this->request->controllerName,
+                    $this->request->fnName
                 );
                 $htmlPath = str_replace('\\', '/', $htmlPath);
                 $this->render->SetHtml(sprintf('%s/assets/html/%s', Framework::$factory->getRoot(), $htmlPath));

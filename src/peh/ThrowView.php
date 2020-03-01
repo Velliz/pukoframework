@@ -13,6 +13,8 @@ namespace pukoframework\peh;
 
 use Exception;
 use pte\CustomRender;
+use pte\exception\PteException as PteExceptionAlias;
+use pte\exception\PteException;
 use pte\Pte;
 use pukoframework\Framework;
 use pukoframework\log\LoggerAwareInterface;
@@ -24,7 +26,8 @@ use pukoframework\Response;
  * Class ThrowView
  * @package pukoframework\peh
  */
-class ThrowView extends Exception implements PukoException, CustomRender, LoggerAwareInterface
+class ThrowView extends Exception implements
+    PukoException, CustomRender, LoggerAwareInterface
 {
     /**
      * @var Pte
@@ -76,7 +79,7 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
     /**
      * @param Exception $error
      * @return mixed|void
-     * @throws \pte\exception\PteException
+     * @throws PteException
      */
     public function ExceptionHandler($error)
     {
@@ -111,7 +114,7 @@ class ThrowView extends Exception implements PukoException, CustomRender, Logger
      * @param $file
      * @param $line
      * @return mixed|void
-     * @throws \pte\exception\PteException
+     * @throws PteExceptionAlias
      */
     public function ErrorHandler($error, $message, $file, $line)
     {
