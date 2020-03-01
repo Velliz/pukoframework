@@ -140,7 +140,8 @@ class Framework
             $this->request->fnName
         );
         $languagePath = str_replace('\\', '/', $languagePath);
-        $this->object->language = new LanguageBinders($languagePath);
+        $languageObject = new LanguageBinders($languagePath);
+        $this->object->language = $languageObject->getLanguage();
 
         $this->pdc = new ReflectionClass($this->object);
 

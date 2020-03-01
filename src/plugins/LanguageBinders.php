@@ -13,6 +13,11 @@ class LanguageBinders
 {
 
     /**
+     * @var array
+     */
+    private $language = [];
+
+    /**
      * LanguageBinders constructor.
      * @param $filePath
      */
@@ -41,7 +46,15 @@ class LanguageBinders
             $language = array_merge($language, $resourceData);
         }
 
-        return $language;
+        $this->language = $language;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLanguage()
+    {
+        return $this->language;
     }
 
 }
