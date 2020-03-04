@@ -66,6 +66,9 @@ class ThrowService extends Exception
             'error_code' => $emg['ErrorCode'],
             'message' => $emg['Message'],
             'Message' => $emg['Message'],
+            'File' => $emg['File'],
+            'LineNumber' => $emg['LineNumber'],
+            'Stacktrace' => $emg['Stacktrace'],
         );
 
         $this->logger->log(LogLevel::ALERT, $error->getMessage(), $emg);
@@ -108,6 +111,9 @@ class ThrowService extends Exception
             'error_code' => $emg['ErrorCode'],
             'message' => $emg['Message'],
             'Message' => $emg['Message'],
+            'File' => $emg['File'],
+            'LineNumber' => $emg['LineNumber'],
+            'Stacktrace' => $emg['Stacktrace'],
         );
 
         $this->logger->log(LogLevel::ERROR, $message, $emg);
