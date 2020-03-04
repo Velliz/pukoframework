@@ -50,7 +50,6 @@ class ThrowConsole extends Exception
      */
     public function ExceptionHandler($error)
     {
-        $emg['ErrorCount'] = $error;
         $emg['ErrorCode'] = PukoException::value;
         $emg['Message'] = $error->getMessage();
         $emg['File'] = $error->getFile();
@@ -85,7 +84,6 @@ class ThrowConsole extends Exception
      */
     public function ErrorHandler($error, $message, $file, $line)
     {
-        $emg['ErrorCount'] = $error;
         $emg['ErrorCode'] = $this->getCode();
         $emg['Message'] = $message;
         $emg['File'] = $file;

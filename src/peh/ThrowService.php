@@ -50,7 +50,6 @@ class ThrowService extends Exception
      */
     public function ExceptionHandler($error)
     {
-        $emg['ErrorCount'] = $error;
         $emg['ErrorCode'] = PukoException::value;
         $emg['Message'] = $error->getMessage();
         $emg['File'] = $error->getFile();
@@ -62,8 +61,8 @@ class ThrowService extends Exception
         header('Content-Type: application/json');
 
         $exception = array(
-            'count' => $emg['ErrorCount'],
             'error_code' => $emg['ErrorCode'],
+            'ErrorCode' => $emg['ErrorCode'],
             'message' => $emg['Message'],
             'Message' => $emg['Message'],
             'File' => $emg['File'],
@@ -95,7 +94,6 @@ class ThrowService extends Exception
      */
     public function ErrorHandler($error, $message, $file, $line)
     {
-        $emg['ErrorCount'] = $error;
         $emg['ErrorCode'] = $this->getCode();
         $emg['Message'] = $message;
         $emg['File'] = $file;
@@ -107,8 +105,8 @@ class ThrowService extends Exception
         header('Content-Type: application/json');
 
         $exception = array(
-            'count' => $emg['ErrorCount'],
             'error_code' => $emg['ErrorCode'],
+            'ErrorCode' => $emg['ErrorCode'],
             'message' => $emg['Message'],
             'Message' => $emg['Message'],
             'File' => $emg['File'],
