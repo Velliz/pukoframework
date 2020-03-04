@@ -54,7 +54,14 @@ class Request extends Routes
         $this->client = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
 
         $this->request_url = Request::Get('request', $cli_param === null ? '' : $cli_param);
-        $this->lang = Request::Cookies('lang', 'id');
+        $lang = '';
+        if (isset($_SERVER['HTTP_X_LANG'])) {
+            $lang = $_SERVER['HTTP_X_LANG'];
+        }
+        if (strlen($lang) === 0) {
+            $lang = Request::Cookies('lang', 'id');
+        }
+        $this->lang = $lang;
 
         $this->Translate($this->request_url, $this->request_accept);
     }

@@ -23,8 +23,15 @@ class LanguageBinders
      */
     public function __construct($filePath)
     {
+        $lang = '';
+        if (isset($_SERVER['HTTP_X_LANG'])) {
+            $lang = $_SERVER['HTTP_X_LANG'];
+        }
+        if (strlen($lang) === 0) {
+            $lang = Request::Cookies('lang', 'id');
+        }
+
         //get from master
-        $lang = Request::Cookies('lang', 'id');
         $master = Framework::$factory->getRoot() . '/assets/master/' . $lang . '.master.json';
         $masterData = null;
         if (file_exists($master)) {
