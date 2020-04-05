@@ -87,15 +87,13 @@ class Model
             $result = DBI::Prepare($sql, $this->_database)->FirstRow($id);
 
             if ($result === null) {
-                throw new Exception(sprintf('Data with key %s not found', $id));
-            }
-
-            foreach ($result as $key => $val) {
-                foreach ($this->_specs as $k => $v) {
-                    foreach ($v as $x => $y) {
-                        if ($y['name'] === $key) {
-                            $this->{$k} = $val;
-                            break;
+                foreach ($result as $key => $val) {
+                    foreach ($this->_specs as $k => $v) {
+                        foreach ($v as $x => $y) {
+                            if ($y['name'] === $key) {
+                                $this->{$k} = $val;
+                                break;
+                            }
                         }
                     }
                 }
