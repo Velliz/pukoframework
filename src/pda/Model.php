@@ -86,7 +86,7 @@ class Model
             $sql = sprintf("SELECT * FROM %s WHERE (%s = @1) LIMIT 1", $this->_table, $this->_primary);
             $result = DBI::Prepare($sql, $this->_database)->FirstRow($id);
 
-            if ($result === null) {
+            if ($result !== null) {
                 foreach ($result as $key => $val) {
                     foreach ($this->_specs as $k => $v) {
                         foreach ($v as $x => $y) {
