@@ -7,36 +7,41 @@
 [![Latest Stable Version](https://poser.pugx.org/puko/framework/v/stable)](https://packagist.org/packages/puko/framework)
 [![Total Downloads](https://poser.pugx.org/puko/framework/downloads)](https://packagist.org/packages/puko/framework)
 
-Puko Framework is MVC PHP Framework for quick PHP Application Development.
+Puko Framework is MVC PHP Framework for quick PHP based Web/API/Console Application Development.
 
 **This is [Core] module for Puko Framework**
 
 ## Requirement
 
-* Puko Require >= **PHP 7.0**
-* Composer
+* php 7.0
+* composer
+* ext-json
 
 ## Feature
 
 * Authentication
 * Build-in Template Engine (PTE)
-* Document Command (PDC)
+* Document Commands (PDC)
 * Exception Handling (PEH)
 * Object-Model Data Access *PDO Wrapper* (PDA)
 * Command Line Interface (PCLI)
 * Simple routes
 * View and Service build in
-* Code Scafolds
+* Code Scaffolds with puko console
 
 ## Installation
 
-Wanna try? just hit on composer:
-```php
+Enter this cli commands:
+
+```text
 composer create-project velliz/puko appname
 ```
 
-See starter kit for puko framework in [here](https://github.com/Velliz/puko) 
-and see usage and sample in [documentation](https://velliz.github.io/pudo)
+Then start a build-in development server:
+
+```text
+php puko serve
+```
 
 If you find bugs, error or you want contribute to this project. 
 Fell free to post an issue and pull request to make puko framework better.
@@ -45,4 +50,4 @@ Fell free to post an issue and pull request to make puko framework better.
 
 Crafted with <3 from Bandung, Indonesia.
 
-Copyright 2016 - 2019 by Didit Velliz
+2016 - 2020 by Didit Velliz

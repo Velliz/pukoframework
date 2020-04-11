@@ -20,7 +20,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "velliz/pte": "dev-master"
+    "velliz/pte": "0.2.1"
   },
   "require-dev": {
     "phpunit/phpunit": "^6"
