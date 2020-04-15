@@ -156,18 +156,16 @@ class DataTables
         if (count($this->search_array) > 0) {
             $likes = implode(" OR ", $this->search_array);
             $search_param .= " WHERE {$likes} ";
+
+            $filtered = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
+            $this->records_filtered = count($filtered);
         }
 
         $order = strtoupper($this->order_dir);
         $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
         $search_param .= " LIMIT {$this->start}, {$this->length}";
 
-        $this->query .= $search_param;
-
-        $data = DBI::Prepare($this->query, $this->database)->GetData();
-        if (count($this->search_array) > 0) {
-            $this->records_filtered = count($data);
-        }
+        $data = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
 
         $response = [
             'draw' => intval($this->draw),
