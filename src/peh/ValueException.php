@@ -60,6 +60,7 @@ class ValueException extends Exception
      * @param $arrayData
      * @param string $message
      *
+     * @return array
      * @throws Exception
      */
     public function Throws($arrayData, $message = '')
@@ -67,12 +68,13 @@ class ValueException extends Exception
         Session::GenerateSecureToken();
 
         if (count($this->validation) > 0) {
-            $this->validation = array_merge($this->validation, $arrayData);
-
-            $this->validation['Exception'] = false;
+            $response = array_merge($this->validation, $arrayData);
             $this->validation['ExceptionMessage'] = $message;
 
-            throw new self($message, $this->validation);
+            $response['Exception'] = $this->validation;
+            return $response;
         }
+
+        return [];
     }
 }
