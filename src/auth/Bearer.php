@@ -129,9 +129,11 @@ class Bearer
             throw new Exception($this->errorText);
         }
 
-        $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
-        if ($date < new DateTime()) {
-            throw new Exception($this->expiredText);
+        if ($data['expired'] !== '') {
+            $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
+            if ($date < new DateTime()) {
+                throw new Exception($this->expiredText);
+            }
         }
 
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);
