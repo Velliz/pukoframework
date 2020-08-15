@@ -28,7 +28,7 @@ class Service extends Controller
      */
     public function BeforeInitialize()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -36,7 +36,7 @@ class Service extends Controller
      */
     public function AfterInitialize()
     {
-        return array();
+        return [];
     }
 
 }

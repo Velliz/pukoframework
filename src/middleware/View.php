@@ -14,11 +14,15 @@ use pukoframework\Response;
 class View extends Controller implements CustomRender
 {
 
+    /**
+     * @var string
+     */
     var $fn;
-    var $param;
 
-    var $tempJs = '';
-    var $tempCss = '';
+    /**
+     * @var string
+     */
+    var $param;
 
     /**
      * View constructor.
@@ -37,7 +41,7 @@ class View extends Controller implements CustomRender
      */
     public function BeforeInitialize()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -45,7 +49,7 @@ class View extends Controller implements CustomRender
      */
     public function AfterInitialize()
     {
-        return array();
+        return [];
     }
 
 
