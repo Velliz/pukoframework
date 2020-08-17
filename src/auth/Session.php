@@ -11,6 +11,7 @@
 
 namespace pukoframework\auth;
 
+use DateTime;
 use Exception;
 use pukoframework\config\Config;
 
@@ -158,9 +159,12 @@ class Session
             return false;
         }
 
+        $date = new DateTime();
         $data = array(
             'secure' => $loginObject->secure,
             'permission' => $loginObject->permission,
+            'generated' => $date->format('Y-m-d H:i:s'),
+            'expired' => $date->modify("+{$this->expired} minutes")->format('Y-m-d H:i:s')
         );
 
         $secure = $this->Encrypt(json_encode($data));
@@ -193,6 +197,14 @@ class Session
         }
 
         $data = json_decode($this->Decrypt($_SESSION[$this->session]), true);
+
+        if ($data['expired'] !== '') {
+            $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
+            if ($date < new DateTime()) {
+                throw new Exception($this->expiredText);
+            }
+        }
+
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication

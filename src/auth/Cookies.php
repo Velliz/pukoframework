@@ -11,6 +11,7 @@
 
 namespace pukoframework\auth;
 
+use DateTime;
 use Exception;
 use pukoframework\config\Config;
 
@@ -74,7 +75,7 @@ class Cookies
                 $token = bin2hex(openssl_random_pseudo_bytes(32));
             }
         }
-        setcookie('token', $token, time() + Auth::EXPIRED_1_DAY, '/');
+        setcookie('token', $token, time() + 60 * 30, '/');
         $_COOKIE['token'] = $token;
         return $token;
     }
@@ -94,11 +95,9 @@ class Cookies
         return openssl_decrypt(base64_decode($string), $this->method, $key, 0, $iv);
     }
 
-    public function Put($key, $val, $expired = Auth::EXPIRED_1_HOUR)
+    public function Put($key, $val)
     {
-        if ($expired !== null) {
-            $expired = (time() + $expired);
-        }
+        $expired = (time() + 60 * $this->expired);
         setcookie($key, $this->Encrypt($val), $expired, "/");
         $_COOKIE[$key] = $this->Encrypt($val);
     }
@@ -113,7 +112,7 @@ class Cookies
 
     public static function Remove($key)
     {
-        setcookie($key, '', (time() - Auth::EXPIRED_1_MONTH), '/');
+        setcookie($key, '', (time() - 2592000), '/');
         $_COOKIE[$key] = '';
     }
 
@@ -128,7 +127,7 @@ class Cookies
 
     public static function Clear()
     {
-        setcookie(self::$cookies, '', (time() - Auth::EXPIRED_1_MONTH), '/');
+        setcookie(self::$cookies, '', (time() - 2592000), '/');
         $_COOKIE[self::$cookies] = null;
     }
 
@@ -137,11 +136,10 @@ class Cookies
     /**
      * @param $username
      * @param $password
-     * @param int $expired
      * @return bool
      * @throws Exception
      */
-    public function Login($username, $password, $expired = Auth::EXPIRED_1_HOUR)
+    public function Login($username, $password)
     {
         $loginObject = $this->authentication->Login($username, $password);
         if (!$loginObject instanceof PukoAuth) {
@@ -151,16 +149,15 @@ class Cookies
             return false;
         }
 
-        if ($expired !== null) {
-            $expired = (time() + $expired);
-        }
-
+        $date = new DateTime();
         $data = array(
             'secure' => $loginObject->secure,
             'permission' => $loginObject->permission,
+            'generated' => $date->format('Y-m-d H:i:s'),
+            'expired' => $date->modify("+{$this->expired} minutes")->format('Y-m-d H:i:s')
         );
         $secure = $this->Encrypt(json_encode($data));
-        setcookie(self::$cookies, $secure, $expired, "/");
+        setcookie(self::$cookies, $secure, (time() + 60 * $this->expired), "/");
         $_COOKIE[self::$cookies] = $secure;
         return true;
     }
@@ -186,6 +183,14 @@ class Cookies
         }
 
         $data = json_decode($this->Decrypt($_COOKIE[self::$cookies]), true);
+
+        if ($data['expired'] !== '') {
+            $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
+            if ($date < new DateTime()) {
+                throw new Exception($this->expiredText);
+            }
+        }
+
         return $this->authentication->GetLoginData($data['secure'], $data['permission']);
     }
     #end region authentication

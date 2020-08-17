@@ -17,18 +17,29 @@ namespace pukoframework\auth;
  */
 interface Auth
 {
-    const EXPIRED_ON_CLOSE = null;
-    const EXPIRED_1_HOUR = 3600;
-    const EXPIRED_1_DAY = 86400;
-    const EXPIRED_1_WEEK = 604800;
-    const EXPIRED_1_MONTH = 2592000;
 
+    /**
+     * @return mixed
+     */
     public static function Instance();
 
+    /**
+     * @param $username
+     * @param $password
+     * @return mixed
+     */
     public function Login($username, $password);
 
+    /**
+     * @return mixed
+     */
     public function Logout();
 
+    /**
+     * @param $data
+     * @param $permission
+     * @return mixed
+     */
     public function GetLoginData($data, $permission);
 
 }

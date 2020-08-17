@@ -107,7 +107,7 @@ class Bearer
             'secure' => $loginObject->secure,
             'permission' => $loginObject->permission,
             'generated' => $date->format('Y-m-d H:i:s'),
-            'expired' => $date->modify("+{$this->expired} day")->format('Y-m-d H:i:s')
+            'expired' => $date->modify("+{$this->expired} minutes")->format('Y-m-d H:i:s')
         );
         $secure = $this->Encrypt(json_encode($data));
         return $secure;
