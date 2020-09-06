@@ -12,6 +12,7 @@
 namespace pukoframework;
 
 use Exception;
+use pukoframework\plugins\Files;
 
 /**
  * Class Request
@@ -153,14 +154,18 @@ class Request extends Routes
     /**
      * @param $key
      * @param $default
+     * @param bool $asObject
      * @return mixed
      */
-    public static function Files($key, $default)
+    public static function Files($key, $default, $asObject = false)
     {
         if (!isset($_FILES[$key])) {
             return $default;
         }
 
+        if ($asObject) {
+            return new Files($_FILES[$key]);
+        }
         return $_FILES[$key];
     }
 
