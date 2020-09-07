@@ -6,17 +6,20 @@ os:
 sudo: false
 
 php:
-  - 7.1.19
-  - 7.2.8
+  - 7.0.33
+  - 7.1.33
+  - 7.2.32
+  - 7.3.21
+  - 7.4.9
 
 matrix:
   fast_finish: true
   allow_failures:
-    - php: 7.1.19
+    - php: 7.1.33
 
 install:
   - composer install --no-interaction
-  - wget -c -nc --retry-connrefused --tries=0 https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+  - wget -c -nc --retry-connrefused --tries=0 https://github.com/satooshi/php-coveralls/releases/download/v2.2.0/coveralls.phar
   - chmod +x coveralls.phar
   - php coveralls.phar --version
 
