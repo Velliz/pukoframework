@@ -19,7 +19,7 @@ matrix:
 
 install:
   - composer install --no-interaction
-  - wget -c -nc --retry-connrefused --tries=0 https://github.com/satooshi/php-coveralls/releases/download/v2.2.0/coveralls.phar
+  - wget -c -nc --retry-connrefused --tries=0 https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
   - chmod +x coveralls.phar
   - php coveralls.phar --version
 
