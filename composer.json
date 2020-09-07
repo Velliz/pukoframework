@@ -22,6 +22,9 @@
     "php": ">=7.0",
     "velliz/pte": "0.2.1"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
   "autoload": {
     "psr-4": {
       "pukoframework\\": "src/"

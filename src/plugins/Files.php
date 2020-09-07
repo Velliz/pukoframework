@@ -13,11 +13,19 @@ namespace pukoframework\plugins;
 class Files
 {
 
+    const KB = 1024;
+    const MB = 1048576;
+    const GB = 1073741824;
+
     /**
-     * @var $_FILES|null
+     * @var object|null
      */
     protected $files = null;
 
+    /**
+     * Files constructor.
+     * @param $files
+     */
     public function __construct($files)
     {
         $this->files = $files;
@@ -38,14 +46,38 @@ class Files
         return $this->files['tmp_name'];
     }
 
+    /**
+     * @return bool
+     */
     public function isError()
     {
-        return $this->files['error'];
+        return (int)$this->files['error'] === 0 ? false : true;
     }
 
+    /**
+     * @return mixed
+     */
     public function getSize()
     {
         return $this->files['size'];
+    }
+
+    /**
+     * @param float|int $expectations
+     * @return bool
+     * Default expectation is lower than 10MB
+     */
+    public function isSizeSmallerThan(float $expectations = 10 * Files::MB): bool
+    {
+        return ($this->getSize() < $expectations);
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getFile()
+    {
+        return file_get_contents($this->getTmpName());
     }
 
 }
