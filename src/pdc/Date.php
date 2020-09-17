@@ -30,10 +30,10 @@ class Date implements Pdc
      * @param $command
      * @param $value
      */
-    public function SetCommand($clause, $command, $value = null)
+    public function SetCommand($clause, $command, $value)
     {
-        $this->key = $clause;
-        $this->value = $command;
+        $this->key = $command;
+        $this->value = $value;
     }
 
     /**
@@ -43,14 +43,14 @@ class Date implements Pdc
      */
     public function SetStrategy(Response &$response)
     {
-        $now = date('d-m-Y H:i:s');
-        $target = (new DateTime($this->value))->format('d-m-Y H:i:s');
-        if (strcasecmp($this->key, 'before') === 0) {
+        $now = new DateTime();
+        $target = DateTime::createFromFormat('d-m-Y H:i:s', $this->value);
+        if (trim($this->key) === 'before') {
             if ($now > $target) {
                 throw new Exception('URL available before ' . $this->value);
             }
         }
-        if (strcasecmp($this->key, 'after') === 0) {
+        if (trim($this->key) === 'after') {
             if ($now < $target) {
                 throw new Exception('URL available after ' . $this->value);
             }
