@@ -94,6 +94,7 @@ class Routes
 
         if (Framework::$factory->getEnvironment() === 'MAINTENANCE') {
             $this->Mapping($this->maintenance, []);
+            return true;
         }
 
         $temp = explode('?', $requestUrl);
