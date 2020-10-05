@@ -19,9 +19,9 @@ matrix:
 
 install:
   - composer install --no-interaction
-  - wget -c -nc --retry-connrefused --tries=0 https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
-  - chmod +x coveralls.phar
-  - php coveralls.phar --version
+  - wget -c -nc --retry-connrefused --tries=0 https://github.com/php-coveralls/php-coveralls/releases/download/v2.3.0/php-coveralls.phar
+  - chmod +x php-coveralls.phar
+  - php php-coveralls.phar --version
 
 before_script:
     - mkdir -p build/logs
@@ -31,7 +31,7 @@ script:
   - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
- - travis_retry php coveralls.phar -v
+ - travis_retry php php-coveralls.phar -v
 
 branches:
   only: master
