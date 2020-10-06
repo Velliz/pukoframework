@@ -18,8 +18,7 @@ class Schema
      */
     public static function createDB($name)
     {
-        $result = DBI::Prepare("CREATE DATABASE IF NOT EXISTS {$name};")->Run();
-        return $result;
+        return DBI::Prepare("CREATE DATABASE IF NOT EXISTS {$name};")->Run();
     }
 
     /**
@@ -29,8 +28,7 @@ class Schema
      */
     public static function dropDB($name)
     {
-        $result = DBI::Prepare("DROP DATABASE {$name};")->Run();
-        return $result;
+        return DBI::Prepare("DROP DATABASE {$name};")->Run();
     }
 
     /**
@@ -41,8 +39,7 @@ class Schema
      */
     public static function backupDB($name, $path)
     {
-        $result = DBI::Prepare("BACKUP DATABASE {$name} TO DISK = '{$path}';")->Run();
-        return $result;
+        return DBI::Prepare("BACKUP DATABASE {$name} TO DISK = '{$path}';")->Run();
     }
 
 }

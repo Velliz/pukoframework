@@ -161,6 +161,8 @@ class Framework
             $this->fn_return = array_merge($this->fn_return, $setup);
         }
 
+        $this->response->sourceFile = $this->request->sourceFile;
+
         if (method_exists($this->object, $this->request->fnName)) {
             $this->fn_pdc = $this->pdc->getMethod($this->request->fnName)->getDocComment();
             $this->docs_engine->PDCParser($this->fn_pdc, $this->fn_return);

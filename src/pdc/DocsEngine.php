@@ -22,8 +22,6 @@ use pukoframework\Response;
 class DocsEngine
 {
 
-    var $target_class;
-
     /**
      * @var Value
      */
@@ -68,7 +66,6 @@ class DocsEngine
                 foreach ($preg as $k => $v) {
                     switch ($k) {
                         case 0:
-                            break;
                         case 1:
                             break;
                         default:

@@ -49,7 +49,7 @@ class Routes
      * @var array
      * store routes file path
      */
-    var $routesFile;
+    var $sourceFile;
 
     /**
      * @var string
@@ -140,6 +140,7 @@ class Routes
     private function Mapping($dataSpecs = array(), $parameter = array())
     {
         $this->controllerName = $dataSpecs['controller'];
+        $this->sourceFile = $dataSpecs['controller'] . '.php';
         $this->fnName = $dataSpecs['function'];
         $this->variable = $parameter;
     }

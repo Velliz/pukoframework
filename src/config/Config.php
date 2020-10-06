@@ -21,13 +21,6 @@ class Config
 {
 
     /**
-     * Config constructor.
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * @param $name
      * @param array $default
      * @return mixed
