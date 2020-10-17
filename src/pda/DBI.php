@@ -77,10 +77,20 @@ class DBI
         }
 
         $this->DBISet(Config::Data('database'), $database);
+
         //todo: change this to support another databases
-        $pdoConnection = "$this->dbType:host=$this->host;port=$this->port";
-        if ($this->dbName !== '') {
-            $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
+        if ($this->dbType === 'mysql') {
+            $pdoConnection = "$this->dbType:host=$this->host;port=$this->port";
+            if ($this->dbName !== '') {
+                $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
+            }
+        }
+        if ($this->dbType === 'sqlsrv') {
+            //connection from pdo_odbc
+            $pdoConnection = "odbc:Driver={SQL Server};Server=$this->host";
+            if ($this->dbName !== '') {
+                $pdoConnection = "odbc:Driver={SQL Server};Server=$this->host;Database=$this->dbName";
+            }
         }
 
         try {
