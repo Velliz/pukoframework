@@ -131,7 +131,11 @@ class DBI
         }
         $key_string = "(";
         foreach ($keys as $key) {
-            $key_string = $key_string . "`" . $key . "`, ";
+            if ($this->dbType === 'mysql') {
+                $key_string = $key_string . "`" . $key . "`, ";
+            } else {
+                $key_string = $key_string . " " . $key . ", ";
+            }
         }
         $key_string = substr($key_string, 0, -2);
         $insert_text = $insert_text . " " . $key_string . ")";
