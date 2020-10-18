@@ -83,7 +83,7 @@ class Model
 
         if ($id !== null) {
             //todo: change this to support another databases
-            $sql = sprintf("SELECT * FROM %s WHERE (%s = @1) LIMIT 1", $this->_table, $this->_primary);
+            $sql = sprintf("SELECT * FROM %s WHERE (%s = @1);", $this->_table, $this->_primary);
             $result = DBI::Prepare($sql, $this->_database)->FirstRow($id);
 
             if ($result !== null) {
@@ -110,12 +110,19 @@ class Model
         $insert = array();
         foreach ($this->_specs as $key => $val) {
             foreach ($val as $k => $v) {
-                if ($v['type'] === 'Column') {
+                $skip = false;
+                if (strpos($v['datatype'], 'auto_increment') !== false) {
+                    $skip = true;
+                }
+                if (strpos($v['datatype'], 'identity') !== false) {
+                    $skip = true;
+                }
+                if ($v['type'] === 'Column' && !$skip) {
                     $insert[$v['name']] = $this->{$key};
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert);
+        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary);
         $this->__construct($lastid, $this->_database);
     }
 
@@ -127,7 +134,14 @@ class Model
         $insert = array();
         foreach ($this->_specs as $key => $val) {
             foreach ($val as $k => $v) {
-                if ($v['type'] === 'Column') {
+                $skip = false;
+                if (strpos($v['datatype'], 'auto_increment') !== false) {
+                    $skip = true;
+                }
+                if (strpos($v['datatype'], 'identity') !== false) {
+                    $skip = true;
+                }
+                if ($v['type'] === 'Column' && !$skip) {
                     $insert[$v['name']] = $this->{$key};
                 }
             }

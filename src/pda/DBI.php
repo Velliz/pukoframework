@@ -117,11 +117,12 @@ class DBI
     }
 
     /**
-     * @param $array
+     * @param array $array
+     * @param string $identity
      * @return bool|string
      * @throws Exception
      */
-    public function Save($array)
+    public function Save($array = [], $identity = '')
     {
         $keys = $values = [];
         $insert_text = "INSERT INTO $this->query";
@@ -138,7 +139,11 @@ class DBI
             }
         }
         $key_string = substr($key_string, 0, -2);
-        $insert_text = $insert_text . " " . $key_string . ")";
+        if ($this->dbType === 'sqlsrv') {
+            $insert_text = $insert_text . " " . $key_string . ") OUTPUT INSERTED.{$identity}";
+        } else {
+            $insert_text = $insert_text . " " . $key_string . ")";
+        }
         $insert_text = $insert_text . " VALUES ";
         $value_string = "(";
         foreach ($keys as $key) {
@@ -153,7 +158,13 @@ class DBI
                 $statement->bindValue(':' . $key, $values[$no]);
             }
             if ($statement->execute()) {
-                $lastid = self::$dbi->lastInsertId();
+                if ($this->dbType === 'mysql') {
+                    $lastid = self::$dbi->lastInsertId();
+                }
+                if ($this->dbType === 'sqlsrv') {
+                    $result = $statement->fetch(PDO::FETCH_ASSOC);
+                    $lastid = $result[$identity];
+                }
                 self::$dbi = null;
                 return $lastid;
             } else {
@@ -176,12 +187,16 @@ class DBI
     {
         $del_text = "DELETE FROM $this->query WHERE ";
         foreach ($arrWhere as $col => $value) {
-            $del_text .= "`" . $col . "`" . " = '" . $value . "' AND ";
+            if ($this->dbType === 'mysql') {
+                $del_text .= "`" . $col . "`" . " = '" . $value . "' AND ";
+            } else {
+                $del_text .= $col . " = " . $value . " AND ";
+            }
         }
         $del_text = substr($del_text, 0, -4);
         try {
             $statement = self::$dbi->prepare($del_text);
-            $result = $statement->execute($arrWhere);
+            $result = $statement->execute();
             self::$dbi = null;
             return $result;
         } catch (PDOException $ex) {
