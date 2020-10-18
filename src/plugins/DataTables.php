@@ -129,7 +129,7 @@ class DataTables
 
         $sql = "SELECT ";
         if($this->db_engine === 'sqlsrv') {
-            $sql = "SELECT TOP {$this->start},{$this->length}";
+            $sql = "SELECT TOP {$this->length} ";
         }
         $sql .= "*";
         $sql .= " FROM ({$query}) ";
