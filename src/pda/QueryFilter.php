@@ -183,7 +183,7 @@ class QueryFilter
      * @param $clause
      * @return string
      */
-    private function _inside($column, $value = array(), $clause)
+    private function _inside($column, $value, $clause)
     {
         $value = implode(',', $value);
         return " {$clause} {$column} IN ({$value}) ";
@@ -195,7 +195,7 @@ class QueryFilter
      * @param $clause
      * @return string
      */
-    private function _notInside($column, $value = array(), $clause)
+    private function _notInside($column, $value, $clause)
     {
         $value = implode(',', $value);
         return " {$clause} {$column} NOT IN ({$value}) ";
@@ -207,7 +207,7 @@ class QueryFilter
      * @param $clause
      * @return null|string
      */
-    private function _between($column, $value = array(), $clause)
+    private function _between($column, $value, $clause)
     {
         if (count($value) < 2) {
             return null;
@@ -221,7 +221,7 @@ class QueryFilter
      * @param $clause
      * @return null|string
      */
-    private function _notBetween($column, $value = array(), $clause)
+    private function _notBetween($column, $value, $clause)
     {
         if (count($value) < 2) {
             return null;
