@@ -153,7 +153,11 @@ class DBI
         }
         $key_string = substr($key_string, 0, -2);
         if ($this->dbType === 'sqlsrv') {
-            $insert_text = $insert_text . " " . $key_string . ") OUTPUT INSERTED.{$identity}";
+            if (strlen($identity) > 0) {
+                $insert_text = $insert_text . " " . $key_string . ") OUTPUT INSERTED.{$identity}";
+            } else {
+                $insert_text = $insert_text . " " . $key_string . ")";
+            }
         } else {
             $insert_text = $insert_text . " " . $key_string . ")";
         }
@@ -175,8 +179,12 @@ class DBI
                     $lastid = self::$dbi->lastInsertId();
                 }
                 if ($this->dbType === 'sqlsrv') {
-                    $result = $statement->fetch(PDO::FETCH_ASSOC);
-                    $lastid = $result[$identity];
+                    if (strlen($identity) > 0) {
+                        $result = $statement->fetch(PDO::FETCH_ASSOC);
+                        $lastid = $result[$identity];
+                    } else {
+                        $lastid = null;
+                    }
                 }
                 self::$dbi = null;
                 return $lastid;
