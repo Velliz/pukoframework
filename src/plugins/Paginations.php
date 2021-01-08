@@ -23,10 +23,12 @@ class Paginations
     public $http_verb = 'GET';
 
     private $response = [
-        'page' => 1,
+        'page' => 0,
+        'totalpage' => 0,
         'length' => 0,
-        'total' => 0,
+        'displayed' => 0,
         'anchor' => [],
+        'totaldata' => 0,
         'error' => 'No data'
     ];
 
@@ -86,31 +88,32 @@ class Paginations
         $count_sql .= "FROM ({$this->query}) counter ";
         $data = DBI::Prepare($count_sql, $this->database)->FirstRow();
 
-        $this->page = ($this->page > 1) ? ($this->page * $this->length) - $this->length : 1;
         $total = intval($data['results']);
-        $total_page = floor($total / $this->page);
+
+        $begin = ($this->page > 1) ? ($this->page * $this->length) - $this->length : 0;
+        $total_page = ceil($total / $this->length);
         $page_list = [];
         for ($i = 1; $i <= $total_page; $i++) {
-            $page_list = $i;
+            $page_list[] = [
+                'page' => $i
+            ];
         }
 
         $paginate_param = "";
         if ($this->db_engine === 'mysql') {
-            $start = $this->page - 1;
-            if ($start < 0) {
-                $start = 0;
-            }
-            $paginate_param .= " LIMIT {$start},{$this->length}";
+            $paginate_param .= " LIMIT {$begin},{$this->length}";
         }
         //todo: sqlsrv implementations
 
         $data = DBI::Prepare(($this->query . $paginate_param), $this->database)->GetData();
 
         $response = [
-            'page' => $this->page,
+            'page' => (int)$this->page,
+            'totalpage' => $total_page,
             'length' => $this->length,
-            'total' => $total,
+            'displayed' => sizeof($data),
             'anchor' => $page_list,
+            'totaldata' => $total,
             'data' => $data,
         ];
 
