@@ -176,6 +176,7 @@ class DataTables
         if($this->db_engine === 'mysql') {
             $search_param .= " LIMIT {$this->start},{$this->length}";
         }
+        //todo: sqlsrv implementations
 
         $data = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
 
