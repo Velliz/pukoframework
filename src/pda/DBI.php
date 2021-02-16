@@ -40,7 +40,7 @@ class DBI
 
     private $host;
     private $port;
-    private $driver;
+    private $driver = 'pdo';
 
     /**
      * @var bool
@@ -62,7 +62,9 @@ class DBI
         $this->dbName = $connection[$database]['dbName'];
         $this->username = $connection[$database]['user'];
         $this->password = $connection[$database]['pass'];
-        $this->driver = $connection[$database]['driver'];
+        if (isset($connection[$database]['driver'])) {
+            $this->driver = $connection[$database]['driver'];
+        }
     }
 
     /**
