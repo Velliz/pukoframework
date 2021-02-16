@@ -40,6 +40,7 @@ class DBI
 
     private $host;
     private $port;
+    private $driver;
 
     /**
      * @var bool
@@ -61,6 +62,7 @@ class DBI
         $this->dbName = $connection[$database]['dbName'];
         $this->username = $connection[$database]['user'];
         $this->password = $connection[$database]['pass'];
+        $this->driver = $connection[$database]['driver'];
     }
 
     /**
@@ -87,10 +89,19 @@ class DBI
             }
         }
         if ($this->dbType === 'sqlsrv') {
-            //connection from pdo_odbc
-            $pdoConnection = "odbc:Driver={SQL Server};Server=$this->host";
-            if ($this->dbName !== '') {
-                $pdoConnection = "odbc:Driver={SQL Server};Server=$this->host;Database=$this->dbName";
+            if ($this->driver === 'odbc') {
+                //connection from pdo_odbc
+                $pdoConnection = "odbc:Driver={SQL Server};Server=$this->host";
+                if ($this->dbName !== '') {
+                    $pdoConnection = "odbc:Driver={SQL Server};Server=$this->host;Database=$this->dbName";
+                }
+            }
+            if ($this->driver === 'sqlsrv') {
+                //connection from pdo_sqlsrv
+                $pdoConnection = "sqlsrv:Server=$this->host,$this->port";
+                if ($this->dbName !== '') {
+                    $pdoConnection = "sqlsrv:Server=$this->host,$this->port;Database=$this->dbName";
+                }
             }
         }
 
