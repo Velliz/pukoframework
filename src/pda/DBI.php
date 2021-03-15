@@ -82,7 +82,6 @@ class DBI
 
         $this->DBISet(Config::Data('database'), $database);
 
-        //todo: change this to support another databases
         $pdoConnection = null;
         if ($this->dbType === 'mysql') {
             $pdoConnection = "$this->dbType:host=$this->host;port=$this->port";
@@ -134,7 +133,7 @@ class DBI
      * @return DBI
      * @throws Exception
      */
-    public static function Prepare($query, $database = null)
+    public static function Prepare($query = '', $database = null)
     {
         if ($database === null) {
             $database = 'primary';
@@ -183,6 +182,7 @@ class DBI
         $insert_text = $insert_text . $value_string . ");";
 
         try {
+            $lastid = null;
             $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
                 $statement->bindValue(':' . $key, $values[$no]);
@@ -195,8 +195,6 @@ class DBI
                     if (strlen($identity) > 0) {
                         $result = $statement->fetch(PDO::FETCH_ASSOC);
                         $lastid = $result[$identity];
-                    } else {
-                        $lastid = null;
                     }
                 }
                 self::$dbi = null;
