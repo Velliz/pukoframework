@@ -144,10 +144,11 @@ class DBI
     /**
      * @param array $array
      * @param string $identity
+     * @param null $transaction
      * @return bool|string
      * @throws Exception
      */
-    public function Save($array = [], $identity = '')
+    public function Save($array = [], $identity = '', $transaction = null)
     {
         $keys = $values = [];
         $insert_text = "INSERT INTO $this->query";
@@ -181,15 +182,20 @@ class DBI
         $value_string = substr($value_string, 0, -2);
         $insert_text = $insert_text . $value_string . ");";
 
+        $db_used = self::$dbi;
+        if ($transaction !== null) {
+            $db_used = $transaction;
+        }
+
         try {
             $lastid = null;
-            $statement = self::$dbi->prepare($insert_text);
+            $statement = $db_used->prepare($insert_text);
             foreach ($keys as $no => $key) {
                 $statement->bindValue(':' . $key, $values[$no]);
             }
             if ($statement->execute()) {
                 if ($this->dbType === 'mysql') {
-                    $lastid = self::$dbi->lastInsertId();
+                    $lastid = $db_used->lastInsertId();
                 }
                 if ($this->dbType === 'sqlsrv') {
                     if (strlen($identity) > 0) {
@@ -197,25 +203,26 @@ class DBI
                         $lastid = $result[$identity];
                     }
                 }
-                self::$dbi = null;
+                $db_used = null;
                 return $lastid;
             } else {
-                self::$dbi = null;
+                $db_used = null;
                 return false;
             }
         } catch (PDOException $ex) {
-            self::$dbi = null;
+            $db_used = null;
             $this->notify('Database error: ' . $ex->getMessage(), $insert_text, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
     }
 
     /**
-     * @param $arrWhere
+     * @param array $arrWhere
+     * @param null $transaction
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
-    public function Delete($arrWhere)
+    public function Delete($arrWhere = [], $transaction = null)
     {
         $del_text = "DELETE FROM $this->query WHERE ";
         foreach ($arrWhere as $col => $value) {
@@ -226,13 +233,18 @@ class DBI
             }
         }
         $del_text = substr($del_text, 0, -4);
+
+        $db_used = self::$dbi;
+        if ($transaction !== null) {
+            $db_used = $transaction;
+        }
         try {
-            $statement = self::$dbi->prepare($del_text);
+            $statement = $db_used->prepare($del_text);
             $result = $statement->execute();
-            self::$dbi = null;
+            $db_used = null;
             return $result;
         } catch (PDOException $ex) {
-            self::$dbi = null;
+            $db_used = null;
             $this->notify('Database error: ' . $ex->getMessage(), $del_text, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -241,10 +253,11 @@ class DBI
     /**
      * @param $id
      * @param $array
+     * @param null $transaction
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
-    public function Update($id, $array)
+    public function Update($id = 0, $array = [], $transaction = null)
     {
         $update_text = "UPDATE $this->query SET";
         $key_string = "";
@@ -258,8 +271,13 @@ class DBI
         }
         $key_where = substr($key_where, 0, -4);
         $update_text .= " " . $key_string . $key_where;
+
+        $db_used = self::$dbi;
+        if ($transaction !== null) {
+            $db_used = $transaction;
+        }
         try {
-            $statement = self::$dbi->prepare($update_text);
+            $statement = $db_used->prepare($update_text);
             foreach ($array as $key => $val) {
                 $statement->bindValue(':' . $key, $val);
             }
@@ -267,10 +285,10 @@ class DBI
                 $statement->bindValue(':' . $key, $val);
             }
             $result = $statement->execute();
-            self::$dbi = null;
+            $db_used = null;
             return $result;
         } catch (PDOException $ex) {
-            self::$dbi = null;
+            $db_used = null;
             $this->notify('Database error: ' . $ex->getMessage(), $update_text, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -364,7 +382,7 @@ class DBI
      * @return mixed|null
      * @throws \Exception
      */
-    public function Run()
+    public function Run($transaction = null)
     {
         $parameters = func_get_args();
         $argCount = count($parameters);
@@ -372,19 +390,24 @@ class DBI
         if ($argCount > 0) {
             $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
         }
+
+        $db_used = self::$dbi;
+        if ($transaction !== null) {
+            $db_used = $transaction;
+        }
         try {
-            $statement = self::$dbi->prepare($this->query);
+            $statement = $db_used->prepare($this->query);
             if ($argCount > 0) {
                 $result = $statement->execute($parameters);
-                self::$dbi = null;
+                $db_used = null;
                 return $result;
             } else {
                 $result = $statement->execute();
-                self::$dbi = null;
+                $db_used = null;
                 return $result;
             }
         } catch (PDOException $ex) {
-            self::$dbi = null;
+            $db_used = null;
             $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -396,7 +419,7 @@ class DBI
      * @return bool
      * @throws \Exception
      */
-    public function Call($name, $arrData)
+    public function Call($name = '', $arrData = [], $transaction = null)
     {
         $argCount = count($arrData);
         $call = "CALL $name(";
@@ -405,19 +428,24 @@ class DBI
         }
         $call_text = substr($call, 0, -2);
         $call_text .= ");";
+
+        $db_used = self::$dbi;
+        if ($transaction !== null) {
+            $db_used = $transaction;
+        }
         try {
-            $statement = self::$dbi->prepare($call_text);
+            $statement = $db_used->prepare($call_text);
             if ($argCount > 0) {
                 $result = $statement->execute($arrData);
-                self::$dbi = null;
+                $db_used = null;
                 return $result;
             } else {
                 $result = $statement->execute();
-                self::$dbi = null;
+                $db_used = null;
                 return $result;
             }
         } catch (PDOException $ex) {
-            self::$dbi = null;
+            $db_used = null;
             $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
             throw new Exception('Database error: ' . $ex->getMessage());
         }
@@ -429,6 +457,40 @@ class DBI
     private function queryPrepareSelect()
     {
         return '?';
+    }
+
+    /**
+     * @param $database
+     * @param callable|null $callback
+     * @return bool|PDO
+     * @throws Exception
+     */
+    public static function Transactional($database = null, callable $callback = null)
+    {
+        if ($database === null) {
+            $database = 'primary';
+        }
+        $dbi = new DBI('', $database);
+
+        if ($callback !== null) {
+            try {
+                $dbi::$dbi->beginTransaction();
+                $execution = $callback($dbi::$dbi);
+                if ($execution === true) {
+                    $dbi::$dbi->commit();
+                } else {
+                    $dbi::$dbi->rollBack();
+                    return false;
+                }
+            } catch (Exception $ex) {
+                $dbi::$dbi->rollBack();
+                return false;
+            }
+        } else {
+            return $dbi::$dbi;
+        }
+
+        return true;
     }
 
 }

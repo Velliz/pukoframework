@@ -40,7 +40,7 @@ class Model
     /**
      * @var array
      */
-    private $_specs = array();
+    private $_specs = [];
 
     /**
      * @var string
@@ -102,9 +102,10 @@ class Model
     }
 
     /**
-     * @throws Exception
+     * @param null $transaction
+     * @throws ReflectionException
      */
-    public function save()
+    public function save($transaction = null)
     {
         $insert = array();
         foreach ($this->_specs as $key => $val) {
@@ -121,14 +122,14 @@ class Model
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary);
+        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary, $transaction);
         $this->__construct($lastid, $this->_database);
     }
 
     /**
      * @throws Exception
      */
-    public function modify()
+    public function modify($transaction = null)
     {
         $insert = array();
         foreach ($this->_specs as $key => $val) {
@@ -145,16 +146,17 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert);
+        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $transaction);
         $this->__construct($this->{$this->_primary}, $this->_database);
     }
 
     /**
+     * @param null $transaction
      * @throws Exception
      */
-    public function remove()
+    public function remove($transaction = null)
     {
-        DBI::Prepare($this->_table, $this->_database)->Delete(array($this->_primary => $this->{$this->_primary}));
+        DBI::Prepare($this->_table, $this->_database)->Delete([$this->_primary => $this->{$this->_primary}], $transaction);
     }
 
     /**
