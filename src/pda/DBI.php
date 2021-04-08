@@ -382,7 +382,7 @@ class DBI
      * @return mixed|null
      * @throws \Exception
      */
-    public function Run($transaction = null)
+    public function Run()
     {
         $parameters = func_get_args();
         $argCount = count($parameters);
@@ -392,9 +392,6 @@ class DBI
         }
 
         $db_used = self::$dbi;
-        if ($transaction !== null) {
-            $db_used = $transaction;
-        }
         try {
             $statement = $db_used->prepare($this->query);
             if ($argCount > 0) {
