@@ -128,9 +128,6 @@ class DataTables
         $this->raw_query = str_replace(';', '', $query);
 
         $sql = "SELECT ";
-        if($this->db_engine === 'sqlsrv') {
-            $sql = "SELECT TOP {$this->length} ";
-        }
         $sql .= "*";
         $sql .= " FROM ({$query}) ";
         $sql .= "TEMP ";
@@ -176,7 +173,10 @@ class DataTables
         if($this->db_engine === 'mysql') {
             $search_param .= " LIMIT {$this->start},{$this->length}";
         }
-        //todo: sqlsrv implementations
+        //workaround for sql server version 2012 or newer
+        if($this->db_engine === 'sqlsrv') {
+            $search_param .= " OFFSET {$this->start} ROWS FETCH NEXT {$this->length} ROWS ONLY";
+        }
 
         $data = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
 
