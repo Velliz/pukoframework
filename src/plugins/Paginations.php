@@ -103,7 +103,10 @@ class Paginations
         if ($this->db_engine === 'mysql') {
             $paginate_param .= " LIMIT {$begin},{$this->length}";
         }
-        //todo: sqlsrv implementations
+        //workaround for sql server version 2012 or newer
+        if($this->db_engine === 'sqlsrv') {
+            $paginate_param .= " OFFSET {$begin} ROWS FETCH NEXT {$this->length} ROWS ONLY";
+        }
 
         $data = DBI::Prepare(($this->query . $paginate_param), $this->database)->GetData();
 
