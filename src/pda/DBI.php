@@ -467,7 +467,7 @@ class DBI
         if ($database === null) {
             $database = 'primary';
         }
-        $dbi = new DBI('', $database);
+        new DBI('', $database);
 
         if ($callback !== null) {
             try {
