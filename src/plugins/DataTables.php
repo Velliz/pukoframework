@@ -168,15 +168,26 @@ class DataTables
 
             $filtered = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
             $this->records_filtered = count($filtered);
+
+            //workaround for sql server version 2000 until 2010
+            //raw query must contains: "ROW_NUMBER() OVER (ORDER BY ?) AS RowNumber"
+            if ($this->db_engine === 'sqlsrv2000') {
+                $search_param .= " AND RowNumber {$this->start} AND {$this->length} ";
+            }
+        } else {
+            //workaround for sql server version 2000 until 2010
+            //raw query must contains: "ROW_NUMBER() OVER (ORDER BY ?) AS RowNumber"
+            if ($this->db_engine === 'sqlsrv2000') {
+                $search_param .= " WHERE RowNumber {$this->start} AND {$this->length} ";
+            }
         }
 
         $order = strtoupper($this->order_dir);
         $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
-        if($this->db_engine === 'mysql') {
+        if ($this->db_engine === 'mysql') {
             $search_param .= " LIMIT {$this->start},{$this->length}";
         }
-        //workaround for sql server version 2012 or newer
-        if($this->db_engine === 'sqlsrv') {
+        if ($this->db_engine === 'sqlsrv') {
             $search_param .= " OFFSET {$this->start} ROWS FETCH NEXT {$this->length} ROWS ONLY";
         }
 
