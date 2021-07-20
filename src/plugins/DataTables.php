@@ -172,13 +172,15 @@ class DataTables
             //workaround for sql server version 2000 until 2010
             //raw query must contains: "ROW_NUMBER() OVER (ORDER BY ?) AS RowNumber"
             if ($this->db_engine === 'sqlsrv2000') {
-                $search_param .= " AND RowNumber BETWEEN {$this->start} AND {$this->length} ";
+                $cap = $this->length + $this->start;
+                $search_param .= " AND RowNumber BETWEEN {$this->start} AND {$cap} ";
             }
         } else {
             //workaround for sql server version 2000 until 2010
             //raw query must contains: "ROW_NUMBER() OVER (ORDER BY ?) AS RowNumber"
             if ($this->db_engine === 'sqlsrv2000') {
-                $search_param .= " WHERE RowNumber BETWEEN {$this->start} AND {$this->length} ";
+                $cap = $this->length + $this->start;
+                $search_param .= " WHERE RowNumber BETWEEN {$this->start} AND {$cap} ";
             }
         }
 
