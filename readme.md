@@ -42,12 +42,3 @@ Then start a build-in development server:
 ```text
 php puko serve
 ```
-
-If you find bugs, error or you want contribute to this project. 
-Fell free to post an issue and pull request to make puko framework better.
-
-## About
-
-Crafted with <3 from Bandung, Indonesia.
-
-2016 - 2020 by Didit Velliz

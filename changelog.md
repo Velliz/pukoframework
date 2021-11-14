@@ -137,3 +137,17 @@ class Example extends Service {
 * Database supports multiple schema connection.
 * DBI: drop file string auto file_get_contents and also remove _isbinary keywords.
 * Enhance error info on service based classes.
+
+### 1.1.8 (15 Apr 2020)
+* Environment added.
+* Dynamic language variable with master.json file.
+* pte modules compatibility update to version 0.2.1.
+* MySQL Model and DataTables pagination improvement.
+
+### 1.1.9 (27 Dec 2020)
+* Sorting routes.
+* SQLServer database implementation.
+
+### 1.2.0 (06 Jun 2021)
+* Pagination Class.
+* SQLServer integrations in DBI and DataTables.

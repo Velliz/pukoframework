@@ -2,12 +2,10 @@
 
 ## TODO Puko Framework
 
-Some of draft and great idea to work, for a better puko framework.
+Some of draft and great idea to work, for a better puko framework:
 
 ### Puko Database Access (PDA)
-* Database Fail over mechanism.
-* Adding support to another Database Connection (Oracle, SQL Server, MongoDB, Cassandra).
-* Adding support for commit and rollback database transaction.
+* Adding support to another Database Connection (Oracle, MongoDB).
 
 ### Puko Exception Handler (PEH)
 * Create pretty error message.
@@ -20,5 +18,4 @@ Some of draft and great idea to work, for a better puko framework.
 * DONE
 
 ### Modules
-* Adding feature import export Excel, Word, PDF. "MOVED TO ANYWHERE"
-* Adding Mail utility.
+* DONE
