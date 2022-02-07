@@ -189,7 +189,7 @@ class DBI
 
         try {
             $lastid = null;
-            $statement = $db_used->prepare(self::$dbi->quote($insert_text));
+            $statement = $db_used->prepare($insert_text);
             foreach ($keys as $no => $key) {
                 $statement->bindValue(':' . $key, $values[$no]);
             }
@@ -239,7 +239,7 @@ class DBI
             $db_used = $transaction;
         }
         try {
-            $statement = $db_used->prepare(self::$dbi->quote($del_text));
+            $statement = $db_used->prepare($del_text);
             $result = $statement->execute();
             $db_used = null;
             return $result;
@@ -277,7 +277,7 @@ class DBI
             $db_used = $transaction;
         }
         try {
-            $statement = $db_used->prepare(self::$dbi->quote($update_text));
+            $statement = $db_used->prepare($update_text);
             foreach ($array as $key => $val) {
                 $statement->bindValue(':' . $key, $val);
             }
@@ -324,7 +324,7 @@ class DBI
             );
         }
         try {
-            $statement = self::$dbi->prepare(self::$dbi->quote($this->query));
+            $statement = self::$dbi->prepare($this->query);
             if ($argCount > 0) {
                 $statement->execute($parameters);
             } else {
@@ -361,7 +361,7 @@ class DBI
             $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
         }
         try {
-            $statement = self::$dbi->prepare(self::$dbi->quote($this->query));
+            $statement = self::$dbi->prepare($this->query);
             if ($argCount > 0) {
                 $statement->execute($parameters);
             } else {
@@ -393,7 +393,7 @@ class DBI
 
         $db_used = self::$dbi;
         try {
-            $statement = $db_used->prepare(self::$dbi->quote($this->query));
+            $statement = $db_used->prepare($this->query);
             if ($argCount > 0) {
                 $result = $statement->execute($parameters);
                 $db_used = null;
