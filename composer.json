@@ -23,7 +23,7 @@
     "velliz/pte": "0.2.1"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6"
+    "phpunit/phpunit": "^9.3.0"
   },
   "autoload": {
     "psr-4": {
