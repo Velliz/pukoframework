@@ -36,12 +36,12 @@ interface ModelContracts
 
     /**
      * This method return true if row found or false if not found from database specified by custom selection
-     * @param $column
-     * @param $value
+     * @param string $column
+     * @param string $value
      * @return bool
      * @throws Exception
      */
-    public static function IsExistsWhere($column, $value);
+    public static function IsExistsWhere(string $column, string $value);
 
     /**
      * This method return count of the data on the database
@@ -52,11 +52,13 @@ interface ModelContracts
 
     /**
      * This method return count of the data on the database with selected conditions
-     * @param array $condition
+     * @param array $keyword
+     * @param int|null $limit
+     * @param int|null $offset
      * @return mixed
      * @throws Exception
      */
-    public static function GetDataSizeWhere($condition = array());
+    public static function GetDataSizeWhere(array $condition = [], int $limit = null, int $offset = null);
 
     /**
      * This method return last inserted data
@@ -68,10 +70,12 @@ interface ModelContracts
     /**
      * This method return search result data available on the database in array structure
      * @param array $keyword
+     * @param int $limit
+     * @param int $offset
      * @return mixed
      * @throws Exception
      */
-    public static function SearchData($keyword = array());
+    public static function SearchData(array $keyword = [], int $limit = null, int $offset = null);
 
     /**
      * This method return search result data available on the database in datatables json format
@@ -79,6 +83,6 @@ interface ModelContracts
      * @return mixed
      * @throws Exception
      */
-    public static function GetDataTable($condition = array());
+    public static function GetDataTable(array $condition = []);
 
 }
