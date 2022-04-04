@@ -17,6 +17,7 @@ use pte\Pte;
 use pukoframework\config\Config;
 use pukoframework\config\Factory;
 use pukoframework\middleware\Console;
+use pukoframework\middleware\Sockets;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
 use pukoframework\middleware\View;
@@ -26,6 +27,9 @@ use pukoframework\peh\ThrowView;
 use pukoframework\plugins\LanguageBinders;
 use ReflectionClass;
 use ReflectionException;
+use Ratchet\Server\IoServer;
+use Ratchet\Http\HttpServer;
+use Ratchet\WebSocket\WsServer;
 
 /**
  * Class Framework
@@ -148,6 +152,7 @@ class Framework
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
         $console = new ReflectionClass(Console::class);
+        $sockets = new ReflectionClass(Sockets::class);
 
         $this->class_pdc = $this->pdc->getDocComment();
         $this->docs_engine->PDCParser($this->class_pdc, $this->fn_return);
@@ -198,6 +203,9 @@ class Framework
                 if ($this->pdc->isSubclassOf($console)) {
                     new ThrowConsole($error);
                 }
+                if ($this->pdc->isSubclassOf($sockets)) {
+                    new ThrowConsole($error);
+                }
                 throw new Exception($error);
             }
         } else {
@@ -213,6 +221,9 @@ class Framework
                 new ThrowService($error);
             }
             if ($this->pdc->isSubclassOf($console)) {
+                new ThrowConsole($error);
+            }
+            if ($this->pdc->isSubclassOf($sockets)) {
                 new ThrowConsole($error);
             }
             throw new Exception($error);
@@ -257,6 +268,17 @@ class Framework
         }
         if ($this->pdc->isSubclassOf($console)) {
             exit(0);
+        }
+        if ($this->pdc->isSubclassOf($sockets)) {
+            $server = IoServer::factory(
+                new HttpServer(
+                    new WsServer(
+                        $this->object
+                    )
+                ),
+                $this->object->SOCKET_PORT
+            );
+            $server->run();
         }
 
         echo $output;
