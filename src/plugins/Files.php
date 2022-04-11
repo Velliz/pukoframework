@@ -67,7 +67,7 @@ class Files
      * @return bool
      * Default expectation is lower than 10MB
      */
-    public function isSizeSmallerThan(float $expectations = 10 * Files::MB): bool
+    public function isSizeSmallerThan(float $expectations = 1048576)
     {
         return ($this->getSize() < $expectations);
     }
