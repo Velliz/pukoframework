@@ -84,7 +84,7 @@ class Framework
     private $fn_return = array();
 
     /**
-     * @var View|Service
+     * @var View|Service|Console|Sockets
      */
     private $object = null;
 
