@@ -38,13 +38,21 @@ class Paginations
 
     private $length = 10;
 
+    private $order_column = '';
+
+    private $sort = 'ASC';
+
     public function __construct($verb = 'GET')
     {
         $this->http_verb = $verb;
 
         //page length pointer
-        $this->page = $_GET['page'];
-        $this->length = $_GET['length'];
+        if (isset($_GET['page'])) {
+            $this->page = $_GET['page'];
+        }
+        if (isset($_GET['length'])) {
+            $this->length = $_GET['length'];
+        }
     }
 
     public function SetDBEngine($engine = 'mysql')
@@ -55,6 +63,11 @@ class Paginations
     public function SetLength($length = 10)
     {
         $this->length = $length;
+    }
+
+    public function OrderBy($column, $sort) {
+        $this->order_column = $column;
+        $this->sort = $sort;
     }
 
     public function SetQuery($query, $database = 'primary')
@@ -68,6 +81,12 @@ class Paginations
         $sql .= "*";
         $sql .= " FROM ({$query}) ";
         $sql .= "TEMP ";
+
+        if (strlen($this->order_column) > 0) {
+            if ($this->db_engine === 'mysql') {
+                $sql .= "ORDER BY {$this->order_column} {$this->sort} ";
+            }
+        }
 
         $this->query = str_replace(';', '', $sql);
     }
@@ -104,7 +123,7 @@ class Paginations
             $paginate_param .= " LIMIT {$begin},{$this->length}";
         }
         //workaround for sql server version 2012 or newer
-        if($this->db_engine === 'sqlsrv') {
+        if ($this->db_engine === 'sqlsrv') {
             $paginate_param .= " OFFSET {$begin} ROWS FETCH NEXT {$this->length} ROWS ONLY";
         }
 
