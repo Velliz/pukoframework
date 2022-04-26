@@ -79,7 +79,7 @@ class Request extends Routes
             return $default;
         }
 
-        return ($filter) ? filter_var($_GET[$key], FILTER_SANITIZE_STRING) : $_GET[$key];
+        return ($filter) ? filter_var($_GET[$key], FILTER_UNSAFE_RAW) : $_GET[$key];
     }
 
     /**
@@ -96,7 +96,7 @@ class Request extends Routes
         if (is_array($_POST[$key])) {
             return $_POST[$key];
         } else {
-            return ($filter) ? filter_var($_POST[$key], FILTER_SANITIZE_STRING) : $_POST[$key];
+            return ($filter) ? filter_var($_POST[$key], FILTER_UNSAFE_RAW) : $_POST[$key];
         }
     }
 
@@ -138,7 +138,7 @@ class Request extends Routes
             return $default;
         }
 
-        return ($filter) ? filter_var($key, FILTER_SANITIZE_STRING) : $key;
+        return ($filter) ? filter_var($key, FILTER_UNSAFE_RAW) : $key;
     }
 
     /**
