@@ -132,7 +132,9 @@ class Bearer
         if ($data['expired'] !== '') {
             $date = DateTime::createFromFormat('Y-m-d H:i:s', $data['expired']);
             if ($date < new DateTime()) {
-                throw new Exception($this->expiredText);
+                if ($this->expired > 0) {
+                    throw new Exception($this->expiredText);
+                }
             }
         }
 
