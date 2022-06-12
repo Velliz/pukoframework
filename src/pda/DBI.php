@@ -84,9 +84,9 @@ class DBI
 
         $pdoConnection = null;
         if ($this->dbType === 'mysql') {
-            $pdoConnection = "$this->dbType:host=$this->host;port=$this->port";
+            $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;charset=utf8mb4";
             if ($this->dbName !== '') {
-                $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName";
+                $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;dbname=$this->dbName;charset=utf8mb4";
             }
         }
         if ($this->dbType === 'sqlsrv') {
