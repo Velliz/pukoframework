@@ -168,10 +168,6 @@ class Model
      */
     public function ModelParser($raw_docs)
     {
-        $clause = null;
-        $command = null;
-        $value = null;
-
         $data = array();
 
         preg_match_all('(#[ a-zA-Z0-9-:.+/_()]+)', $raw_docs, $result, PREG_PATTERN_ORDER);

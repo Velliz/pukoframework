@@ -296,7 +296,7 @@ class DBI
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function GetData()
     {
@@ -350,7 +350,7 @@ class DBI
 
     /**
      * @return mixed|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function FirstRow()
     {
@@ -380,7 +380,7 @@ class DBI
 
     /**
      * @return mixed|null
-     * @throws \Exception
+     * @throws Exception
      */
     public function Run()
     {
@@ -414,7 +414,7 @@ class DBI
      * @param $name
      * @param $arrData
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function Call($name = '', $arrData = [], $transaction = null)
     {
@@ -471,20 +471,20 @@ class DBI
 
         if ($callback !== null) {
             try {
-                $dbi::$dbi->beginTransaction();
-                $execution = $callback($dbi::$dbi);
+                self::$dbi->beginTransaction();
+                $execution = $callback(self::$dbi);
                 if ($execution === true) {
-                    $dbi::$dbi->commit();
+                    self::$dbi->commit();
                 } else {
-                    $dbi::$dbi->rollBack();
+                    self::$dbi->rollBack();
                     return false;
                 }
             } catch (Exception $ex) {
-                $dbi::$dbi->rollBack();
+                self::$dbi->rollBack();
                 return false;
             }
         } else {
-            return $dbi::$dbi;
+            return self::$dbi;
         }
 
         return true;
