@@ -457,34 +457,31 @@ class DBI
     }
 
     /**
-     * @param $database
-     * @param callable|null $callback
-     * @return bool|PDO
+     * @param callable $callback
+     * @param string $database
+     * @return bool
      * @throws Exception
      */
-    public static function Transactional($database = null, callable $callback = null)
+    public static function Transactional(callable $callback = null, string $database = 'primary')
     {
-        if ($database === null) {
-            $database = 'primary';
-        }
+        //initialize DBI objects for 1 transactional sessions.
         new DBI('', $database);
+        if ($callback === null) {
+           return false;
+        }
 
-        if ($callback !== null) {
-            try {
-                self::$dbi->beginTransaction();
-                $execution = $callback(self::$dbi);
-                if ($execution === true) {
-                    self::$dbi->commit();
-                } else {
-                    self::$dbi->rollBack();
-                    return false;
-                }
-            } catch (Exception $ex) {
+        try {
+            self::$dbi->beginTransaction();
+            $execution = $callback(self::$dbi);
+            if ($execution === true) {
+                self::$dbi->commit();
+            } else {
                 self::$dbi->rollBack();
                 return false;
             }
-        } else {
-            return self::$dbi;
+        } catch (Exception $ex) {
+            self::$dbi->rollBack();
+            return false;
         }
 
         return true;
