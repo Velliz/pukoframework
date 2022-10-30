@@ -13,7 +13,6 @@ namespace pukoframework\pda;
 
 use Exception;
 use PDOException;
-use Memcached;
 use PDO;
 use pukoframework\config\Config;
 use pukoframework\log\LogTransforms;
@@ -28,25 +27,16 @@ class DBI
     use LogTransforms;
 
     private static $dbi;
-
     protected $query;
-    protected $queryParams;
 
     protected $dbType;
     protected $dbName;
-
     private $username;
     private $password;
-
     private $host;
     private $port;
-    private $driver = 'pdo';
 
-    /**
-     * @var bool
-     */
-    private $cache = false;
-    private $cacheExpiry = 60;
+    private $driver = 'pdo';
 
     private $queryPattern = '#@([0-9]+)#';
 
@@ -54,14 +44,16 @@ class DBI
      * @param $connection array
      * @param $database
      */
-    protected function DBISet($connection, $database)
+    protected function DBISet(array $connection, $database)
     {
         $this->dbType = $connection[$database]['dbType'];
         $this->host = $connection[$database]['host'];
         $this->port = $connection[$database]['port'];
+
         $this->dbName = $connection[$database]['dbName'];
         $this->username = $connection[$database]['user'];
         $this->password = $connection[$database]['pass'];
+
         if (isset($connection[$database]['driver'])) {
             $this->driver = $connection[$database]['driver'];
         }
@@ -110,22 +102,12 @@ class DBI
             self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
             self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
-            $this->notify('Connection failed: ' . $ex->getMessage(), $query, $ex->getTrace());
-            throw new Exception("Connection failed: " . $ex->getMessage());
+            self::$dbi = null;
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
-
-    /**
-     * @param int $timeInSeconds
-     * @return $this
-     */
-    public function CacheFor($timeInSeconds = 60)
-    {
-        $this->cache = true;
-        $this->cacheExpiry = $timeInSeconds;
-        return $this;
-    }
-
 
     /**
      * @param $query string
@@ -133,7 +115,7 @@ class DBI
      * @return DBI
      * @throws Exception
      */
-    public static function Prepare($query = '', $database = null)
+    public static function Prepare(string $query = '', $database = null): DBI
     {
         if ($database === null) {
             $database = 'primary';
@@ -144,153 +126,148 @@ class DBI
     /**
      * @param array $array
      * @param string $identity
-     * @param null $transaction
      * @return bool|string
      * @throws Exception
      */
-    public function Save($array = [], $identity = '', $transaction = null)
+    public function Save(array $array = [], string $identity = '')
     {
-        $keys = $values = [];
-        $insert_text = "INSERT INTO $this->query";
+        $ticks = "";
+        if ($this->dbType === 'mysql') {
+            $ticks = "`";
+        }
+
+        //separate key dan values
+        $keys = [];
+        $values = [];
         foreach ($array as $k => $v) {
             $keys[] = $k;
             $values[] = $v;
         }
-        $key_string = "(";
+
+        //build key
+        $key_string = "";
         foreach ($keys as $key) {
-            if ($this->dbType === 'mysql') {
-                $key_string = $key_string . "`" . $key . "`, ";
-            } else {
-                $key_string = $key_string . " " . $key . ", ";
-            }
+            $key_string .= "{$ticks}{$key}{$ticks}, ";
         }
         $key_string = substr($key_string, 0, -2);
-        if ($this->dbType === 'sqlsrv') {
-            if (strlen($identity) > 0) {
-                $insert_text = $insert_text . " " . $key_string . ") OUTPUT INSERTED.{$identity}";
-            } else {
-                $insert_text = $insert_text . " " . $key_string . ")";
-            }
-        } else {
-            $insert_text = $insert_text . " " . $key_string . ")";
+
+        //output inserted.? for sql-server
+        $output = "";
+        if ($this->dbType === 'sqlsrv' && strlen($identity) > 0) {
+            $output .= "OUTPUT INSERTED.{$identity}";
         }
-        $insert_text = $insert_text . " VALUES ";
-        $value_string = "(";
+
+        //build value
+        $value_string = "";
         foreach ($keys as $key) {
-            $value_string = $value_string . ":" . $key . ", ";
+            $value_string .= ":{$key}, ";
         }
         $value_string = substr($value_string, 0, -2);
-        $insert_text = $insert_text . $value_string . ");";
 
-        $db_used = self::$dbi;
-        if ($transaction !== null) {
-            $db_used = $transaction;
-        }
-
+        $last_id = null;
+        $insert_text = "INSERT INTO {$this->query} ({$key_string}) {$output} VALUES ({$value_string});";
         try {
-            $lastid = null;
-            $statement = $db_used->prepare($insert_text);
+            $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
-                $statement->bindValue(':' . $key, $values[$no]);
+                $statement->bindValue(":{$key}", $values[$no]);
             }
+
             if ($statement->execute()) {
                 if ($this->dbType === 'mysql') {
-                    $lastid = $db_used->lastInsertId();
+                    $last_id = self::$dbi->lastInsertId();
                 }
                 if ($this->dbType === 'sqlsrv') {
                     if (strlen($identity) > 0) {
                         $result = $statement->fetch(PDO::FETCH_ASSOC);
-                        $lastid = $result[$identity];
+                        $last_id = $result[$identity];
                     }
                 }
-                $db_used = null;
-                return $lastid;
-            } else {
-                $db_used = null;
-                return false;
+                self::$dbi = null;
+                return $last_id;
             }
+            self::$dbi = null;
+            return false;
         } catch (PDOException $ex) {
-            $db_used = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $insert_text, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
+            self::$dbi = null;
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
 
     /**
-     * @param array $arrWhere
-     * @param null $transaction
+     * @param array $where
      * @return bool
      * @throws Exception
      */
-    public function Delete($arrWhere = [], $transaction = null)
+    public function Delete(array $where = [])
     {
-        $del_text = "DELETE FROM $this->query WHERE ";
-        foreach ($arrWhere as $col => $value) {
-            if ($this->dbType === 'mysql') {
-                $del_text .= "`" . $col . "`" . " = '" . $value . "' AND ";
-            } else {
-                $del_text .= $col . " = " . $value . " AND ";
-            }
+        $ticks = "";
+        if ($this->dbType === 'mysql') {
+            $ticks = "`";
         }
-        $del_text = substr($del_text, 0, -4);
 
-        $db_used = self::$dbi;
-        if ($transaction !== null) {
-            $db_used = $transaction;
-        }
-        try {
-            $statement = $db_used->prepare($del_text);
-            $result = $statement->execute();
-            $db_used = null;
-            return $result;
-        } catch (PDOException $ex) {
-            $db_used = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $del_text, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
-        }
-    }
-
-    /**
-     * @param $id
-     * @param $array
-     * @param null $transaction
-     * @return bool
-     * @throws Exception
-     */
-    public function Update($id = 0, $array = [], $transaction = null)
-    {
-        $update_text = "UPDATE $this->query SET";
-        $key_string = "";
         $key_where = " WHERE ";
-        foreach ($array as $key => $val) {
-            $key_string .= $key . " = :" . $key . ", ";
-        }
-        $key_string = substr($key_string, 0, -2);
-        foreach ($id as $key => $val) {
-            $key_where .= $key . " = :" . $key . " AND ";
+        foreach ($where as $key => $value) {
+            $key_where .= "{$ticks}{$key}{$ticks} = '{$value}' AND ";
         }
         $key_where = substr($key_where, 0, -4);
-        $update_text .= " " . $key_string . $key_where;
 
-        $db_used = self::$dbi;
-        if ($transaction !== null) {
-            $db_used = $transaction;
-        }
         try {
-            $statement = $db_used->prepare($update_text);
-            foreach ($array as $key => $val) {
-                $statement->bindValue(':' . $key, $val);
-            }
-            foreach ($id as $key => $val) {
-                $statement->bindValue(':' . $key, $val);
-            }
+            $statement = self::$dbi->prepare("DELETE FROM {$this->query} {$key_where};");
             $result = $statement->execute();
-            $db_used = null;
+
+            self::$dbi = null;
+
             return $result;
         } catch (PDOException $ex) {
-            $db_used = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $update_text, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
+            self::$dbi = null;
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
+        }
+    }
+
+    /**
+     * @param array $ids
+     * @param array $data
+     * @return bool
+     * @throws Exception
+     */
+    public function Update(array $ids = [], array $data = []): bool
+    {
+        $key_string = "";
+        foreach ($data as $key => $val) {
+            $key_string .= "{$key} = :{$key}, ";
+        }
+        $key_string = substr($key_string, 0, -2);
+
+        $key_where = " WHERE ";
+        foreach ($ids as $key => $val) {
+            $key_where .= "{$key} = :{$key} AND ";
+        }
+        $key_where = substr($key_where, 0, -4);
+
+        $update_text = "UPDATE {$this->query} SET {$key_string} {$key_where};";
+
+        try {
+            $statement = self::$dbi->prepare($update_text);
+            foreach ($data as $key => $val) {
+                $statement->bindValue(":{$key}", $val);
+            }
+            foreach ($ids as $key => $val) {
+                $statement->bindValue(":{$key}", $val);
+            }
+            $result = $statement->execute();
+
+            self::$dbi = null;
+
+            return $result;
+        } catch (PDOException $ex) {
+            self::$dbi = null;
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
 
@@ -298,53 +275,31 @@ class DBI
      * @return array
      * @throws Exception
      */
-    public function GetData()
+    public function GetData(): array
     {
-        $memcached = $keys = null;
-        if ($this->cache) {
-            $cacheConfig = Config::Data('app')['cache'];
-            $memcached = new Memcached();
-            $memcached->addServer($cacheConfig['host'], $cacheConfig['port']);
-
-            $keys = hash('ripemd160', $this->query);
-            $item = $memcached->get($keys);
-            if ($item) {
-                return $item;
-            }
-        }
-
         $parameters = func_get_args();
-        $argCount = count($parameters);
-        $this->queryParams = $parameters;
-        if ($argCount > 0) {
-            $this->query = preg_replace_callback(
-                $this->queryPattern,
-                array($this, 'queryPrepareSelect'),
-                $this->query
-            );
+
+        $args = count($parameters);
+        if ($args > 0) {
+            $this->query = preg_replace_callback($this->queryPattern, array($this, '_query_prepare_select'), $this->query);
         }
         try {
             $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0) {
+            if ($args > 0) {
                 $statement->execute($parameters);
             } else {
                 $statement->execute();
             }
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-            self::$dbi = null;
 
-            if ($this->cache) {
-                //doing memcached storage
-                $memcached->set($keys, $statement->fetchAll(PDO::FETCH_ASSOC), $this->cacheExpiry);
-                return $memcached->get($keys);
-            }
+            self::$dbi = null;
 
             return $result;
-
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
 
@@ -355,26 +310,30 @@ class DBI
     public function FirstRow()
     {
         $parameters = func_get_args();
-        $argCount = count($parameters);
-        $this->queryParams = $parameters;
-        if ($argCount > 0) {
-            $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+
+        $args = count($parameters);
+        if ($args > 0) {
+            $this->query = preg_replace_callback($this->queryPattern, array($this, '_query_prepare_select'), $this->query);
         }
+
         try {
             $statement = self::$dbi->prepare($this->query);
-            if ($argCount > 0) {
+            if ($args > 0) {
                 $statement->execute($parameters);
             } else {
                 $statement->execute();
             }
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-            isset($result[0]) ? $result = $result[0] : $result = null;
+            $result = $result[0] ?? null;
+
             self::$dbi = null;
+
             return $result;
         } catch (PDOException $ex) {
             self::$dbi = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
 
@@ -385,106 +344,68 @@ class DBI
     public function Run()
     {
         $parameters = func_get_args();
-        $argCount = count($parameters);
-        $this->queryParams = $parameters;
-        if ($argCount > 0) {
-            $this->query = preg_replace_callback($this->queryPattern, array($this, 'queryPrepareSelect'), $this->query);
+
+        $args = count($parameters);
+        if ($args > 0) {
+            $this->query = preg_replace_callback($this->queryPattern, array($this, '_query_prepare_select'), $this->query);
         }
 
-        $db_used = self::$dbi;
         try {
-            $statement = $db_used->prepare($this->query);
-            if ($argCount > 0) {
+            $statement = self::$dbi->prepare($this->query);
+            if ($args > 0) {
                 $result = $statement->execute($parameters);
-                $db_used = null;
-                return $result;
             } else {
                 $result = $statement->execute();
-                $db_used = null;
-                return $result;
             }
+            self::$dbi = null;
+
+            return $result;
         } catch (PDOException $ex) {
-            $db_used = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
+            self::$dbi = null;
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
 
     /**
-     * @param $name
-     * @param $arrData
+     * @param string $sp_name
+     * @param array $payloads
      * @return bool
      * @throws Exception
      */
-    public function Call($name = '', $arrData = [], $transaction = null)
+    public function Call(string $sp_name = '', array $payloads = []): bool
     {
-        $argCount = count($arrData);
-        $call = "CALL $name(";
-        foreach ($arrData as $col => $value) {
-            $call .= "'" . $value . "', ";
+        $attr = "";
+        foreach ($payloads as $pos => $value) {
+            $attr .= "'{$value}', ";
         }
-        $call_text = substr($call, 0, -2);
-        $call_text .= ");";
+        $attr = substr($attr, 0, -2);
 
-        $db_used = self::$dbi;
-        if ($transaction !== null) {
-            $db_used = $transaction;
-        }
         try {
-            $statement = $db_used->prepare($call_text);
-            if ($argCount > 0) {
-                $result = $statement->execute($arrData);
-                $db_used = null;
-                return $result;
+            $statement = self::$dbi->prepare("CALL {$sp_name}({$attr});");
+            if (sizeof($payloads) > 0) {
+                $result = $statement->execute($payloads);
             } else {
                 $result = $statement->execute();
-                $db_used = null;
-                return $result;
             }
+            self::$dbi = null;
+
+            return $result;
         } catch (PDOException $ex) {
-            $db_used = null;
-            $this->notify('Database error: ' . $ex->getMessage(), $this->query, $ex->getTrace());
-            throw new Exception('Database error: ' . $ex->getMessage());
+            self::$dbi = null;
+
+            $this->notify("Database error: {$ex->getMessage()}", $this->query, $ex->getTrace());
+            throw new Exception("Database error: {$ex->getMessage()}");
         }
     }
 
     /**
      * @return string
      */
-    private function queryPrepareSelect()
+    private function _query_prepare_select(): string
     {
         return '?';
-    }
-
-    /**
-     * @param callable $callback
-     * @param string $database
-     * @return bool
-     * @throws Exception
-     */
-    public static function Transactional(callable $callback = null, string $database = 'primary')
-    {
-        //initialize DBI objects for 1 transactional sessions.
-        new DBI('', $database);
-        if ($callback === null) {
-           return false;
-        }
-
-        try {
-            self::$dbi->beginTransaction();
-            $execution = $callback(self::$dbi);
-            if ($execution === true) {
-                self::$dbi->commit();
-            } else {
-                self::$dbi->rollBack();
-                return false;
-            }
-        } catch (Exception $ex) {
-            self::$dbi->rollBack();
-            return false;
-        }
-
-        return true;
     }
 
 }

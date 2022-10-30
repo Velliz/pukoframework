@@ -102,14 +102,13 @@ class Model
     }
 
     /**
-     * @param null $transaction
-     * @throws ReflectionException
+     * @throws Exception
      */
-    public function save($transaction = null)
+    public function save()
     {
         $insert = array();
         foreach ($this->_specs as $key => $val) {
-            foreach ($val as $k => $v) {
+            foreach ($val as $v) {
                 $skip = false;
                 if (strpos($v['datatype'], 'auto_increment') !== false) {
                     $skip = true;
@@ -122,18 +121,18 @@ class Model
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary, $transaction);
+        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary);
         $this->__construct($lastid, $this->_database);
     }
 
     /**
      * @throws Exception
      */
-    public function modify($transaction = null)
+    public function modify()
     {
         $insert = array();
         foreach ($this->_specs as $key => $val) {
-            foreach ($val as $k => $v) {
+            foreach ($val as $v) {
                 $skip = false;
                 if (strpos($v['datatype'], 'auto_increment') !== false) {
                     $skip = true;
@@ -146,17 +145,16 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert, $transaction);
+        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert);
         $this->__construct($this->{$this->_primary}, $this->_database);
     }
 
     /**
-     * @param null $transaction
      * @throws Exception
      */
-    public function remove($transaction = null)
+    public function remove()
     {
-        DBI::Prepare($this->_table, $this->_database)->Delete([$this->_primary => $this->{$this->_primary}], $transaction);
+        DBI::Prepare($this->_table, $this->_database)->Delete([$this->_primary => $this->{$this->_primary}]);
     }
 
     /**
@@ -166,7 +164,7 @@ class Model
      * @return array
      * @throws Exception
      */
-    public function ModelParser($raw_docs)
+    public function ModelParser($raw_docs): array
     {
         $data = array();
 
