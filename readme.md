@@ -2,7 +2,6 @@
 
 # Puko Framework [Core]
 
-[![Build Status](https://travis-ci.org/Velliz/pukoframework.svg?branch=master)](https://travis-ci.org/Velliz/pukoframework)
 [![StyleCI Status](https://styleci.io/repos/65143717/shield)](https://styleci.io/repos/65143717/shield)
 [![Latest Stable Version](https://poser.pugx.org/puko/framework/v/stable)](https://packagist.org/packages/puko/framework)
 [![Total Downloads](https://poser.pugx.org/puko/framework/downloads)](https://packagist.org/packages/puko/framework)
