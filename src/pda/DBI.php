@@ -279,6 +279,17 @@ class DBI
     {
         $parameters = func_get_args();
 
+        //flatern array parameter
+        $flatern = [];
+        if (isset($parameters[0])) {
+            if (is_array($parameters[0])) {
+                foreach ($parameters[0] as $key => $item) {
+                    $flatern[$key] = $item;
+                }
+                $parameters = $flatern;
+            }
+        }
+
         $args = count($parameters);
         if ($args > 0) {
             $this->query = preg_replace_callback($this->queryPattern, array($this, '_query_prepare_select'), $this->query);
@@ -310,6 +321,17 @@ class DBI
     public function FirstRow()
     {
         $parameters = func_get_args();
+
+        //flatern array parameter
+        $flatern = [];
+        if (isset($parameters[0])) {
+            if (is_array($parameters[0])) {
+                foreach ($parameters[0] as $key => $item) {
+                    $flatern[$key] = $item;
+                }
+                $parameters = $flatern;
+            }
+        }
 
         $args = count($parameters);
         if ($args > 0) {
@@ -345,6 +367,17 @@ class DBI
     {
         $parameters = func_get_args();
 
+        //flatern array parameter
+        $flatern = [];
+        if (isset($parameters[0])) {
+            if (is_array($parameters[0])) {
+                foreach ($parameters[0] as $key => $item) {
+                    $flatern[$key] = $item;
+                }
+                $parameters = $flatern;
+            }
+        }
+        
         $args = count($parameters);
         if ($args > 0) {
             $this->query = preg_replace_callback($this->queryPattern, array($this, '_query_prepare_select'), $this->query);
