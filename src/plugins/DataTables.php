@@ -80,8 +80,8 @@ class DataTables
         $this->draw = Request::Post('draw', 0);
 
         //order pointer
-        $this->order_index = $_POST['order'][0]['column'];
-        $this->order_dir = $_POST['order'][0]['dir'];
+        $this->order_index = isset($_POST['order'][0]['column']) ? $_POST['order'][0]['column'] : null;
+        $this->order_dir = isset($_POST['order'][0]['dir']) ? $_POST['order'][0]['dir'] : null;
 
         //page length pointer
         $this->start = $_POST['start'];
@@ -184,8 +184,10 @@ class DataTables
             }
         }
 
-        $order = strtoupper($this->order_dir);
-        $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
+        if ($this->order_index !== null && $this->order_dir !== null) {
+            $order = strtoupper($this->order_dir);
+            $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
+        }
         if ($this->db_engine === 'mysql') {
             $search_param .= " LIMIT {$this->start},{$this->length}";
         }
