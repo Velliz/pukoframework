@@ -41,7 +41,7 @@ class Framework
     /**
      * @var array
      */
-    private $app = array();
+    private $app = [];
 
     /**
      * @var Request
@@ -81,7 +81,7 @@ class Framework
     /**
      * @var array
      */
-    private $fn_return = array();
+    private $fn_return = [];
 
     /**
      * @var View|Service|Console|Sockets
@@ -97,7 +97,7 @@ class Framework
      * @param Factory $factory
      * @throws Exception Framework constructor.
      * The construct function called for init Request and Response objects.
-     * Token also generated when don't exists before.
+     * Token also Automatically regenerated when token not exist.
      */
     public function __construct(Factory $factory)
     {

@@ -88,7 +88,7 @@ class Model
             if ($result !== null) {
                 foreach ($result as $key => $val) {
                     foreach ($this->_specs as $k => $v) {
-                        foreach ($v as $x => $y) {
+                        foreach ($v as $y) {
                             if ($y['name'] === $key) {
                                 $this->{$k} = $val;
                                 break;
@@ -106,7 +106,7 @@ class Model
      */
     public function save()
     {
-        $insert = array();
+        $insert = [];
         foreach ($this->_specs as $key => $val) {
             foreach ($val as $v) {
                 $skip = false;
@@ -121,8 +121,8 @@ class Model
                 }
             }
         }
-        $lastid = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary);
-        $this->__construct($lastid, $this->_database);
+        $last_id = DBI::Prepare($this->_table, $this->_database)->Save($insert, $this->_primary);
+        $this->__construct($last_id, $this->_database);
     }
 
     /**
@@ -130,7 +130,7 @@ class Model
      */
     public function modify()
     {
-        $insert = array();
+        $insert = [];
         foreach ($this->_specs as $key => $val) {
             foreach ($val as $v) {
                 $skip = false;
@@ -145,7 +145,7 @@ class Model
                 }
             }
         }
-        DBI::Prepare($this->_table, $this->_database)->Update(array($this->_primary => $this->{$this->_primary}), $insert);
+        DBI::Prepare($this->_table, $this->_database)->Update([$this->_primary => $this->{$this->_primary}], $insert);
         $this->__construct($this->{$this->_primary}, $this->_database);
     }
 

@@ -93,7 +93,7 @@ class Routes
         $this->maintenance = $source['maintenance'];
 
         if (Framework::$factory->getEnvironment() === 'MAINTENANCE') {
-            $this->Mapping($this->maintenance, []);
+            $this->Mapping($this->maintenance);
             return true;
         }
 
@@ -125,11 +125,10 @@ class Routes
                         $this->Mapping($val, $parameter);
                         return true;
                     }
-                    break;
                 }
             }
         }
-        $this->Mapping($this->notFound, array());
+        $this->Mapping($this->notFound);
         return false;
     }
 
@@ -137,7 +136,7 @@ class Routes
      * @param array $dataSpecs
      * @param array $parameter
      */
-    private function Mapping($dataSpecs = array(), $parameter = array())
+    private function Mapping($dataSpecs = [], $parameter = [])
     {
         $this->controllerName = $dataSpecs['controller'];
         $this->sourceFile = $dataSpecs['controller'] . '.php';

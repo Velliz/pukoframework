@@ -75,6 +75,7 @@ class DBI
         $this->DBISet(Config::Data('database'), $database);
 
         $pdoConnection = null;
+        //connection from mysql
         if ($this->dbType === 'mysql') {
             $pdoConnection = "$this->dbType:host=$this->host;port=$this->port;charset=utf8mb4";
             if ($this->dbName !== '') {
@@ -367,7 +368,7 @@ class DBI
     {
         $parameters = func_get_args();
 
-        //flatern array parameter
+        //flatten array parameter
         $flatern = [];
         if (isset($parameters[0])) {
             if (is_array($parameters[0])) {
@@ -377,7 +378,7 @@ class DBI
                 $parameters = $flatern;
             }
         }
-        
+
         $args = count($parameters);
         if ($args > 0) {
             $this->query = preg_replace_callback($this->queryPattern, array($this, '_query_prepare_select'), $this->query);
@@ -410,7 +411,7 @@ class DBI
     public function Call(string $sp_name = '', array $payloads = []): bool
     {
         $attr = "";
-        foreach ($payloads as $pos => $value) {
+        foreach ($payloads as $value) {
             $attr .= "'{$value}', ";
         }
         $attr = substr($attr, 0, -2);
