@@ -89,7 +89,7 @@ class Routes
     {
         $this->router = $source['router'];
         $this->error = $source['error'];
-        $this->notFound = $source['not_found'];
+        $this->notFound = $source['notfound'];
         $this->maintenance = $source['maintenance'];
 
         if (Framework::$factory->getEnvironment() === 'MAINTENANCE') {
