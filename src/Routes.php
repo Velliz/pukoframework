@@ -47,6 +47,12 @@ class Routes
 
     /**
      * @var array
+     * store cms routing rules
+     */
+    var $cms;
+
+    /**
+     * @var array
      * store routes file path
      */
     var $sourceFile;
@@ -91,7 +97,9 @@ class Routes
         $this->error = $source['error'];
         $this->notFound = $source['notfound'];
         $this->maintenance = $source['maintenance'];
+        $this->cms = $source['cms'];
 
+        //activate maintenance mode
         if (Framework::$factory->getEnvironment() === 'MAINTENANCE') {
             $this->Mapping($this->maintenance);
             return true;
@@ -103,16 +111,16 @@ class Routes
         foreach ($this->router as $key => $val) {
             $url = explode('/', $key);
             if (count($url) === count($requestUrl)) {
-                $match = $parameter = array();
+                $match = $parameter = [];
                 foreach ($url as $pointer => $segment) {
                     if ($segment === '{?}') {
-                        array_push($parameter, $requestUrl[$pointer]);
+                        $parameter[] = $requestUrl[$pointer];
                         $segment = $requestUrl[$pointer];
                     }
                     if (strcmp($segment, $requestUrl[$pointer]) == 0) {
-                        array_push($match, true);
+                        $match[] = true;
                     } else {
-                        array_push($match, false);
+                        $match[] = false;
                     }
                 }
                 if (!in_array(false, $match)) {
@@ -128,6 +136,14 @@ class Routes
                 }
             }
         }
+
+        //activate cms-admin engine
+        if ($requestUrl[0] === 'cms') {
+            $this->Mapping($this->cms);
+            return true;
+        }
+
+        //notfound as last condition
         $this->Mapping($this->notFound);
         return false;
     }

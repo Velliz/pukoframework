@@ -2,7 +2,7 @@
   "name": "puko/framework",
   "description": "MVC Framework for quick and fast PHP application development.",
   "type": "framework",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "license": "MIT",
   "authors": [
     {
