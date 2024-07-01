@@ -135,6 +135,26 @@ class DataTables
     }
 
     /**
+     * @param string $dir
+     * @return void
+     * @desc ignore default datatables sorting index and implement this configuration instead.
+     */
+    public function OverrideOrderDir(string $dir = 'asc')
+    {
+        $this->order_dir = $dir;
+    }
+
+    /**
+     * @param int $index
+     * @return void
+     * @desc ignore default datatables sorting column position and implement this configuration instead.
+     */
+    public function OverrideOrderIndex(int $index = 0)
+    {
+        $this->order_index = $index;
+    }
+
+    /**
      * @param callable|null $callback
      * @return array DataTables get ajax requests
      * DataTables POST ajax requests
@@ -166,7 +186,11 @@ class DataTables
             $likes = implode(" OR ", $this->search_array);
             $search_param .= " WHERE {$likes} ";
 
-            $filtered = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
+            $filtered = DBI::Prepare(
+                ($this->query . $search_param),
+                $this->database
+            )->GetData();
+
             $this->records_filtered = count($filtered);
 
             //workaround for sql server version 2000 until 2010
@@ -185,8 +209,8 @@ class DataTables
         }
 
         if ($this->order_index !== null && $this->order_dir !== null) {
-            $order = strtoupper($this->order_dir);
-            $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$order}";
+            $sort_order_dir = strtoupper($this->order_dir);
+            $search_param .= " ORDER BY {$this->column_names[$this->order_index]} {$sort_order_dir}";
         }
         if ($this->db_engine === 'mysql') {
             $search_param .= " LIMIT {$this->start},{$this->length}";
@@ -195,7 +219,10 @@ class DataTables
             $search_param .= " OFFSET {$this->start} ROWS FETCH NEXT {$this->length} ROWS ONLY";
         }
 
-        $data = DBI::Prepare(($this->query . $search_param), $this->database)->GetData();
+        $data = DBI::Prepare(
+            ($this->query . $search_param),
+            $this->database
+        )->GetData();
 
         $response = [
             'draw' => intval($this->draw),
