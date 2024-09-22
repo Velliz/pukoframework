@@ -224,16 +224,17 @@ class DataTables
             $this->database
         )->GetData();
 
+        if ($callback !== null) {
+            $data = $callback($data);
+            $this->records_filtered = count($data);
+        }
+
         $response = [
             'draw' => intval($this->draw),
             'recordsTotal' => $this->records_total,
             'recordsFiltered' => $this->records_filtered,
             'data' => [],
         ];
-
-        if ($callback !== null) {
-            $data = $callback($data);
-        }
 
         //make the visible column is only from column specs
         foreach ($data as $a_row) {
