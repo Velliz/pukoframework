@@ -226,13 +226,13 @@ class DataTables
 
         if ($callback !== null) {
             $data = $callback($data);
-            $this->records_filtered = count($data);
         }
 
         $response = [
             'draw' => intval($this->draw),
             'recordsTotal' => $this->records_total,
             'recordsFiltered' => $this->records_filtered,
+            'recordsDisplayed' => count($data),
             'data' => [],
         ];
 
