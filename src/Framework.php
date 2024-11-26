@@ -17,6 +17,7 @@ use pte\Pte;
 use pukoframework\config\Config;
 use pukoframework\config\Factory;
 use pukoframework\middleware\Console;
+use pukoframework\middleware\ServiceConvertNumeric;
 use pukoframework\middleware\Sockets;
 use pukoframework\pdc\DocsEngine;
 use pukoframework\middleware\Service;
@@ -151,6 +152,7 @@ class Framework
 
         $view = new ReflectionClass(View::class);
         $service = new ReflectionClass(Service::class);
+        $service_numeric = new ReflectionClass(ServiceConvertNumeric::class);
         $console = new ReflectionClass(Console::class);
         $sockets = new ReflectionClass(Sockets::class);
 
@@ -265,6 +267,9 @@ class Framework
         }
         if ($this->pdc->isSubclassOf($service)) {
             $output = $this->render->Output($this->object, Pte::VIEW_JSON);
+        }
+        if ($this->pdc->isSubclassOf($service_numeric)) {
+            $output = $this->render->Output($this->object, Pte::VIEW_JSON_NUMERIC);
         }
         if ($this->pdc->isSubclassOf($console)) {
             exit(0);

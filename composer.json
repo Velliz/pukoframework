@@ -21,7 +21,7 @@
   "require": {
     "php": ">=7.0|>=8.0",
     "cboden/ratchet": "v0.4.4",
-    "velliz/pte": "0.2.3",
+    "velliz/pte": "0.2.4",
     "ext-pdo": "*"
   },
   "require-dev": {
