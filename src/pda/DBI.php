@@ -100,8 +100,11 @@ class DBI
         }
 
         try {
-            self::$dbi = new PDO($pdoConnection, $this->username, $this->password);
-            self::$dbi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $opt = [
+                PDO::ATTR_PERSISTENT => true,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ];
+            self::$dbi = new PDO($pdoConnection, $this->username, $this->password, $opt);
         } catch (PDOException $ex) {
             self::$dbi = null;
 
