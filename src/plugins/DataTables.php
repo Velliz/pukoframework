@@ -166,9 +166,13 @@ class DataTables
             return $this->response;
         }
 
+        $raw_for_count = $this->raw_query;
+        if ($this->db_engine === 'pgsql') {
+            $raw_for_count = preg_replace('/\s+ORDER\s+BY\s+[\s\S]+$/i', '', $this->raw_query);
+        }
         $count_sql = "SELECT ";
         $count_sql .= "COUNT(*) results ";
-        $count_sql .= "FROM ({$this->raw_query}) counter ";
+        $count_sql .= "FROM ({$raw_for_count}) counter ";
         $data = DBI::Prepare($count_sql, $this->database)->FirstRow();
         $this->records_total = intval($data['results']);
         $this->records_filtered = intval($data['results']);
@@ -177,7 +181,11 @@ class DataTables
             for ($i = 0; $i < count($this->column_names); $i++) {
                 //sql query workarounds for search single quotes
                 $st = str_replace("'", "\'", $this->search_terms);
-                $this->search_array[] = "{$this->column_names[$i]} LIKE '%{$st}%'";
+                if ($this->db_engine === 'pgsql') {
+                    $this->search_array[] = "CAST({$this->column_names[$i]} AS TEXT) ILIKE '%{$st}%'";
+                } else {
+                    $this->search_array[] = "{$this->column_names[$i]} LIKE '%{$st}%'";
+                }
             }
         }
 
@@ -217,6 +225,9 @@ class DataTables
         }
         if ($this->db_engine === 'sqlsrv') {
             $search_param .= " OFFSET {$this->start} ROWS FETCH NEXT {$this->length} ROWS ONLY";
+        }
+        if ($this->db_engine === 'pgsql') {
+            $search_param .= " LIMIT {$this->length} OFFSET {$this->start}";
         }
 
         $data = DBI::Prepare(

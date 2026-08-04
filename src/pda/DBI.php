@@ -46,16 +46,20 @@ class DBI
      */
     protected function DBISet(array $connection, $database)
     {
-        $this->dbType = $connection[$database]['dbType'];
-        $this->host = $connection[$database]['host'];
-        $this->port = $connection[$database]['port'];
+        $dbConfig = isset($connection[$database]) ? $connection[$database] : [];
 
-        $this->dbName = $connection[$database]['dbName'];
-        $this->username = $connection[$database]['user'];
-        $this->password = $connection[$database]['pass'];
+        $this->dbType = isset($dbConfig['dbType']) ? $dbConfig['dbType'] : getenv('DB_TYPE');
+        $this->host = isset($dbConfig['host']) ? $dbConfig['host'] : getenv('DB_HOST');
+        $this->port = isset($dbConfig['port']) ? $dbConfig['port'] : getenv('DB_PORT');
 
-        if (isset($connection[$database]['driver'])) {
-            $this->driver = $connection[$database]['driver'];
+        $this->dbName = isset($dbConfig['dbName']) ? $dbConfig['dbName'] : getenv('DB_NAME');
+        $this->username = isset($dbConfig['user']) ? $dbConfig['user'] : getenv('DB_USER');
+        $this->password = isset($dbConfig['pass']) ? $dbConfig['pass'] : getenv('DB_PASS');
+
+        if (isset($dbConfig['driver'])) {
+            $this->driver = $dbConfig['driver'];
+        } elseif (getenv('DB_DRIVER')) {
+            $this->driver = getenv('DB_DRIVER');
         }
     }
 
@@ -97,6 +101,9 @@ class DBI
                     $pdoConnection = "sqlsrv:Server=$this->host,$this->port;Database=$this->dbName";
                 }
             }
+        }
+        if ($this->dbType === 'pgsql') {
+            $pdoConnection = "pgsql:host=$this->host;port=$this->port;dbname=$this->dbName";
         }
 
         try {
@@ -173,12 +180,21 @@ class DBI
         try {
             $statement = self::$dbi->prepare($insert_text);
             foreach ($keys as $no => $key) {
-                $statement->bindValue(":{$key}", $values[$no]);
+                $val = $values[$no];
+                if ($this->dbType === 'pgsql' && is_bool($val)) {
+                    $statement->bindValue(":{$key}", $val ? 'true' : 'false', PDO::PARAM_STR);
+                } else {
+                    $statement->bindValue(":{$key}", $val);
+                }
             }
 
             if ($statement->execute()) {
                 if ($this->dbType === 'mysql') {
                     $last_id = self::$dbi->lastInsertId();
+                }
+                if ($this->dbType === 'pgsql') {
+                    $sequence = "{$this->query}_{$identity}_seq";
+                    $last_id = self::$dbi->lastInsertId($sequence);
                 }
                 if ($this->dbType === 'sqlsrv') {
                     if (strlen($identity) > 0) {
@@ -213,6 +229,7 @@ class DBI
 
         $key_where = " WHERE ";
         foreach ($where as $key => $value) {
+            if ($this->dbType === 'pgsql' && is_bool($value)) $value = $value ? 1 : 0;
             $key_where .= "{$ticks}{$key}{$ticks} = '{$value}' AND ";
         }
         $key_where = substr($key_where, 0, -4);
@@ -257,9 +274,14 @@ class DBI
         try {
             $statement = self::$dbi->prepare($update_text);
             foreach ($data as $key => $val) {
-                $statement->bindValue(":{$key}", $val);
+                if ($this->dbType === 'pgsql' && is_bool($val)) {
+                    $statement->bindValue(":{$key}", $val ? 'true' : 'false', PDO::PARAM_STR);
+                } else {
+                    $statement->bindValue(":{$key}", $val);
+                }
             }
             foreach ($ids as $key => $val) {
+                if ($this->dbType === 'pgsql' && is_bool($val)) $val = $val ? 1 : 0;
                 $statement->bindValue(":{$key}", $val);
             }
             $result = $statement->execute();
@@ -443,6 +465,11 @@ class DBI
     private function _query_prepare_select(): string
     {
         return '?';
+    }
+
+    public static function _get_pdo_instance()
+    {
+        return self::$dbi;
     }
 
 }
